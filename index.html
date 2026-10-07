@@ -391,15 +391,45 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 .beam{position:absolute;pointer-events:none;z-index:3;height:16px;border-radius:999px;transform-origin:left center}
 .ring{position:absolute;pointer-events:none;z-index:3;border:5px solid #ffd23f;border-radius:50%;box-shadow:0 0 0 3px rgba(255,255,255,.7)}
 .sk .pv svg.mini{width:70px}
+
+/* ---------- v4 ---------- */
+/* 燃燒的時間條 */
+.timer{position:relative;height:12px;overflow:visible;background:#e7e2cf;border-radius:999px}
+.timer i{position:relative;height:100%;width:100%;border-radius:999px;background:linear-gradient(90deg,#ff3b1f,#ff8a1c,#ffd23f,#ff8a1c,#ff3b1f) 0 0/200% 100%!important;animation:fireflow .7s linear infinite;transform:none!important;box-shadow:0 0 calc(4px + var(--heat,0)*10px) rgba(255,110,30,.8)}
+.timer i::after{content:"";position:absolute;right:-11px;top:calc(-14px - var(--heat,0)*10px);width:calc(20px + var(--heat,0)*12px);height:calc(28px + var(--heat,0)*14px);border-radius:50% 50% 45% 45%/60% 60% 40% 40%;background:radial-gradient(ellipse at 50% 78%,#fffbe0 0 14%,#ffd23f 26%,#ff8a1c 46%,#ff3b1f 62%,transparent 72%);transform-origin:50% 100%;animation:flick .16s ease-in-out infinite alternate}
+.timer.rage i{background:linear-gradient(90deg,#7a1f3d,#ff3b1f,#ffb02e,#ff3b1f,#7a1f3d) 0 0/200% 100%!important}
+@keyframes fireflow{to{background-position:-200% 0}}
+@keyframes flick{from{transform:scale(1,1) rotate(-3deg)}to{transform:scale(.88,1.12) rotate(3deg)}}
+.ember{position:absolute;width:5px;height:5px;border-radius:50%;background:#ffb02e;box-shadow:0 0 6px #ff6a1c;pointer-events:none;z-index:2}
+/* 多音題的魔王狂暴提示 */
+.seqhint.rage{background:#ffe0dc;color:#b8322b}
+/* 武器特效 */
+.streak{position:absolute;height:6px;border-radius:999px;pointer-events:none;z-index:3;transform-origin:center}
+.wfx{position:absolute;pointer-events:none;z-index:3}
+.wfx svg{display:block;overflow:visible;width:100%;height:100%}
+/* 全頻廣播彈幕 */
+.danmaku{position:fixed;left:0;right:0;top:0;height:0;z-index:8;pointer-events:none}
+.dm{position:absolute;left:0;white-space:nowrap;display:inline-flex;align-items:center;gap:8px;background:rgba(36,50,74,.88);color:#fff;border:2px solid var(--gold);border-radius:999px;padding:4px 14px 4px 6px;font-weight:900;font-size:clamp(.9rem,2.6vw,1.1rem);box-shadow:0 4px 0 rgba(0,0,0,.2)}
+.dm .medal{width:26px;height:26px;font-size:.75rem;border-width:2px}
+.dm b{color:#ffd23f}
+/* 更新日誌 */
+.log{display:flex;flex-direction:column;gap:10px;max-height:320px;overflow:auto}
+.log .ent{border-left:4px solid var(--gold);padding:2px 0 2px 10px}
+.log .ent h5{margin:0 0 4px;font-size:1rem}
+.log .ent h5 small{color:var(--ink-soft);font-weight:700;margin-left:6px}
+.log ul{margin:0;padding-left:1.2em;line-height:1.6;font-weight:700;font-size:.9rem}
+.log li.fix{color:#1f63b8}
+.log .now{display:inline-block;background:var(--ink);color:var(--paper);border-radius:999px;padding:0 8px;font-size:.75rem;margin-left:6px}
+.tbtn.god{background:#ffe0dc}
 </style>
 </head>
 <body>
 <div class="vign" id="vign"></div>
+<div class="danmaku" id="danmaku" aria-live="polite"></div>
 <div class="flash" id="flash"></div>
 <div class="app" id="app">
   <div class="top">
     <h1>音符勇者</h1>
-    <span class="ver" id="ver"></span>
     <button class="who" id="who" title="換玩家"><span class="st" id="cloudDot"></span><span id="whoName">訪客</span></button>
     <span class="coins" id="coins"><span class="coin"></span><span id="coinNum">0</span></span>
     <span class="chip" id="lvChip">音符草原 1-1</span>
@@ -417,6 +447,7 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
         <button class="tbtn" id="btnSound" aria-pressed="true">音效</button>
         <button class="tbtn" id="btnFull">全螢幕</button>
         <button class="tbtn" id="btnTeacher">老師面板</button>
+        <button class="tbtn god" id="btnGodWin" hidden>測試：直接過關</button>
       </div>
     </div>
   </div>
@@ -443,7 +474,7 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
   <div class="card">
     <div class="msg" id="msg" hidden></div>
     <div class="seqhint" id="seqhint" hidden></div>
-    <svg class="staff" id="staff" viewBox="0 0 360 190" aria-label="五線譜"></svg>
+    <svg class="staff" id="staff" viewBox="0 0 360 200" aria-label="五線譜"></svg>
     <div class="timer" id="timer"><i id="timerFill"></i></div>
     <button class="next" id="btnNext" hidden>下一題 ▶</button>
   </div>
@@ -468,7 +499,6 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
     <div class="names" id="recent"></div>
     <div class="row"><button class="big alt" id="btnGuest">先用訪客玩</button><button class="big alt" id="btnTeacher2">老師面板</button></div>
     <div class="sub" id="loginCloud"></div>
-    <div class="sub" id="verLogin"></div>
   </div>
 </div>
 
@@ -485,7 +515,6 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
       <button class="hbtn" id="hDex"><b>收藏</b><small>圖鑑・徽章</small></button>
     </div>
     <div class="row"><button class="big alt" id="btnSwitch">換玩家</button><button class="big alt" id="btnTeacher3">老師面板</button></div>
-    <div class="sub" id="verHome"></div>
   </div>
 </div>
 
@@ -638,6 +667,10 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
         <div class="hint" id="tpTestMsg">沒有連線時，資料會先存在這台電腦，連上後自動補傳。</div>
       </section>
       <section>
+        <h4>更新日誌</h4>
+        <div class="log" id="tpLog"></div>
+      </section>
+      <section>
         <h4>老師密碼</h4>
         <div class="r"><input type="text" id="tPin" maxlength="12"><span class="hint">要和 Apps Script 裡的 TEACHER_PIN 一樣，全班歸零才會成功。</span></div>
       </section>
@@ -650,7 +683,15 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 const $ = id => document.getElementById(id);
 
 // 版本號：每次更新加 1，畫面上會顯示，方便確認上傳的是最新版
-const VERSION = 3, VERSION_DATE = '2026-10-07';
+const VERSION = 4, VERSION_DATE = '2026-10-07';
+// 更新日誌：每次更新在最上面加一筆（顯示在老師面板）
+const CHANGELOG = [
+  {v:4, date:'2026-10-07', add:['魔王生氣後難度加倍：題目變成 3～5 個音、時間縮短、答錯怪獸一次逼近兩步','後面的地區從第一關就開始多音題','時間條加上火焰燃燒效果','每種武器都有自己的擊打特效（鎚子震地、光線槍灼燒、小龍噴火等）','全頻廣播彈幕：有人過新關卡、拿到新收藏或新裝備時，全班畫面都會飄過','老師測試帳號「偉展老師」：關卡全開、10 萬金幣、可直接過關','老師面板新增更新日誌'], fix:['版本號從主畫面移到老師面板的更新日誌']},
+  {v:3, date:'2026-10-07', add:['測試連線會檢查是否真的寫得進音符勇者的試算表'], fix:['修正試算表網址誤用成動感節拍組合器的網址，資料寫不進去的問題','遊戲檔案裡寫好的網址優先，不會被舊設定蓋掉']},
+  {v:2, date:'2026-10-07', add:['練習模式 6 課（語音唸題目）','冒險地圖：5 個地區、25 關、地區魔王與通關獎勵造型','武器商店：法杖、迴力鏢、音波鼓、光線槍、召喚小龍等遠距攻擊','段位與全班排行榜','手機橫向排版，所有畫面都能捲動']},
+  {v:1, date:'2026-10-07', add:['五線譜識音打怪、注音唱名、高音ㄉㄡ','商店造型與擊打特效、背景音樂','錯題加強、提示線、分組對抗、老師面板、圖鑑與徽章','Google 試算表存檔']},
+];
+const GOD_NAMES = ['偉展老師'];   // 老師測試帳號：關卡全開、不列入排行榜與廣播
 
 // 想把試算表網址寫死在檔案裡，就貼在這裡；也可以在「選單 → 老師面板」貼上。
 const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwXP1Wicuj-VIqFdxN4dTJ1T3ys7-2WvI5SaFypRc4fdYx8tcvnP3ORQ8H7EUwdTtxPJw/exec';
@@ -749,19 +790,22 @@ const REGIONS = [
   {id:'snow',   name:'冰雪山脈', desc:'八個音全部登場',         pool:KEYS,                              t:9,  song:'snow',   mons:['snowW','snowI'],   boss:'snowK',  reward:{skin:'snowp',wpn:'rainbow'}, c1:'#dff1fb', c2:'#7fb6e0'},
   {id:'castle', name:'魔王城堡', desc:'最終挑戰：打倒大魔王',   pool:KEYS,                              t:8,  song:'castle', mons:['shadow','flame'],  boss:'boss',   reward:{skin:'starkn',wpn:'dragon'}, c1:'#a08cc8', c2:'#4a3d6b'},
 ];
-const STAGE_PLAN = [
-  {n:1, seq:[1],     tmul:1.0,  goal:8},
-  {n:2, seq:[1],     tmul:0.8,  goal:8},
-  {n:3, seq:[1,2],   tmul:0.9,  goal:9},
-  {n:4, seq:[2],     tmul:0.8,  goal:10},
-  {n:5, seq:[1,2,3], tmul:0.75, goal:12, boss:true},
+// 每區 5 關：[一般題目的音數, 魔王生氣後的音數]。後面的地區一開始就多音，魔王第二階段難度加倍。
+const SEQ_PLAN = [
+  [ [[1],[1]],     [[1],[1]],     [[1,2],[1,2]],   [[1,2],[1,2]],   [[1,2],[2,3]] ],
+  [ [[1],[1]],     [[1,2],[1,2]], [[2],[2]],       [[2,3],[2,3]],   [[2,3],[3,4]] ],
+  [ [[1,2],[1,2]], [[2],[2]],     [[2,3],[2,3]],   [[3],[3]],       [[2,3],[3,4,5]] ],
+  [ [[2],[2]],     [[2,3],[2,3]], [[3],[3]],       [[3,4],[3,4]],   [[3],[4,5]] ],
+  [ [[2,3],[2,3]], [[3],[3]],     [[3,4],[3,4]],   [[4],[4]],       [[3,4],[4,5]] ],
 ];
+const STAGE_TMUL = [1.0, 0.85, 0.9, 0.8, 0.75], STAGE_GOAL = [8, 8, 9, 10, 12];
+const avg = a => a.reduce((x,y)=>x+y,0)/a.length;
 const STAGES = [];
-REGIONS.forEach((R,ri)=>STAGE_PLAN.forEach(p=>{
-  let seq = p.seq;
-  if(ri===0 && p.n===4) seq=[1,2];
-  if(ri===0 && p.n===5) seq=[1,2];
-  STAGES.push({id:`${R.id}-${p.n}`, r:ri, n:p.n, seq, time:Math.max(4, Math.round(R.t*p.tmul*(1-ri*0.05)*10)/10), goal:p.goal, boss:!!p.boss});
+REGIONS.forEach((R,ri)=>SEQ_PLAN[ri].forEach(([seq,seq2],si)=>{
+  const n=si+1, boss=n===5;
+  STAGES.push({id:`${R.id}-${n}`, r:ri, n, seq, seq2, boss,
+    time:Math.max(3.5, Math.round(R.t*STAGE_TMUL[si]*(1-ri*0.05)*10)/10),
+    goal:Math.round(STAGE_GOAL[si]*(avg(seq)+1)/2)});
 }));
 const stageById = id => STAGES.find(s=>s.id===id);
 
@@ -924,7 +968,7 @@ function progressText(sv=save){
 function commit(record, notes){
   persistLocal();
   if(notes) addLocalClass(notes);
-  if(player.name){ const sc=rankScore(); send({action:'save', name:player.name, save:Object.assign({}, save, {badgeNames:badgeNames(), rankScore:sc, tierName:tierOf(sc).name, weak:weakNotes(), progress:progressText()}), record, notes}); }
+  if(player.name){ const sc=save.god?0:rankScore(); send({action:'save', name:player.name, save:Object.assign({}, save, {badgeNames:badgeNames(), rankScore:sc, tierName:save.god?'老師測試帳號':tierOf(sc).name, weak:weakNotes(), progress:progressText()}), record, notes}); }
   else if(record) send({action:'record', record, notes});
 }
 
@@ -1248,7 +1292,7 @@ function drawStaff(seq, states=[], active=-1){
     el('text',{x:141,y:yOf(0)+5,'text-anchor':'middle','font-size':12,'font-weight':900,'font-family':FONT,fill:'#a86e00'}).textContent='ㄇㄧ';
   }
   if(!seq||!seq.length) return;
-  const xs = seq.length===1 ? [232] : seq.length===2 ? [200,290] : [180,250,320];
+  const xs = {1:[232],2:[200,290],3:[180,250,320],4:[172,222,272,322],5:[166,207,248,289,330]}[seq.length];
   seq.forEach((k,i)=>{
     const n=NOTES[k], x=xs[i], y=yOf(n.step), st=states[i], c=st?st.color:(active>=0 && i!==active ? '#8a93a6' : '#2b3550');
     if(n.step<=-2) el('line',{x1:x-17,x2:x+17,y1:yOf(-2),y2:yOf(-2),stroke:'#2b3550','stroke-width':2.2});
@@ -1258,7 +1302,8 @@ function drawStaff(seq, states=[], active=-1){
     if(i===active && seq.length>1) el('path',{d:`M${x-8} 22 L${x+8} 22 L${x} 34Z`,fill:'#f5b82e',stroke:'#2b3550','stroke-width':2});
     if(st && st.label){
       if(seq.length===1){ const w=st.label.length*19+18; pill(s, x+24+w/2, y, st.label, st.color) }
-      else pill(s, x, 176, st.label, st.color, 15);
+      else if(seq.length<=3) pill(s, x, 178, st.label, st.color, 15);
+      else pill(s, x, i%2?188:168, st.label.replace('高音','高'), st.color, 12);
     }
   });
 }
@@ -1408,7 +1453,7 @@ function addCoins(n){
 
 // ================= 徽章 =================
 let toastQ=[], toasting=false;
-function award(id){ if(save.badges.includes(id)) return; save.badges.push(id); toastQ.push(id); runToast() }
+function award(id){ if(save.badges.includes(id)) return; save.badges.push(id); toastQ.push(id); runToast(); const bd=BADGES.find(x=>x.id===id); if(bd) broadcast(`獲得徽章「${bd.name}」`) }
 async function runToast(){
   if(toasting) return; toasting=true;
   while(toastQ.length){
@@ -1432,15 +1477,115 @@ function checkCollect(){
 }
 
 // ================= 攻擊 =================
-function impact(big, fx, dir, slash){
+function impact(big, fx, dir, slash, kind){
   const m=centerOf($('monster'));
   sFx(fx.snd,big); sHit(big);
+  weaponImpact(kind||'sword', m, big, dir);
   fxExtra($('scene'), m.x, m.y, fx);
   if(slash) slashFx(m.x, m.y, big, fx);
   flash(big?.6:.35, 140); shake(big?16:9, big?420:300);
   fxBurst($('scene'), m.x, m.y, big?20:12, fx, big?110:80);
   $('monBod').animate([{transform:'translateX(0)',filter:'brightness(3) saturate(0)'},{transform:`translateX(${dir*(big?40:24)}px) rotate(${dir*14}deg) scale(1.1,.85)`,filter:'brightness(2.2) saturate(.2)',offset:.25},{transform:`translateX(${dir*8}px) rotate(${-dir*4}deg)`,filter:'none',offset:.6},{transform:'translateX(0)',filter:'none'}],{duration:520,easing:'ease-out'});
   fxText(big?'會心一擊！':fx.text, m.x, m.y-m.h*.6, big?'gold':'');
+}
+// ---------- 每種武器自己的擊打效果 ----------
+function wfx(html, x, y, w, h){ const d=document.createElement('div'); d.className='wfx'; Object.assign(d.style,{left:(x-w/2)+'px',top:(y-h/2)+'px',width:w+'px',height:h+'px'}); d.innerHTML=html; $('scene').appendChild(d); return d }
+function streak(x,y,deg,len,col,w=6,delay=0,dur=320){
+  const d=document.createElement('div'); d.className='streak'; Object.assign(d.style,{left:(x-len/2)+'px',top:(y-w/2)+'px',width:len+'px',height:w+'px',background:`linear-gradient(90deg,transparent,${col},#fff,${col},transparent)`,boxShadow:`0 0 10px ${col}`});
+  $('scene').appendChild(d);
+  d.animate([{transform:`rotate(${deg}deg) scaleX(0)`,opacity:1},{transform:`rotate(${deg}deg) scaleX(1.1)`,opacity:1,offset:.4},{transform:`rotate(${deg}deg) scaleX(1.2) scaleY(.2)`,opacity:0}],{duration:dur,delay,fill:'backwards'}).onfinish=()=>d.remove();
+}
+function ringAt(x,y,col,size,{dur=500,delay=0,w=5,sy=1,grow=3}={}){
+  const d=wfx(`<svg viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="46" ry="${46*sy}" fill="none" stroke="${col}" stroke-width="${w}"/></svg>`,x,y,size,size);
+  d.animate([{transform:'scale(.2)',opacity:1},{transform:`scale(${grow})`,opacity:0}],{duration:dur,delay,fill:'backwards',easing:'ease-out'}).onfinish=()=>d.remove();
+}
+function popShape(shape,col,x,y,size,anim,dur,delay=0){
+  const d=wfx(`<svg viewBox="0 0 20 20">${partSVG(shape,col)}</svg>`,x,y,size,size);
+  d.animate(anim,{duration:dur,delay,fill:'backwards',easing:'ease-out'}).onfinish=()=>d.remove();
+}
+const burstOf = (parts,cols) => ({parts,cols});
+function weaponImpact(kind, m, big, dir){
+  const k=big?1.35:1, sc=$('scene');
+  switch(kind){
+    case 'hammer': {
+      ringAt(m.x, m.bottom-6, '#c98a5e', 90*k, {sy:.28, grow:3.2, w:7});
+      ringAt(m.x, m.bottom-6, '#fff', 70*k, {sy:.28, grow:2.6, w:4, delay:80});
+      const cr=wfx(`<svg viewBox="0 0 200 40"><path d="M100 4 L80 18 L60 14 L40 30 M100 4 L118 22 L140 16 L164 32 M100 4 L104 26 L96 38" fill="none" stroke="#5b4636" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`, m.x, m.bottom-2, 200*k, 40*k);
+      cr.animate([{opacity:0,transform:'scaleX(.3)'},{opacity:1,transform:'scaleX(1)',offset:.15},{opacity:1,offset:.7},{opacity:0}],{duration:900}).onfinish=()=>cr.remove();
+      dust(m.x, m.bottom-6); dust(m.x, m.bottom-6, dir);
+      fxText('咚！！', m.x, m.bottom-m.h*1.1, 'gold'); shake(22, 500);
+      sfx(()=>{ osc(70,.5,'sine',.6,0,null,30); noise(.3,.4,0,null,90) });
+      break; }
+    case 'spear':
+      streak(m.x, m.y, 0, m.w*2.4*k, '#ffd23f', 8);
+      streak(m.x, m.y, 0, m.w*1.8*k, '#fff', 3, 60);
+      popShape('star','#ffd23f', m.x+dir*m.w*.9, m.y, 34*k, [{transform:'scale(0) rotate(0)',opacity:1},{transform:'scale(1.4) rotate(90deg)',opacity:0}], 500);
+      break;
+    case 'spoon': case 'lolli': case 'cane': {
+      for(let i=0;i<3;i++){ const a=i*120;
+        const d=wfx(`<svg viewBox="0 0 20 20">${partSVG('star','#ffd23f')}</svg>`, m.x, m.y-m.h*.55, 18, 18);
+        d.animate(Array.from({length:7},(_,j)=>{ const t=(a+j*60)*Math.PI/180; return {transform:`translate(${Math.cos(t)*m.w*.4}px,${Math.sin(t)*10}px)`,opacity:j<6?1:0} }),{duration:1000}).onfinish=()=>d.remove(); }
+      fxBurst(sc, m.x, m.y, 8*k, burstOf(kind==='spoon'?['dot','star']:['candy','heart'], kind==='spoon'?['#fff4cf','#ffd23f']:['#ff6fae','#5ce1ff','#ffd23f']), 80);
+      fxText('暈～', m.x+m.w*.5, m.y-m.h*.7, '');
+      break; }
+    case 'wand': {
+      popShape('star','#ffd23f', m.x, m.y, 70*k, [{transform:'scale(.1) rotate(-60deg)',opacity:1},{transform:'scale(1.3) rotate(20deg)',opacity:1,offset:.4},{transform:'scale(1.6) rotate(40deg)',opacity:0}], 600);
+      for(let i=0;i<8;i++){ const t=i*Math.PI/4; popShape('star',RB[i%RB.length], m.x, m.y, 16, [{transform:'translate(0,0) scale(.3)',opacity:1},{transform:`translate(${Math.cos(t)*90*k}px,${Math.sin(t)*70*k}px) scale(1) rotate(180deg)`,opacity:0}], 700, 60) }
+      sfx(()=>[1568,2093,2637,3136].forEach((f,i)=>osc(f,.2,'sine',.07,i*.05)));
+      break; }
+    case 'boomerang':
+      [-35,20,75].forEach((deg,i)=>streak(m.x+(i-1)*10, m.y+(i-1)*8, deg, m.w*1.4*k, '#f28a2e', 7, i*90, 260));
+      ringAt(m.x, m.y, '#fff', 60*k, {w:3, grow:2.6, delay:120});
+      sfx(()=>[0,.09,.18].forEach(t=>noise(.08,.3,t,null,3000)));
+      break;
+    case 'yoyo':
+      [0,1,2].forEach(i=>ringAt(m.x+(i-1)*m.w*.25, m.y+(i%2?-12:8), '#ff5c8a', 30*k, {w:6, grow:2.2, delay:i*110, dur:420}));
+      sfx(()=>[0,.11,.22].forEach((t,i)=>osc(700+i*200,.1,'square',.06,t)));
+      break;
+    case 'flute':
+      for(let i=0;i<10*k;i++){ const dx=(Math.random()*2-1)*60, dy=-60-Math.random()*70; popShape('note',RB[i%RB.length], m.x+(Math.random()*2-1)*20, m.y, 20, [{transform:'translate(0,0) scale(.4)',opacity:1},{transform:`translate(${dx}px,${dy}px) scale(1.1) rotate(${dx/2}deg)`,opacity:0}], 900, i*40) }
+      { const rb=wfx(`<svg viewBox="0 0 200 60">${[0,1,2,3,4].map(i=>`<path d="M0 ${10+i*10} Q50 ${i*10-6} 100 ${10+i*10} T200 ${10+i*10}" fill="none" stroke="#5a63c9" stroke-width="2"/>`).join('')}</svg>`, m.x, m.y, 220*k, 66*k);
+        rb.animate([{opacity:0,transform:'scaleX(.2)'},{opacity:.9,transform:'scaleX(1)',offset:.3},{opacity:0,transform:'scaleX(1.2) translateY(-20px)'}],{duration:800}).onfinish=()=>rb.remove() }
+      break;
+    case 'drum':
+      [0,1,2].forEach(i=>ringAt(m.x, m.y, i%2?'#ff7a3d':'#ffd23f', 50*k, {w:9, grow:3.4, delay:i*120, dur:560}));
+      fxBurst(sc, m.x, m.y, 6, burstOf(['note'],['#e8473d','#ffd23f']), 100);
+      shake(18,420);
+      break;
+    case 'blaster': {
+      const f=wfx(`<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#5ce1ff" opacity=".6"/><circle cx="50" cy="50" r="26" fill="#fff"/></svg>`, m.x, m.y, 60*k, 60*k);
+      f.animate([{transform:'scale(.2)',opacity:1},{transform:'scale(1.6)',opacity:.8,offset:.3},{transform:'scale(2)',opacity:0}],{duration:420}).onfinish=()=>f.remove();
+      fxBurst(sc, m.x, m.y, 12*k, burstOf(['shard'],['#5ce1ff','#ffffff','#b8f4ff']), 110);
+      for(let i=0;i<5;i++) popShape('dot','#aab4c4', m.x+(Math.random()*2-1)*24, m.y-10, 22+Math.random()*14, [{transform:'translate(0,0) scale(.4)',opacity:.8},{transform:`translate(${(Math.random()*2-1)*20}px,-70px) scale(1.6)`,opacity:0}], 1100, 150+i*60);
+      sfx(()=>{ osc(2200,.15,'square',.05,0,null,600); noise(.25,.2,.05,null,4000) });
+      break; }
+    case 'bubble': {
+      const bb=wfx(`<svg viewBox="0 0 20 20">${partSVG('bubble','#8fd8ff')}</svg>`, m.x, m.y, m.w*1.4, m.w*1.4);
+      bb.animate([{transform:'scale(.3)',opacity:.9},{transform:'scale(1)',opacity:.9,offset:.55},{transform:'scale(1.25)',opacity:0}],{duration:620}).onfinish=()=>bb.remove();
+      for(let i=0;i<14*k;i++){ const t=Math.random()*Math.PI*2; popShape('dot',i%2?'#8fd8ff':'#ffffff', m.x+Math.cos(t)*m.w*.6, m.y+Math.sin(t)*m.w*.6, 7, [{transform:'translate(0,0)',opacity:1},{transform:`translate(${Math.cos(t)*30}px,${40+Math.random()*30}px)`,opacity:0}], 600, 330) }
+      sfx(()=>{ osc(900,.08,'sine',.2,.33,null,1600); for(let i=0;i<4;i++) osc(600+Math.random()*500,.06,'sine',.12,.38+i*.04,null,1400) });
+      break; }
+    case 'rainbow':
+      fxExtra(sc, m.x, m.y, {extra:'rainbow'});
+      for(let i=0;i<10*k;i++) popShape('star',RB[i%RB.length], m.x+(Math.random()*2-1)*60, m.y+(Math.random()*2-1)*40, 14, [{transform:'scale(0)',opacity:1},{transform:'scale(1.3) rotate(120deg)',opacity:1,offset:.5},{transform:'scale(0) rotate(200deg)',opacity:0}], 700, i*50);
+      break;
+    case 'dragon': {
+      const f=wfx(`<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#ff8a1c" opacity=".7"/><circle cx="50" cy="50" r="30" fill="#ffd23f"/><circle cx="50" cy="50" r="14" fill="#fffbe0"/></svg>`, m.x, m.y, 70*k, 70*k);
+      f.animate([{transform:'scale(.2)',opacity:1},{transform:'scale(1.8)',opacity:.9,offset:.35},{transform:'scale(2.4)',opacity:0}],{duration:600}).onfinish=()=>f.remove();
+      fxBurst(sc, m.x, m.y, 16*k, burstOf(['flame'],['#ff6a2b','#ffb02e','#ffe066']), 120);
+      for(let i=0;i<6;i++) popShape('dot','#7d7a86', m.x+(Math.random()*2-1)*30, m.y-m.h*.3, 26+Math.random()*16, [{transform:'translate(0,0) scale(.4)',opacity:.7},{transform:`translate(${(Math.random()*2-1)*30}px,-80px) scale(1.8)`,opacity:0}], 1300, 200+i*70);
+      shake(20,500);
+      break; }
+    default:
+      streak(m.x, m.y, -40, m.w*1.6*k, '#ffd23f', 7);
+      streak(m.x, m.y, 40, m.w*1.6*k, '#ffffff', 5, 90);
+      fxBurst(sc, m.x, m.y, 8, burstOf(['shard'],['#fff','#ffd23f']), 70);
+  }
+}
+function attackKind(heroEl){
+  if(S.mode==='team') return 'sword';
+  const W=WEAPONS.find(w=>w.id===save.wpn);
+  return (W && W.id!=='auto') ? W.draw : curSkin().wpn;
 }
 function projSVG(kind){
   switch(kind){
@@ -1465,14 +1610,14 @@ async function heroAttack(big, heroEl=$('hero'), dir=1){
   const hb=heroEl.querySelector('.bod'), h=centerOf(heroEl), m=centerOf($('monster'));
   const W = S.mode==='team' ? {style:'melee'} : effWeapon();
   const fx = S.mode==='team' ? FX[heroEl.id==='hero'?1:2] : curFx();
-  const hand={x:h.x+dir*h.w*.35, y:h.y-h.h*.05};
+  const hand={x:h.x+dir*h.w*.35, y:h.y-h.h*.05}, kind=attackKind(heroEl);
   if(W.style==='proj'){
     hb.animate([{transform:'translateX(0)'},{transform:`translateX(${-dir*8}px) rotate(${-dir*8}deg)`,offset:.35},{transform:`translateX(${dir*10}px) rotate(${dir*6}deg)`,offset:.6},{transform:'translateX(0)'}],{duration:520});
     sfx(()=>osc(500,.25,'triangle',.12,0,null,1300));
     await wait(200);
     const n = W.proj==='note'||W.proj==='bubble' ? 3 : 1, size = W.proj==='boomerang'||W.proj==='yoyo' ? 34 : 30, back = W.proj==='boomerang'||W.proj==='yoyo';
     for(let i=0;i<n;i++) spawnProj(W.proj, hand, {x:m.x+(i-1)*8, y:m.y+(i-1)*10}, 380, i*90, big?size*1.3:size, back);
-    await wait(back?380:380); impact(big, fx, dir, false);
+    await wait(back?380:380); impact(big, fx, dir, false, kind);
     if(n>1){ await wait(90); fxBurst($('scene'), m.x, m.y, 6, fx, 60) }
   }else if(W.style==='beam'){
     hb.animate([{transform:'translateX(0)'},{transform:`translateX(${-dir*6}px)`,offset:.2},{transform:`translateX(${-dir*14}px)`,offset:.4},{transform:'translateX(0)'}],{duration:600});
@@ -1483,7 +1628,7 @@ async function heroAttack(big, heroEl=$('hero'), dir=1){
     Object.assign(b.style,{left:(dir>0?hand.x:m.x)+'px',top:(hand.y-8)+'px',width:len+'px',background:grad,boxShadow:`0 0 14px ${W.beam==='rainbow'?'#fff':W.beam[0]}`,transformOrigin:dir>0?'left center':'right center'});
     $('scene').appendChild(b);
     b.animate([{transform:'scaleX(0)',opacity:1},{transform:'scaleX(1)',opacity:1,offset:.25},{transform:'scaleX(1) scaleY(1.4)',opacity:.9,offset:.5},{transform:'scaleX(1) scaleY(.2)',opacity:0}],{duration:560}).onfinish=()=>b.remove();
-    await wait(150); impact(big, fx, dir, false);
+    await wait(150); impact(big, fx, dir, false, kind);
   }else if(W.style==='wave'){
     hb.animate([{transform:'translateY(0)'},{transform:'translateY(-14%)',offset:.3},{transform:'translateY(0) scale(1.08,.92)',offset:.6},{transform:'translateY(0)'}],{duration:520});
     sfx(()=>{ osc(80,.4,'sine',.5,0,null,40); noise(.2,.3,0,null,200); osc(80,.4,'sine',.4,.12,null,40) });
@@ -1493,7 +1638,7 @@ async function heroAttack(big, heroEl=$('hero'), dir=1){
       $('scene').appendChild(r);
       r.animate([{transform:'translate(0,0) scale(.5)',opacity:1},{transform:`translate(${m.x-hand.x}px,${m.y-hand.y}px) scale(3)`,opacity:.9,offset:.8},{transform:`translate(${m.x-hand.x}px,${m.y-hand.y}px) scale(4)`,opacity:0}],{duration:520,delay:i*110,fill:'backwards',easing:'ease-out'}).onfinish=()=>r.remove();
     }
-    await wait(420); impact(big, fx, dir, false);
+    await wait(420); impact(big, fx, dir, false, kind);
   }else if(W.style==='summon'){
     const d=document.createElement('div'); d.className='proj';
     d.innerHTML=`<svg viewBox="0 0 60 50"><path d="M18 22 Q4 2 26 10 Q20 16 22 24Z" fill="#9be07b" stroke="#2b3550" stroke-width="2.5"/><path d="M34 22 Q54 0 44 20Z" fill="#9be07b" stroke="#2b3550" stroke-width="2.5"/><ellipse cx="28" cy="30" rx="16" ry="11" fill="#7be07b" stroke="#2b3550" stroke-width="3"/><circle cx="44" cy="22" r="9" fill="#7be07b" stroke="#2b3550" stroke-width="3"/><circle cx="47" cy="20" r="2" fill="#2b3550"/><path d="M12 32 Q2 34 6 42" fill="none" stroke="#7be07b" stroke-width="5" stroke-linecap="round"/><path d="M40 13 l2 -6 l3 5" fill="#ffd23f" stroke="#2b3550" stroke-width="1.5"/></svg>`;
@@ -1505,12 +1650,12 @@ async function heroAttack(big, heroEl=$('hero'), dir=1){
     await wait(720);
     fxBurst($('scene'), m.x-dir*m.w*.2, m.y-m.h*.1, 14, Object.assign({},fx,{parts:['flame'],cols:['#ff6a2b','#ffb02e','#ffe066']}), 70);
     sfx(()=>noise(.4,.4,0,null,150));
-    impact(big, fx, dir, false);
+    impact(big, fx, dir, false, kind);
   }else{
     const dx=dir*Math.max(10, Math.abs(m.x-h.x) - m.w*.55);
     hb.animate([{transform:'translateX(0)'},{transform:`translateX(${-dir*10}px) scaleX(.9)`,offset:.2},{transform:`translateX(${dx}px) rotate(${dir*10}deg)`,offset:.55},{transform:`translateX(${dx}px) rotate(${-dir*14}deg)`,offset:.7},{transform:'translateX(0)'}],{duration:620,easing:'cubic-bezier(.4,0,.2,1)'});
     await wait(330);
-    impact(big, fx, dir, true);
+    impact(big, fx, dir, true, kind);
   }
 }
 async function monsterAdvance(adjacent){
@@ -1555,7 +1700,7 @@ async function monsterDefeat(){
 async function bossEnrage(){
   S.phase2=true;
   const m=centerOf($('monster'));
-  say(`${curMon().name}生氣了！第二階段！`,'bad');
+  say(`${curMon().name}生氣了！難度加倍！`,'bad');
   sGrowl(); sBoom();
   $('flash').style.background='#ff3b2e'; flash(.55,500); setTimeout(()=>$('flash').style.background='#fff',520);
   shake(26,800);
@@ -1579,7 +1724,7 @@ function pickOne(exclude){
   return pool[pool.length-1];
 }
 function makeSeq(){
-  const lens = S.mode==='team' ? [1] : S.stage.seq;
+  const lens = S.mode==='team' ? [1] : (S.phase2 ? S.stage.seq2 : S.stage.seq);
   const n = lens[Math.floor(Math.random()*lens.length)];
   const seq=[]; let last=S.last;
   for(let i=0;i<n;i++){ const k=pickOne(last); seq.push(k); last=k }
@@ -1597,28 +1742,39 @@ function nextQ(){
   $('btnNext').hidden=true; $('msg').hidden=true; clearKeyMarks();
   S.locked={A:false,B:false}; $('tkA').classList.remove('locked'); $('tkB').classList.remove('locked');
   S.seq=makeSeq(); S.pos=0; S.states=[]; S.busy=false; S.qWrong=false; S.qStart=performance.now();
-  $('seqhint').hidden = S.seq.length<2;
-  if(S.seq.length>1) $('seqhint').textContent=`依序答 ${S.seq.length} 個音`;
+  $('seqhint').hidden = S.seq.length<2 && !S.phase2;
+  $('seqhint').classList.toggle('rage', S.phase2);
+  $('seqhint').textContent = (S.phase2?'魔王狂暴！':'') + (S.seq.length>1?`依序答 ${S.seq.length} 個音`:'');
+  $('timer').classList.toggle('rage', S.phase2);
   drawStaff(S.seq, S.states, S.seq.length>1?0:-1); startTimer();
 }
 function qTime(){
   const base = S.mode==='team' ? regionOf().t : S.stage.time;
-  return Math.max(3, base*(1+0.7*(S.seq.length-1))*timeMul());
+  return Math.max(3, base*(1+0.7*(S.seq.length-1))*timeMul()*(S.phase2?0.75:1));
 }
 function startTimer(){
   cancelAnimationFrame(S.tId);
   const bar=$('timerFill'); $('timer').classList.toggle('off',!S.timerOn);
   if(!S.timerOn) return;
-  const lim=qTime()*1000, t0=performance.now();
+  const lim=qTime()*1000, t0=performance.now(); let lastEmber=0;
   const tick=now=>{
-    const r=Math.max(0,1-(now-t0)/lim);
-    bar.style.transform=`scaleX(${r})`; bar.style.background=r>.5?'var(--good)':r>.25?'var(--gold)':'var(--danger)';
+    const r=Math.max(0,1-(now-t0)/lim), heat=S.phase2?Math.min(1,1.3-r):1-r;
+    bar.style.width=(r*100)+'%'; $('timer').style.setProperty('--heat',heat.toFixed(2));
+    if(!reduce && now-lastEmber > (heat>.65?60:150)){ lastEmber=now; spawnEmber(r, heat) }
     if(r<=0){ S.mode==='team' ? reveal(true) : answer(null,null); return }
     S.tId=requestAnimationFrame(tick);
   };
   S.tId=requestAnimationFrame(tick);
 }
 function stopTimer(){ cancelAnimationFrame(S.tId); $('timer').classList.add('off') }
+function spawnEmber(r, heat){
+  const t=$('timer'), card=t.parentElement, tr=t.getBoundingClientRect(), cr=card.getBoundingClientRect();
+  const e=document.createElement('i'); e.className='ember';
+  const x=tr.left-cr.left+tr.width*r, y=tr.top-cr.top+3, sz=3+Math.random()*4*(.5+heat);
+  Object.assign(e.style,{left:x+'px',top:y+'px',width:sz+'px',height:sz+'px',background:Math.random()<.5?'#ffd23f':'#ff6a1c'});
+  card.appendChild(e);
+  e.animate([{transform:'translate(0,0)',opacity:1},{transform:`translate(${(Math.random()*2-1)*24}px,${-20-Math.random()*40*(.5+heat)}px)`,opacity:0}],{duration:600+Math.random()*500,easing:'ease-out'}).onfinish=()=>e.remove();
+}
 function say(t,kind){ const m=$('msg'); m.textContent=t; m.className='msg '+kind; m.hidden=false }
 const labelState = k => ({color:colorOf(k), label:zyName(k)});
 
@@ -1643,7 +1799,7 @@ async function answer(k,btn){
     if(len===1 && dt<2000) award('fast'); if(len===3) award('seq3'); if(save.right>=100) award('q100');
     const big = S.combo%3===0 || len>=3;
     S.power += len + (S.combo%3===0?1:0);
-    say(big?(len>=3?'三音連發！':`${S.combo} 連擊！會心一擊！`):(len>1?'全部答對！':`答對了！是 ${zyName(cur)}`),'good');
+    say(big?(len>=3?`${['','','','三','四','五'][len]}音連發！`:`${S.combo} 連擊！會心一擊！`):(len>1?'全部答對！':`答對了！是 ${zyName(cur)}`),'good');
     const c=$('combo'); c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop');
     hud();
     await heroAttack(big);
@@ -1669,6 +1825,7 @@ async function answer(k,btn){
     $('key-'+cur).classList.add('show');
     say(k?`這是 ${zyName(cur)} 喔`:`時間到！這是 ${zyName(cur)}`,'bad');
     await monsterAdvance(S.mon-1<=S.hero);
+    if(S.phase2 && S.mon-1>S.hero){ await wait(120); await monsterAdvance(false) }
     S.seq.forEach((kk,i)=>setTimeout(()=>sNote(NOTES[kk].f), i*450));
     $('btnNext').hidden=false; $('btnNext').focus({preventScroll:true});
   }
@@ -1713,6 +1870,39 @@ function reveal(timeout){
   $('btnNext').hidden=false;
 }
 
+// ================= 全頻廣播（彈幕） =================
+const DM = {lanes:[0,0,0,0], since:Date.now()-120000, mine:new Set(), timer:0};
+function danmaku(name, text){
+  const lane = DM.lanes.indexOf(Math.min(...DM.lanes)), now=performance.now();
+  DM.lanes[lane]=now+2600;
+  const d=document.createElement('div'); d.className='dm';
+  d.innerHTML=`<span class="medal">${escapeHTML(String(name).slice(0,1))}</span><span><b>${escapeHTML(name)}</b> ${escapeHTML(text)}</span>`;
+  d.style.top=(58+lane*40)+'px';
+  $('danmaku').appendChild(d);
+  const w=d.getBoundingClientRect().width, vw=window.innerWidth;
+  d.animate([{transform:`translateX(${vw}px)`},{transform:`translateX(${-w-20}px)`}],{duration:7000+w*8,easing:'linear'}).onfinish=()=>d.remove();
+}
+function broadcast(text){
+  if(!player.name || save.god) return;
+  const ts=Date.now(); DM.mine.add(player.name+'|'+ts);
+  danmaku(player.name, text);
+  send({action:'event', name:player.name, text, ts});
+}
+async function pollFeed(){
+  if(!Cloud.ready() || document.hidden) return;
+  try{
+    const j=await Cloud.get({action:'feed', since:DM.since});
+    (j.events||[]).forEach(e=>{
+      DM.since=Math.max(DM.since, Number(e.ts)||0);
+      if(DM.mine.has(e.name+'|'+e.ts)) return;
+      if(GOD_NAMES.includes(e.name)) return;
+      danmaku(e.name, e.text);
+    });
+  }catch(e){}
+}
+DM.timer=setInterval(pollFeed, 20000);
+const KIND_NAME={skin:'造型',wpn:'武器',fx:'擊打特效'};
+
 // ================= 過關 =================
 const starsFor = (r,w) => { const acc=r/Math.max(1,r+w); return acc>=.9?3:acc>=.7?2:1 };
 const stageLabel = st => `${REGIONS[st.r].name} ${st.r+1}-${st.n}`;
@@ -1736,7 +1926,7 @@ async function win(){
   S.playing=false;
   await monsterDefeat(); sFan();
   const st=S.stage, R=REGIONS[st.r], stars=starsFor(S.right,S.wrong), m=curMon();
-  const tierBefore=tierOf(rankScore());
+  const tierBefore=tierOf(rankScore()), firstClear=!save.prog[st.id], newMon=!save.dex[m.id];
   save.prog[st.id]=Math.max(save.prog[st.id]||0,stars);
   addCoins(stars*20 + (st.boss?50:0));
   save.dex[m.id]=(save.dex[m.id]||0)+1;
@@ -1752,6 +1942,10 @@ async function win(){
   if(st.boss && R.id==='castle') award('boss');
   checkCollect();
   const tierAfter=tierOf(rankScore());
+  if(firstClear) broadcast(st.boss ? `打敗了${m.name}，通過${R.name}！` : `通過了 ${stageLabel(st)}！`);
+  if(newMon) broadcast(`收集到新怪獸「${m.name}」`);
+  if(reward){ const sk=SKINS.find(s=>s.id===R.reward.skin), W=R.reward.wpn&&WEAPONS.find(w=>w.id===R.reward.wpn); broadcast(`獲得通關獎勵「${sk.name}」${W?`和「${W.name}」`:''}！`) }
+  if(tierAfter!==tierBefore) broadcast(`升上段位「${tierAfter.name}」！`);
   const starTxt='★'.repeat(stars)+'☆'.repeat(3-stars);
   commit({name:player.name||'訪客', mode:'冒險', level:stageLabel(st), right:S.right, wrong:S.wrong, best:S.best, stars:starTxt, coins:S.earned, missed:missedText()}, S.sess);
   await wait(700);
@@ -1769,7 +1963,7 @@ async function teamWin(t){
 
 // ================= 開始 =================
 function stageUnlocked(st){
-  if(T.unlockAll) return true;
+  if(T.unlockAll || save.god) return true;
   const i=STAGES.indexOf(st); if(i<=0) return true;
   return !!save.prog[STAGES[i-1].id];
 }
@@ -1788,7 +1982,7 @@ function startStage(id){
   const monId = st.boss ? R.boss : R.mons[Math.floor(Math.random()*R.mons.length)];
   resetRound(st.r, monId);
   $('lvChip').textContent=stageLabel(st)+(st.boss?' 魔王':'');
-  renderHero(); setKeys(); place(); hud(); nextQ();
+  renderHero(); setKeys(); place(); hud(); nextQ(); updateGodBtn();
 }
 function startTeam(ri){
   S.mode='team'; S.stage=null; document.body.classList.add('team'); $('hero2').hidden=false;
@@ -1800,6 +1994,7 @@ function startTeam(ri){
 }
 function again(){ S.mode==='team' ? startTeam(S.region) : startStage(S.stage.id) }
 function nextLevel(){ const nx=nextStageOf(S.stage); if(nx) startStage(nx.id) }
+function updateGodBtn(){ $('btnGodWin').hidden=!(save.god && S.playing && S.mode==='solo') }
 function stopPlay(){ if(S.mode==='solo' && S.playing && S.stage) commit(); S.playing=false; stopTimer() }
 
 // ================= 畫面切換 =================
@@ -1812,6 +2007,7 @@ function goBack(){ if(backTo==='game' && S.playing) resumeIfPlaying(); else home
 
 function medalHTML(t){ return `<span class="medal" style="background:radial-gradient(circle at 35% 30%,#fff,${t.c} 65%)">${t.m}</span>` }
 function rankCardHTML(){
+  if(save.god) return `<span class="medal">師</span><div class="rc"><b>${escapeHTML(player.name)}・老師測試帳號</b><small>關卡全開、不列入排行榜和廣播</small></div>`;
   const sc=rankScore(), t=tierOf(sc), i=TIERS.indexOf(t), nx=TIERS[i+1];
   const pct = nx ? Math.round((sc-t.min)/(nx.min-t.min)*100) : 100;
   return `${medalHTML(t)}<div class="rc"><b>${escapeHTML(player.name||'訪客')}・${t.name}</b><small>段位積分 ${sc}${nx?`，再 ${nx.min-sc} 分升到「${nx.name}」`:'，已經是最高段位！'}</small><div class="rbar"><i style="width:${pct}%"></i></div></div>`;
@@ -1881,7 +2077,7 @@ async function openRank(){
   }
 }
 function renderBoard(rows){
-  rows=rows.slice().sort((a,b)=>b.score-a.score).slice(0,50);
+  rows=rows.filter(r=>!GOD_NAMES.includes(r.name)).sort((a,b)=>b.score-a.score).slice(0,50);
   $('board').innerHTML = rows.length ? rows.map((r,i)=>{ const t=tierOf(r.score); return `<div class="brow${r.name===player.name?' me':''}"><span class="no">${i+1}</span>${medalHTML(t)}<span class="nm">${escapeHTML(r.name)}<small>${t.name}${r.prog?'・'+escapeHTML(r.prog):''}</small></span><span class="sc">${r.score}</span></div>` }).join('') : '<div class="sub">還沒有人上榜，快去冒險吧！</div>';
 }
 function escapeHTML(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])) }
@@ -1911,9 +2107,17 @@ async function login(name){
   }
   const pickCloud = cloud && (!local || (cloud.ts||0)>=(local.ts||0));
   player.name=name; save=normSave(pickCloud?cloud:local);
+  if(GOD_NAMES.includes(name)) makeGod();
   $('btnLogin').disabled=false;
   commit(); renderHero(); hud(); refreshClass(); flush();
   home();
+}
+function makeGod(){
+  save.god=true;
+  save.coins=Math.max(save.coins,100000);
+  SKINS.forEach(x=>{ if(!save.owned.includes(x.id)) save.owned.push(x.id) });
+  WEAPONS.forEach(x=>{ if(!save.wpnOwned.includes(x.id)) save.wpnOwned.push(x.id) });
+  FX.forEach(x=>{ if(!save.fxOwned.includes(x.id)) save.fxOwned.push(x.id) });
 }
 function guest(){ player.name=''; save=normSave(lsGet('nh-guest',null)); ctx(); bgmStart(); renderHero(); hud(); home() }
 
@@ -1963,7 +2167,7 @@ function buildShop(){
       const act=b.dataset.act;
       const equip=()=>{ if(tab==='fx'){ save.fx=it.id; sFx(it.snd) } else if(tab==='wpn'){ save.wpn=it.id; sStep() } else { save.skin=it.id; sStep() } renderHero() };
       if(act==='ask'){ pendingBuy=it.id; buildShop() }
-      else if(act==='buy'){ if(save.coins>=it.price){ save.coins-=it.price; owned.push(it.id); equip(); sCoin(); sFan(); checkCollect(); hud(); commit() } pendingBuy=null; buildShop() }
+      else if(act==='buy'){ if(save.coins>=it.price){ save.coins-=it.price; owned.push(it.id); equip(); sCoin(); sFan(); broadcast(`取得新${KIND_NAME[tab]}「${it.name}」`); checkCollect(); hud(); commit() } pendingBuy=null; buildShop() }
       else if(act==='wear'){ ctx(); equip(); commit(); pendingBuy=null; buildShop() }
     });
     box.appendChild(d);
@@ -2191,6 +2395,7 @@ function openTeacher(){
   $('tMul').value=String(T.timeMul); $('tUnlock').checked=!!T.unlockAll; $('tShopLock').checked=!!T.shopLock; $('tVoice').checked=!!prefs.voice;
   $('tUrl').value=SHEET_URL||T.url; $('tUrl').readOnly=!!SHEET_URL; $('tPin').value=T.pin;
   if(SHEET_URL) $('tpTestMsg').textContent='試算表網址已經寫在遊戲檔案裡。按「測試連線」檢查是否正常。';
+  $('tpLog').innerHTML=CHANGELOG.map(c=>`<div class="ent"><h5>版本 ${c.v}<small>${c.date}</small>${c.v===VERSION?'<span class="now">目前版本</span>':''}</h5><ul>${(c.add||[]).map(x=>`<li>新增：${x}</li>`).join('')}${(c.fix||[]).map(x=>`<li class="fix">修復：${x}</li>`).join('')}</ul></div>`).join('');
   fillTeacher(); refreshClass().then(fillTeacher);
 }
 function fillTeacher(){
@@ -2252,6 +2457,7 @@ on('tabMon',()=>setDexTab('mon')); on('tabBadge',()=>setDexTab('badge'));
 on('who',loginScreen); on('btnSwitch',loginScreen);
 $('loginForm').addEventListener('submit',e=>{ e.preventDefault(); login($('nameInput').value) });
 on('btnGuest',guest);
+on('btnGodWin',async()=>{ $('more').hidden=true; if(!save.god||!S.playing||S.busy) return; S.busy=true; stopTimer(); S.power=goal(); await heroAttack(true); await win() });
 on('btnTeacher',()=>openPin(S.playing?'game':'home')); on('btnTeacher2',()=>openPin('login')); on('btnTeacher3',()=>openPin('home'));
 $('pinForm').addEventListener('submit',e=>{ e.preventDefault(); if($('pinInput').value===String(T.pin)) openTeacher(); else $('pinMsg').textContent='密碼不對' });
 on('btnPinClose',closeTeacher);
@@ -2273,8 +2479,6 @@ window.addEventListener('pagehide',()=>{ persistLocal() });
 window.addEventListener('online',flush);
 
 // ================= 啟動 =================
-$('ver').textContent=`版本 ${VERSION}`; $('ver').title=`更新日期 ${VERSION_DATE}`;
-$('verLogin').textContent=`版本 ${VERSION}（${VERSION_DATE}）`; $('verHome').textContent=`版本 ${VERSION}（${VERSION_DATE}）`;
 $('btnHint').setAttribute('aria-pressed',prefs.hint); $('btnHint').classList.toggle('on',prefs.hint);
 S.stage=STAGES[0]; S.region=0; S.monId='slimeG';
 setScene(0); renderMon(false); renderHero(); setKeys(); place(); hud(); drawStaff(['mi']);
