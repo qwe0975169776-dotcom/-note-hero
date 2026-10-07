@@ -509,6 +509,26 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 .ap svg,.sk .pv .ap svg{width:100%!important;height:100%!important}
 .sk .pv{overflow:hidden}
 .sk .pv .ap{width:11px!important;height:11px!important}
+
+/* v9 修改器 */
+.edbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;position:sticky;top:-12px;z-index:2;background:var(--paper);padding:8px 0;margin-bottom:4px}
+.edbar .sbtn,.ed .sbtn{border:2px solid var(--line);border-radius:10px;padding:6px 12px;font-weight:900;background:var(--gold)}
+.edbar .sbtn.alt{background:#fff}
+.edbar .sbtn:disabled{opacity:.5}
+.edbar .hint,.edmsg{font-size:.85rem;color:var(--ink-soft);font-weight:700;text-align:left}
+.edmsg:empty{display:none}
+.ed{margin-top:6px}
+.ed td{vertical-align:middle}
+.ed td input[type=number],.ed td input[type=text]{width:5.2em}
+.ed td small{display:block;font-size:.72rem;color:var(--ink-soft);font-weight:700}
+.ed tr.chg>td,.ed td.chg{background:#fff4cf}
+.ed td.dv{color:var(--ink-soft)}
+.ed .edreg{gap:6px}
+.ed select{font:inherit;font-weight:700;padding:5px 8px;border:2px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);max-width:100%}
+.ed #edQ{flex:1;min-width:140px}
+.ed .r h4{margin:0}
+.ed td:first-child,.ed th{white-space:nowrap}
+@media (max-width:520px){ .ed td input[type=number],.ed td input[type=text]{width:4.2em;padding:5px 6px} .ed th,.ed td{padding:4px 3px} }
 </style>
 </head>
 <body>
@@ -765,6 +785,11 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
         <div class="r"><label for="tVoice">練習語音</label><input type="checkbox" id="tVoice"> 練習模式用語音唸題目</div>
       </section>
       <section>
+        <h4>遊戲修改器</h4>
+        <div class="r"><button class="sbtn" id="tpEditor">開啟修改器</button></div>
+        <div class="hint">改商店價格、每一關的難度、金幣獎勵，還有每位玩家的資料。改好的數值存在試算表的「修改器」分頁，也可以直接在試算表裡改。</div>
+      </section>
+      <section>
         <h4>測試模式</h4>
         <div class="r"><button class="sbtn" id="tpTestMode">用測試模式開始玩</button></div>
         <div class="hint">全部關卡、造型、武器、特效、寵物和道具都解鎖，還有 10 萬金幣和「直接過關」（在遊戲選單裡）。資料只存在這台裝置，不會寫進試算表、不上排行榜、不發廣播。要離開時按上方的名字換回一般玩家。</div>
@@ -805,15 +830,30 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
     </div>
   </div>
 </div>
+<div class="overlay" id="ovEditor" hidden>
+  <div class="panel wide">
+    <div class="shophead"><h2>遊戲修改器</h2><button class="big alt" id="btnEdClose">回老師面板</button></div>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="edTab_shop" aria-selected="true">商店價目</button>
+      <button class="tab" role="tab" id="edTab_stage" aria-selected="false">關卡難度</button>
+      <button class="tab" role="tab" id="edTab_reward" aria-selected="false">獎勵數值</button>
+      <button class="tab" role="tab" id="edTab_user" aria-selected="false">玩家資料</button>
+    </div>
+    <div class="edbar" id="edBar"><button class="sbtn" id="edSave" disabled>儲存並同步全班</button><button class="sbtn alt" id="edReset">這頁恢復預設</button><span class="hint">黃色＝和預設不一樣</span></div>
+    <div class="hint edmsg" id="edMsg"></div>
+    <div class="tp ed" id="edBody"></div>
+  </div>
+</div>
 
 <script>
 (function(){
 const $ = id => document.getElementById(id);
 
 // 版本號：每次更新加 1，畫面上會顯示，方便確認上傳的是最新版
-const VERSION = 8, VERSION_DATE = '2026-10-07';
+const VERSION = 9, VERSION_DATE = '2026-10-07';
 // 更新日誌：每次更新在最上面加一筆（顯示在老師面板）
 const CHANGELOG = [
+  {v:9, date:'2026-10-07', add:['遊戲修改器（老師面板）：可以改商店價格和上下架、每一關的答題秒數／一次幾個音／過關格數／愛心、各種金幣獎勵，以及每位玩家的金幣、關卡、送東西、刪除帳號','修改器的數值存在試算表「修改器」分頁，也可以直接在試算表裡改；Users 分頁的「目前積分」直接改也會生效','試算表新增「修改紀錄」分頁，記錄每次從修改器做的調整'], fix:[]},
   {v:8, date:'2026-10-07', fix:['修正造型發光粒子在商店被放大、跑出卡片外的問題']},
   {v:7, date:'2026-10-07', add:['老師面板新增「測試模式」：全部關卡、造型、武器、特效、寵物、道具解鎖，資料只存在這台裝置，不進試算表、排行榜和廣播'], fix:['移除「偉展老師」測試帳號，這個名字現在是一般玩家']},
   {v:6, date:'2026-10-07', add:['達人之島：8 關高難度關卡，每題 3～5 個音、時間很短，只有 3 顆愛心（最後 3 關只有 2 顆），答錯扣光就挑戰失敗','每種武器都有 3 種專屬擊打特效，可在商店「擊打特效」解鎖並分別設定','造型動態效果：會發光，並有火焰、雪花、泡泡、音符、閃電等專屬粒子','老師面板新增「關閉冒險地圖」，和「鎖住商店」一起改成全班裝置同步生效','新徽章：音符達人；達人之島限定造型「音符達人」'], fix:['造型價格調高（最高 3000 金幣）','打怪時不再出現彈幕，改在過關、地圖等畫面才飄出','舊的擊打特效自動換成對應武器的新特效，不會損失']},
@@ -1128,7 +1168,7 @@ function send(body){
 async function flush(){
   if(flushing || !Cloud.ready() || !pending.length) return;
   flushing=true; setDot('wait');
-  try{ while(pending.length){ await Cloud.post(pending[0]); pending.shift(); lsSet('nh-pending',pending) } }
+  try{ while(pending.length){ const b=pending[0], j=await Cloud.post(b); pending.shift(); lsSet('nh-pending',pending); if(j && j.ops && b.action==='save') onTeacherOps(b.name, j.ops, j.tSeen) } }
   catch(e){}
   flushing=false;
 }
@@ -2053,7 +2093,7 @@ async function answer(k,btn){
     hud();
     await heroAttack(big);
     if(S.sub==='song'){ await wait(120); await wait(playMelody(S.song.parts[S.chunk-1])*1000) }
-    const coins=10*len+(big?5:0); addCoins(coins);
+    const coins=RW.note*len+(big?RW.crit:0); addCoins(coins);
     const h=centerOf($('hero')); fxText(`+${coins}`, h.x, h.y-h.h*.7, 'gold');
     persistLocal();
     await wait(250);
@@ -2189,7 +2229,7 @@ async function win(){
   const st=S.stage, R=REGIONS[st.r], stars=starsFor(S.right,S.wrong), m=curMon();
   const tierBefore=tierOf(rankScore()), firstClear=!save.prog[st.id], newMon=!save.dex[m.id];
   save.prog[st.id]=Math.max(save.prog[st.id]||0,stars);
-  addCoins(stars*20 + (st.boss?50:0));
+  addCoins(stars*RW.star + (st.boss?RW.boss:0));
   save.dex[m.id]=(save.dex[m.id]||0)+1;
   award('win1'); if(S.wrong===0) award('perfect');
   dailyEvent('stage',1); if(st.boss) dailyEvent('boss',1);
@@ -2275,7 +2315,7 @@ function updateGodBtn(){ $('btnGodWin').hidden=!(save.god && S.playing && S.mode
 function stopPlay(){ if(S.mode==='solo' && S.playing && S.stage) commit(); if(S.sub==='raid' && S.playing && S.raidPending>0){ Cloud.post({action:'raidHit', name:player.name||'訪客', dmg:S.raidPending, id:S.raidId}).catch(()=>{}); S.raidPending=0 } S.playing=false; stopTimer(); clearInterval(RAID.timer); if(musBus&&ac) musBus.gain.setTargetAtTime(S.music?.55:0, ac.currentTime, .2) }
 
 // ================= 畫面切換 =================
-const OVS=['ovLogin','ovHome','ovMap','ovPractice','ovLesson','ovTeam','ovWin','ovShop','ovDex','ovRank','ovPin','ovTeacher','ovSongs','ovDaily'];
+const OVS=['ovLogin','ovHome','ovMap','ovPractice','ovLesson','ovTeam','ovWin','ovShop','ovDex','ovRank','ovPin','ovTeacher','ovSongs','ovDaily','ovEditor'];
 function closeAll(){ OVS.forEach(id=>$(id).hidden=true); $('more').hidden=true }
 function show(id){ cancelAnimationFrame(S.tId); closeAll(); $(id).hidden=false; $(id).scrollTop=0; setTimeout(flushDanmaku, 400) }
 function resumeIfPlaying(){ closeAll(); if(S.playing && !S.busy) startTimer() }
@@ -2306,7 +2346,7 @@ function home(){
 const CONFIG = {lockAdventure:false, lockShop:false};
 async function fetchConfig(){
   if(!Cloud.ready()) return;
-  try{ const j=await Cloud.get({action:'config'}); if(j.config) Object.assign(CONFIG, j.config) }catch(e){}
+  try{ const j=await Cloud.get({action:'config'}); if(j.config) Object.assign(CONFIG, j.config); if(j.tune) setTune(j.tune) }catch(e){}
   homeLocks();
 }
 const advLocked = () => !save.god && (CONFIG.lockAdventure || (!Cloud.ready() && T.lockAdventure));
@@ -2457,7 +2497,7 @@ function buildShop(){
   const box=$('skins'); box.innerHTML='';
   const tab=shopTab;
   if(tab==='item'){
-    ITEMS.forEach(it=>{
+    ITEMS.filter(it=>!it.hidden).forEach(it=>{
       const d=document.createElement('div'); d.className='sk';
       const btn = pendingBuy===it.id ? `<button class="confirm" data-act="buy">確定兌換？</button>` : `<button data-act="ask" ${save.coins<it.price?'disabled':''}><span class="coin"></span>${it.price}</button>`;
       d.innerHTML=`<div class="pv"><span style="width:56px;height:56px;display:block">${itemSVG(it)}</span></div><div class="nm">${it.name}</div><div class="tag">${it.tag}・有 ${save.items[it.id]||0} 個</div>${btn}`;
@@ -2476,7 +2516,7 @@ function buildShop(){
     fams.forEach(fam=>{
       const hd=document.createElement('div'); hd.className='shopsec'; hd.innerHTML=`${WFX_FAM[fam][0]}的特效${fam===curFam?'<small>目前使用的武器</small>':''}`; box.appendChild(hd);
       const selId=(save.fxSel[fam] && WFX.some(x=>x.id===save.fxSel[fam])) ? save.fxSel[fam] : `${fam}-${WFX_FAM[fam][1][0][0]}`;
-      WFX.filter(x=>x.fam===fam).forEach(it=>{
+      WFX.filter(x=>x.fam===fam && (!x.hidden || save.fxOwned.includes(x.id))).forEach(it=>{
         const th=FX.find(f=>f.id===it.theme)||FX[0], own=it.price===0||save.fxOwned.includes(it.id), cur=selId===it.id;
         const dv=document.createElement('div'); dv.className='sk'+(cur?' on':'');
         let btn;
@@ -2501,7 +2541,7 @@ function buildShop(){
   const list = tab==='wpn'?WEAPONS : SKINS;
   const owned = tab==='wpn'?save.wpnOwned : save.owned;
   const curId = tab==='wpn'?save.wpn : save.skin;
-  list.forEach(it=>{
+  list.filter(it=>!it.hidden || owned.includes(it.id)).forEach(it=>{
     const own=owned.includes(it.id), cur=curId===it.id;
     const d=document.createElement('div'); d.className='sk'+(cur?' on':'');
     if(tab==='skin' && it.aura && !it.reward) it.tag=it.tag.replace(/・會發光$/,'')+'・會發光';
@@ -2741,10 +2781,10 @@ function p5move(d){
 function lessonDone(){
   const first=!save.practice[L.id];
   save.practice[L.id]=true; dailyEvent('practice',1); checkCollect();
-  if(first) addCoins(20);
+  if(first) addCoins(RW.lesson);
   commit();
   drawP({tags:[{s:4,x:186,text:'完成！',c:'#2f9e5b'}]});
-  setPrompt(first?'完成了！獲得 20 金幣':'完成了！', first?'完成了！獲得二十個金幣':'完成了！');
+  setPrompt(first?`完成了！獲得 ${RW.lesson} 金幣`:'完成了！', first?`完成了！獲得${RW.lesson}個金幣`:'完成了！');
   sFan(); feed('');
   const i=LESSONS.findIndex(l=>l.id===L.id), nx=LESSONS[i+1];
   ansButtons([...(nx?[{text:`下一課：${nx.title}`,on:()=>startLesson(nx.id)}]:[{text:'去冒險！',on:openMap}]),{text:'練習選單',cls:'alt',on:openPractice}]);
@@ -2864,7 +2904,7 @@ async function songWin(){
   await wait(at*1000+500);
   if(musBus) musBus.gain.setTargetAtTime(S.music?.55:0, ac.currentTime, .3);
   save.songs[sg.id]=Math.max(save.songs[sg.id]||0, stars);
-  addCoins(first?100:stars*15);
+  addCoins(first?RW.songFirst:stars*RW.songStar);
   if(first) broadcast(`完成歌曲關卡「${sg.name}」！`);
   dailyEvent('song',1);
   checkCollect();
@@ -2918,7 +2958,7 @@ async function raidOver(){
   if(S.raidPending>0){ try{ await Cloud.post({action:'raidHit', name:player.name||'訪客', dmg:S.raidPending, id:S.raidId}) }catch(e){} S.raidPending=0 }
   await monsterDefeat(); sFan();
   let earn=0;
-  if(r.status==='已打倒' && !save.raids.includes(r.id) && S.raidMine>0){ save.raids.push(r.id); earn=50+S.raidMine*2; addCoins(earn); award('raid') }
+  if(r.status==='已打倒' && !save.raids.includes(r.id) && S.raidMine>0){ save.raids.push(r.id); earn=RW.raidBase+S.raidMine*RW.raidPer; addCoins(earn); award('raid') }
   commit({name:player.name||'訪客', mode:'世界魔王', level:r.name, right:S.right, wrong:S.wrong, best:S.best, stars:'', coins:S.earned, missed:missedText()}, S.sess);
   const top=(r.top||[]).map((t,i)=>`${i+1}. ${escapeHTML(t.name)}（${t.dmg}）`).join('　');
   showWin({title: r.status==='已打倒' ? `全班一起打倒了${escapeHTML(r.name)}！` : `${escapeHTML(r.name)}離開了`,
@@ -3044,12 +3084,12 @@ function dailyEvent(type, v){
 function openDaily(){
   ensureDaily(); const D=save.daily, tasks=dailyTasks();
   $('dailyList').innerHTML=tasks.map(t=>{ const v=Math.min(t.n, D.p[t.type]||0), done=v>=t.n, got=D.claimed.includes(t.id);
-    return `<div class="dq${got?' got':''}"><div class="dqt"><b>${t.text}</b><small>${v}/${t.n}</small><div class="rbar"><i style="width:${v/t.n*100}%"></i></div></div><button class="big${done&&!got?'':' alt'}" data-daily="${t.id}" ${done&&!got?'':'disabled'}>${got?'已領取':done?'領 50 金幣':'進行中'}</button></div>` }).join('')
-    + `<div class="sub">${D.bonus?'今天的任務全部完成了，明天再來！':'三個任務都領完，再多送 50 金幣'}</div>`;
+    return `<div class="dq${got?' got':''}"><div class="dqt"><b>${t.text}</b><small>${v}/${t.n}</small><div class="rbar"><i style="width:${v/t.n*100}%"></i></div></div><button class="big${done&&!got?'':' alt'}" data-daily="${t.id}" ${done&&!got?'':'disabled'}>${got?'已領取':done?`領 ${RW.daily} 金幣`:'進行中'}</button></div>` }).join('')
+    + `<div class="sub">${D.bonus?'今天的任務全部完成了，明天再來！':`三個任務都領完，再多送 ${RW.dailyAll} 金幣`}</div>`;
   $('dailyList').querySelectorAll('[data-daily]').forEach(b=>b.addEventListener('click',()=>{
     const id=b.dataset.daily; if(D.claimed.includes(id)) return;
-    D.claimed.push(id); addCoins(50); sFan();
-    if(!D.bonus && tasks.every(t=>D.claimed.includes(t.id))){ D.bonus=true; addCoins(50); toastMsg('每日任務全部完成！再送 50 金幣') }
+    D.claimed.push(id); addCoins(RW.daily); sFan();
+    if(!D.bonus && tasks.every(t=>D.claimed.includes(t.id))){ D.bonus=true; addCoins(RW.dailyAll); toastMsg(`每日任務全部完成！再送 ${RW.dailyAll} 金幣`) }
     commit(); openDaily();
   }));
   show('ovDaily');
@@ -3100,6 +3140,244 @@ document.addEventListener('fullscreenchange',()=>{ $('btnFull').textContent=docu
 document.addEventListener('visibilitychange',()=>{ if(!ac) return; if(document.hidden) ac.suspend(); else ac.resume() });
 window.addEventListener('pagehide',()=>{ persistLocal() });
 window.addEventListener('online',flush);
+
+
+// ================= 版本 9：遊戲修改器 =================
+// 所有可調整的參數都列在 TUNE_DEFS。修改值存在 Google 試算表「修改器」分頁（也可以直接在試算表改），
+// 每台裝置開啟時讀進來套用；沒填的就用預設值。
+const TUNE_DEFS = [];
+function tdef(o){ TUNE_DEFS.push(o) }
+SKINS.filter(s=>!s.reward && s.id!=='knight').forEach(s=>tdef({key:`skin.${s.id}.price`, tab:'shop', group:'造型', name:s.name, field:'價格', kind:'price', obj:s, prop:'price'}));
+WEAPONS.filter(w=>!w.reward && w.id!=='auto').forEach(w=>tdef({key:`wpn.${w.id}.price`, tab:'shop', group:'武器', name:w.name, field:'價格', kind:'price', obj:w, prop:'price'}));
+WFX.filter(x=>x.price>0).forEach(x=>tdef({key:`fx.${x.id}.price`, tab:'shop', group:'擊打特效', name:`${WFX_FAM[x.fam][0]}・${x.name}`, field:'價格', kind:'price', obj:x, prop:'price'}));
+ITEMS.forEach(it=>tdef({key:`item.${it.id}.price`, tab:'shop', group:'道具', name:it.name, field:'價格', kind:'price', obj:it, prop:'price'}));
+STAGES.forEach(st=>{
+  const g=REGIONS[st.r].name, nm=`${st.r+1}-${st.n}${st.boss?' 魔王':''}`;
+  tdef({key:`stage.${st.id}.time`, tab:'stage', group:g, name:nm, field:'每音秒數', kind:'num', min:.8, max:12, obj:st, prop:'time'});
+  tdef({key:`stage.${st.id}.seq`,  tab:'stage', group:g, name:nm, field:'題目音數', kind:'seq', obj:st, prop:'seq'});
+  if(st.boss) tdef({key:`stage.${st.id}.seq2`, tab:'stage', group:g, name:nm, field:'魔王狂暴後音數', kind:'seq', obj:st, prop:'seq2'});
+  tdef({key:`stage.${st.id}.goal`, tab:'stage', group:g, name:nm, field:'過關格數', kind:'int', min:2, max:80, obj:st, prop:'goal'});
+  if(st.lives) tdef({key:`stage.${st.id}.lives`, tab:'stage', group:g, name:nm, field:'愛心', kind:'int', min:1, max:9, obj:st, prop:'lives'});
+});
+const RW = {note:10, crit:5, star:20, boss:50, songFirst:100, songStar:15, lesson:20, daily:50, dailyAll:50, raidBase:50, raidPer:2};
+[['note','每答對一個音'],['crit','會心一擊／連擊加碼'],['star','過關每顆星'],['boss','打倒魔王加碼'],['songFirst','歌曲關卡第一次完成'],['songStar','歌曲重玩每顆星'],
+ ['lesson','練習第一次完成'],['daily','每日任務每一項'],['dailyAll','每日任務全部完成加碼'],['raidBase','打倒世界魔王基本獎勵'],['raidPer','世界魔王每打 1 血再加']]
+  .forEach(([k,n])=>tdef({key:`reward.${k}`, tab:'reward', group:'獎勵', name:n, field:'金幣', kind:'int', min:0, max:5000, obj:RW, prop:k}));
+TUNE_DEFS.forEach(d=>{ const v=d.obj[d.prop]; d.def=Array.isArray(v)?v.slice():v });
+
+const TUNE_DESC = {price:'填數字＝價格（0＝免費）；填「下架」＝商店不顯示；空白＝預設', num:'數字，越大越簡單；空白＝預設', int:'整數；空白＝預設', seq:'一次出幾個音，1～5，可以寫多個例如 3,4（隨機）；空白＝預設'};
+const seqText = a => a.join(',');
+function tuneParse(d, raw){
+  if(raw==null || String(raw).trim()==='') return undefined;
+  const s=String(raw).trim();
+  if(d.kind==='price'){
+    if(/下架|隱藏|停售|關/.test(s)) return {hidden:true};
+    const n=Number(s.replace(/[^\d.]/g,'')); return s.replace(/[^\d.]/g,'')!=='' && isFinite(n) ? {price:Math.max(0,Math.round(n))} : undefined;
+  }
+  if(d.kind==='seq'){ const m=s.match(/[1-5]/g); return m ? m.map(Number) : undefined }
+  const n=Number(s); if(!isFinite(n)) return undefined;
+  const v=Math.min(d.max, Math.max(d.min, n));
+  return d.kind==='int' ? Math.round(v) : Math.round(v*10)/10;
+}
+let TUNE = lsGet('nh-tune', {});
+function applyTune(map){
+  TUNE_DEFS.forEach(d=>{
+    const v=tuneParse(d, map[d.key]);
+    if(d.kind==='price'){ d.obj.price = v&&v.price!=null ? v.price : d.def; d.obj.hidden = !!(v&&v.hidden) }
+    else d.obj[d.prop] = v===undefined ? (Array.isArray(d.def)?d.def.slice():d.def) : v;
+  });
+}
+function setTune(map){ TUNE=map||{}; lsSet('nh-tune',TUNE); applyTune(TUNE) }
+applyTune(TUNE);
+const tuneRows = () => TUNE_DEFS.map(d=>[d.key, {shop:'商店價目',stage:'關卡難度',reward:'獎勵數值'}[d.tab]+'・'+d.group, d.name, d.field, d.kind==='seq'?seqText(d.def):d.def, TUNE_DESC[d.kind]]);
+
+// 老師在試算表或修改器改了某位玩家的資料 → 這些「調整」也要套到小朋友裝置上的存檔
+function applyOp(sv, op){
+  if(op.op==='setCoins') sv.coins=Math.max(0,Math.round(Number(op.v)||0));
+  else if(op.op==='addCoins'){ const v=Math.round(Number(op.v)||0); sv.coins=Math.max(0,(sv.coins||0)+v); if(v>0) sv.total=(sv.total||0)+v }
+  else if(op.op==='give'){
+    const n=Math.max(1,Number(op.n)||1);
+    if(op.kind==='skin' && !sv.owned.includes(op.item)) sv.owned.push(op.item);
+    if(op.kind==='wpn' && !sv.wpnOwned.includes(op.item)) sv.wpnOwned.push(op.item);
+    if(op.kind==='fx' && !sv.fxOwned.includes(op.item)) sv.fxOwned.push(op.item);
+    if(op.kind==='item') sv.items[op.item]=(sv.items[op.item]||0)+n;
+  }
+  else if(op.op==='unlockAll'){ (op.stages||[]).forEach(id=>{ sv.prog[id]=Math.max(sv.prog[id]||0,1) }); (op.regions||[]).forEach(id=>{ if(!sv.cleared.includes(id)) sv.cleared.push(id) }) }
+  else if(op.op==='resetProg'){ sv.prog={}; sv.cleared=[] }
+}
+function onTeacherOps(name, ops, tSeen){
+  if(player.test || !ops || !ops.length) return;
+  const fresh=(sv)=>ops.filter(o=>o.id>(sv.tSeen||0));
+  if(player.name===name){
+    const list=fresh(save);
+    if(list.length){ list.forEach(o=>applyOp(save,o)); save.tSeen=Math.max(save.tSeen||0, tSeen||0, ...list.map(o=>o.id)); persistLocal(); hud(); renderHero(); toastMsg('老師幫你調整了資料') }
+    return;
+  }
+  const cache=lsGet('nh-players',{}), c=cache[name];
+  if(c && c.save){ const sv=normSave(c.save), list=fresh(sv); if(list.length){ list.forEach(o=>applyOp(sv,o)); sv.tSeen=Math.max(sv.tSeen||0,tSeen||0,...list.map(o=>o.id)); cache[name]={save:sv, ts:sv.ts}; lsSet('nh-players',cache) } }
+}
+
+// ---------- 修改器畫面 ----------
+let edTab='shop', edDraft={}, edRegion=0, edUsers=null, edUser=null, edArm='';
+const edCur = d => d.key in edDraft ? edDraft[d.key] : (TUNE[d.key]==null?'':String(TUNE[d.key]));
+function edVal(d){ // 目前要顯示的有效值
+  const v=tuneParse(d, edCur(d));
+  if(d.kind==='price') return {price: v&&v.price!=null?v.price:d.def, hidden: !!(v&&v.hidden)};
+  return v===undefined ? d.def : v;
+}
+const edChanged = d => edCur(d)!=='' ;
+function openEditor(){
+  show('ovEditor'); edDraft={}; edUser=null; edArm=''; edTab=edTab||'shop'; $('edMsg').textContent='';
+  edRender();
+  if(Cloud.ready()){
+    $('edMsg').textContent='讀取試算表中…';
+    Cloud.post({action:'tuneSync', pin:T.pin, rows:tuneRows()})
+      .then(j=>{ if(j.tune) setTune(j.tune); $('edMsg').textContent='已讀取試算表「修改器」分頁的最新數值。'; edRender() })
+      .catch(e=>{ $('edMsg').textContent='讀不到試算表：'+(e.message||'連線失敗')+'。（Apps Script 要更新成第 7 版並部署新版本）' });
+  } else $('edMsg').textContent='還沒連接試算表：修改只對這台裝置有效。';
+}
+function edSetTab(t){ edTab=t; edUser=null; ['shop','stage','reward','user'].forEach(x=>$('edTab_'+x).setAttribute('aria-selected', x===t)); edRender() }
+function edRow(d, inner){ return `<tr class="${edChanged(d)?'chg':''}" data-k="${d.key}">${inner}</tr>` }
+function edRender(){
+  const box=$('edBody');
+  if(box.contains(document.activeElement)) document.activeElement.blur();   // 先送出正在輸入的值，避免重畫時打架
+  ['shop','stage','reward','user'].forEach(x=>$('edTab_'+x).setAttribute('aria-selected', x===edTab));
+  const n=Object.keys(edDraft).length;
+  $('edSave').disabled=!n; $('edSave').textContent=n?`儲存並同步全班（${n} 項）`:'儲存並同步全班';
+  $('edBar').hidden = edTab==='user';
+  if(edTab==='user'){ edRenderUsers(); return }
+  let h='';
+  if(edTab==='shop'){
+    ['造型','武器','擊打特效','道具'].forEach(g=>{
+      h+=`<section><h4>${g}</h4><div class="tbl"><table><thead><tr><th>名稱</th><th>價格</th><th>上架</th><th>預設</th></tr></thead><tbody>`;
+      TUNE_DEFS.filter(d=>d.tab==='shop'&&d.group===g).forEach(d=>{ const v=edVal(d);
+        h+=edRow(d,`<td>${escapeHTML(d.name)}</td><td><input type="number" min="0" step="10" inputmode="numeric" data-f="price" value="${v.price}" ${v.hidden?'disabled':''} aria-label="${escapeHTML(d.name)} 價格"></td><td><input type="checkbox" data-f="show" ${v.hidden?'':'checked'} aria-label="${escapeHTML(d.name)} 上架"></td><td class="dv">${d.def}</td>`) });
+      h+='</tbody></table></div></section>';
+    });
+  }
+  if(edTab==='stage'){
+    h+=`<section><div class="r edreg">${REGIONS.map((R,i)=>`<button class="sbtn ${i===edRegion?'':'alt'}" data-reg="${i}">${i+1}. ${R.name}</button>`).join('')}</div>
+      <div class="r"><button class="sbtn alt" data-bulk="1.2">這一區變簡單（時間 +20%）</button><button class="sbtn alt" data-bulk="0.8">這一區變難（時間 −20%）</button></div>
+      <div class="hint">每音秒數：一個音給幾秒（多個音會自動加時間）。題目音數：一次出幾個音，寫 3,4 代表隨機出 3 或 4 個。過關格數：答對多少下能量條才會滿。</div>`;
+    const sts=STAGES.filter(s=>s.r===edRegion), hasLives=sts.some(s=>s.lives), hasSeq2=sts.some(s=>s.boss);
+    h+=`<div class="tbl"><table><thead><tr><th>關卡</th><th>每音秒數</th><th>題目音數</th>${hasSeq2?'<th>魔王狂暴後</th>':''}<th>過關格數</th>${hasLives?'<th>愛心</th>':''}</tr></thead><tbody>`;
+    sts.forEach(st=>{
+      const f=fld=>TUNE_DEFS.find(d=>d.key===`stage.${st.id}.${fld}`);
+      const cell=(fld,attrs)=>{ const d=f(fld); if(!d) return '<td>—</td>'; const v=edVal(d), shown=d.kind==='seq'?seqText(v):v, df=d.kind==='seq'?seqText(d.def):d.def;
+        return `<td class="${edChanged(d)?'chg':''}"><input ${attrs} data-k="${d.key}" value="${shown}" aria-label="${escapeHTML(REGIONS[st.r].name)} ${st.n} ${d.field}"><small>預設 ${df}</small></td>` };
+      h+=`<tr><td><b>${st.r+1}-${st.n}</b>${st.boss?' <small>魔王</small>':''}</td>${cell('time','type="number" step="0.1" min="0.8" max="12" inputmode="decimal"')}${cell('seq','type="text" inputmode="numeric" maxlength="9" class="seqin"')}${hasSeq2?(st.boss?cell('seq2','type="text" inputmode="numeric" maxlength="9" class="seqin"'):'<td></td>'):''}${cell('goal','type="number" min="2" max="80" inputmode="numeric"')}${hasLives?cell('lives','type="number" min="1" max="9" inputmode="numeric"'):''}</tr>`;
+    });
+    h+='</tbody></table></div></section>';
+  }
+  if(edTab==='reward'){
+    h+=`<section><h4>每次可以拿到的金幣</h4><div class="tbl"><table><thead><tr><th>項目</th><th>金幣</th><th>預設</th></tr></thead><tbody>`;
+    TUNE_DEFS.filter(d=>d.tab==='reward').forEach(d=>{ h+=edRow(d,`<td>${escapeHTML(d.name)}</td><td><input type="number" min="0" max="5000" inputmode="numeric" data-k="${d.key}" value="${edVal(d)}" aria-label="${escapeHTML(d.name)}"></td><td class="dv">${d.def}</td>`) });
+    h+='</tbody></table></div><div class="hint">例：「每答對一個音」10、「會心一擊」5 → 一次答對 3 個音而且是會心一擊，可以拿 10×3＋5＝35 金幣。</div></section>';
+  }
+  box.innerHTML=h;
+  // 事件
+  box.querySelectorAll('[data-reg]').forEach(b=>b.addEventListener('click',()=>{ edRegion=Number(b.dataset.reg); edRender() }));
+  box.querySelectorAll('[data-bulk]').forEach(b=>b.addEventListener('click',()=>{
+    const m=Number(b.dataset.bulk);
+    STAGES.filter(s=>s.r===edRegion).forEach(st=>{ const d=TUNE_DEFS.find(x=>x.key===`stage.${st.id}.time`); const v=Math.min(12,Math.max(.8,Math.round(edVal(d)*m*10)/10)); edDraft[d.key]= v===d.def?'':String(v) });
+    edRender(); $('edMsg').textContent='已調整這一區的時間，記得按「儲存並同步全班」。';
+  }));
+  box.querySelectorAll('tr[data-k]').forEach(tr=>{
+    const d=TUNE_DEFS.find(x=>x.key===tr.dataset.k); if(d.kind!=='price') return;
+    const p=tr.querySelector('[data-f=price]'), c=tr.querySelector('[data-f=show]');
+    const upd=()=>{ const price=Math.max(0,Math.round(Number(p.value)||0)); edDraft[d.key]= !c.checked ? '下架' : (price===d.def?'':String(price)); edRender() };
+    p.addEventListener('change',upd); c.addEventListener('change',upd);
+  });
+  box.querySelectorAll('input[data-k]').forEach(inp=>inp.addEventListener('change',()=>{
+    const d=TUNE_DEFS.find(x=>x.key===inp.dataset.k), v=tuneParse(d, inp.value);
+    if(v===undefined){ $('edMsg').textContent=`「${inp.value}」看不懂，已恢復成原本的數字。`; edRender(); return }
+    const same = d.kind==='seq' ? seqText(v)===seqText(d.def) : v===d.def;
+    edDraft[d.key] = same ? '' : (d.kind==='seq'?seqText(v):String(v)); edRender();
+  }));
+}
+async function edSave(){
+  const changes=Object.assign({}, edDraft), m=$('edMsg');
+  if(!Object.keys(changes).length) return;
+  if(!Cloud.ready()){
+    const map=Object.assign({}, TUNE); for(const k in changes){ if(changes[k]==='') delete map[k]; else map[k]=changes[k] }
+    setTune(map); edDraft={}; edRender(); m.textContent='已儲存（還沒連接試算表，只對這台裝置有效）。'; return;
+  }
+  m.textContent='同步中…'; $('edSave').disabled=true;
+  try{
+    const j=await Cloud.post({action:'tuneSet', pin:T.pin, changes, rows:tuneRows()});
+    if(j.tune) setTune(j.tune); edDraft={}; edRender();
+    m.textContent='已儲存到試算表！小朋友回到主畫面或重新整理後就會套用。';
+  }catch(e){ m.textContent='沒有儲存成功：'+(e.message||'連不到試算表')+'。請確認老師密碼和 Apps Script 一樣，而且已部署第 7 版。'; $('edSave').disabled=false }
+}
+function edResetPage(){
+  const defs = edTab==='stage' ? TUNE_DEFS.filter(d=>d.tab==='stage' && STAGES.find(s=>d.key.startsWith(`stage.${s.id}.`)).r===edRegion) : TUNE_DEFS.filter(d=>d.tab===edTab);
+  defs.forEach(d=>{ if(edCur(d)!=='') edDraft[d.key]=''; else delete edDraft[d.key] });
+  edRender(); $('edMsg').textContent=(edTab==='stage'?`「${REGIONS[edRegion].name}」`:'這一頁')+'已改回預設值，按「儲存並同步全班」才會生效。';
+}
+
+// ---------- 玩家資料 ----------
+async function edLoadUsers(){
+  const box=$('edBody');
+  if(!Cloud.ready()){ box.innerHTML='<section><div class="hint">修改玩家資料需要先連接 Google 試算表（老師面板最下面）。</div></section>'; return }
+  box.innerHTML='<section><div class="hint">讀取玩家名單中…</div></section>';
+  try{ const j=await Cloud.post({action:'users', pin:T.pin}); edUsers=j.users||[]; edRenderUsers() }
+  catch(e){ box.innerHTML=`<section><div class="hint">讀不到玩家名單：${escapeHTML(e.message||'連線失敗')}。請確認老師密碼和 Apps Script 一樣，而且已部署第 7 版。</div></section>` }
+}
+function edRenderUsers(){
+  const box=$('edBody');
+  if(!edUsers){ edLoadUsers(); return }
+  if(edUser){ edRenderUser(); return }
+  const q=($('edQ')&&$('edQ').value)||'';
+  box.innerHTML=`<section><div class="r"><input type="text" id="edQ" placeholder="搜尋名字" value="${escapeHTML(q)}" aria-label="搜尋名字"><button class="sbtn alt" id="edReload">重新讀取</button><span class="hint">共 ${edUsers.length} 位</span></div>
+    <div class="tbl"><table><thead><tr><th>姓名</th><th>目前金幣</th><th>累計</th><th>段位</th><th>關卡</th><th>最後更新</th><th></th></tr></thead><tbody id="edUList"></tbody></table></div>
+    <div class="hint">也可以直接在試算表 Users 分頁改「目前積分」那一格，小朋友下次存檔時就會變成那個數字。</div></section>`;
+  const fill=()=>{ const s=$('edQ').value.trim();
+    $('edUList').innerHTML=edUsers.filter(u=>!s||String(u.name).includes(s)).map(u=>`<tr><td><b>${escapeHTML(u.name)}</b></td><td>${u.coins}</td><td>${u.total}</td><td>${escapeHTML(u.tier||'')}</td><td>${escapeHTML(u.progress||'')}</td><td><small>${escapeHTML(u.updated||'')}</small></td><td><button class="sbtn" data-u="${escapeHTML(u.name)}">修改</button></td></tr>`).join('') || '<tr><td colspan="7">找不到</td></tr>';
+    $('edUList').querySelectorAll('[data-u]').forEach(b=>b.addEventListener('click',()=>{ edUser=b.dataset.u; edArm=''; edRenderUser() }));
+  };
+  $('edQ').addEventListener('input',fill); $('edReload').addEventListener('click',()=>{ edUsers=null; edLoadUsers() }); fill();
+}
+function edRenderUser(){
+  const u=edUsers.find(x=>x.name===edUser); if(!u){ edUser=null; edRenderUsers(); return }
+  const opt=(arr,lab)=>arr.map(x=>`<option value="${x.id}">${escapeHTML(lab(x))}</option>`).join('');
+  $('edBody').innerHTML=`<section>
+    <div class="r"><button class="sbtn alt" id="edBack">← 回名單</button><h4>${escapeHTML(u.name)}</h4><span class="hint">${escapeHTML(u.tier||'')}・${escapeHTML(u.progress||'')}・累計 ${u.total}</span></div>
+    <div class="r"><label for="edCoins">目前金幣</label><input type="number" id="edCoins" min="0" value="${u.coins}" inputmode="numeric"><button class="sbtn" id="edSetCoins">改成這個數字</button></div>
+    <div class="r"><label>快速加減</label><button class="sbtn alt" data-add="50">+50</button><button class="sbtn alt" data-add="100">+100</button><button class="sbtn alt" data-add="500">+500</button><button class="sbtn alt" data-add="-50">−50</button></div>
+    <div class="r"><label>關卡</label><button class="sbtn" id="edUnlock">全部關卡解鎖</button><button class="sbtn warn" id="edResetProg">${edArm==='prog'?'再按一次確定重設':'關卡進度重設'}</button></div>
+    <div class="r"><label for="edGiveKind">送東西</label><select id="edGiveKind"><option value="skin">造型</option><option value="wpn">武器</option><option value="fx">擊打特效</option><option value="item">道具</option></select><select id="edGiveItem"></select><input type="number" id="edGiveN" min="1" max="99" value="1" aria-label="數量"><button class="sbtn" id="edGive">送出</button></div>
+    <div class="r"><label>帳號</label><button class="sbtn warn" id="edDel">${edArm==='del'?'再按一次確定刪除':'刪除這個帳號'}</button><span class="hint">打錯字多出來的名字可以刪掉。如果之後有人又用這個名字登入，會再出現。</span></div>
+    <div class="hint" id="edUMsg"></div></section>`;
+  const lists={skin:()=>opt(SKINS.filter(s=>s.id!=='knight'),s=>s.name+(s.reward?'（通關獎勵）':'')), wpn:()=>opt(WEAPONS.filter(w=>w.id!=='auto'),w=>w.name+(w.reward?'（獎勵）':'')), fx:()=>opt(WFX.filter(x=>x.price>0),x=>`${WFX_FAM[x.fam][0]}・${x.name}`), item:()=>opt(ITEMS,x=>x.name)};
+  const syncGive=()=>{ const k=$('edGiveKind').value; $('edGiveItem').innerHTML=lists[k](); $('edGiveN').hidden=k!=='item' };
+  $('edGiveKind').addEventListener('change',syncGive); syncGive();
+  $('edBack').addEventListener('click',()=>{ edUser=null; edArm=''; edRenderUsers() });
+  $('edSetCoins').addEventListener('click',()=>edUserOp({op:'setCoins', v:Math.max(0,Math.round(Number($('edCoins').value)||0))}, `金幣改成 ${Math.max(0,Math.round(Number($('edCoins').value)||0))}`));
+  $('edBody').querySelectorAll('[data-add]').forEach(b=>b.addEventListener('click',()=>edUserOp({op:'addCoins', v:Number(b.dataset.add)}, `金幣 ${Number(b.dataset.add)>0?'+':''}${b.dataset.add}`)));
+  $('edUnlock').addEventListener('click',()=>edUserOp({op:'unlockAll', stages:STAGES.map(s=>s.id), regions:REGIONS.map(R=>R.id)}, '全部關卡解鎖'));
+  $('edResetProg').addEventListener('click',()=>{ if(edArm!=='prog'){ edArm='prog'; edRenderUser(); return } edArm=''; edUserOp({op:'resetProg'}, '關卡進度重設') });
+  $('edGive').addEventListener('click',()=>{ const k=$('edGiveKind').value, id=$('edGiveItem').value, n=Math.max(1,Math.min(99,Number($('edGiveN').value)||1)); const nm=$('edGiveItem').selectedOptions[0].textContent; edUserOp({op:'give', kind:k, item:id, n}, `送「${nm}」${k==='item'?'×'+n:''}`) });
+  $('edDel').addEventListener('click',()=>{ if(edArm!=='del'){ edArm='del'; edRenderUser(); return } edArm=''; edUserOp({op:'delete'}, '刪除帳號') });
+}
+async function edUserOp(op, label){
+  const m=$('edUMsg'), name=edUser; m.textContent='處理中…';
+  try{
+    const j=await Cloud.post({action:'userEdit', pin:T.pin, name, op, label});
+    if(op.op==='delete'){
+      edUsers=edUsers.filter(u=>u.name!==name); edUser=null;
+      const cache=lsGet('nh-players',{}); delete cache[name]; lsSet('nh-players',cache);
+      edRenderUsers(); toastMsg(`已刪除「${name}」`); return;
+    }
+    if(j.user){ const i=edUsers.findIndex(u=>u.name===name); if(i>=0) edUsers[i]=j.user }
+    if(j.op) onTeacherOps(name, [j.op], j.op.id);
+    edRenderUser(); $('edUMsg').textContent=`完成：${label}。小朋友下次存檔或重新登入時就會看到。`;
+  }catch(e){ m.textContent='沒有成功：'+(e.message||'連不到試算表') }
+}
+on('tpEditor',()=>openEditor());
+on('btnEdClose',()=>{ edDraft={}; openTeacher() });
+on('edSave',edSave);
+on('edReset',edResetPage);
+['shop','stage','reward','user'].forEach(t=>on('edTab_'+t,()=>edSetTab(t)));
 
 // ================= 啟動 =================
 $('btnHint').setAttribute('aria-pressed',prefs.hint); $('btnHint').classList.toggle('on',prefs.hint);
