@@ -650,10 +650,10 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 const $ = id => document.getElementById(id);
 
 // 版本號：每次更新加 1，畫面上會顯示，方便確認上傳的是最新版
-const VERSION = 2, VERSION_DATE = '2026-10-07';
+const VERSION = 3, VERSION_DATE = '2026-10-07';
 
 // 想把試算表網址寫死在檔案裡，就貼在這裡；也可以在「選單 → 老師面板」貼上。
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyMzNB3ElbCxvcaJ5JnMq0HNWryWZTnFJbkifYSALIoZB7htYBx81u6Sb0D7yvEzIC4/exec';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwXP1Wicuj-VIqFdxN4dTJ1T3ys7-2WvI5SaFypRc4fdYx8tcvnP3ORQ8H7EUwdTtxPJw/exec';
 
 // ================= data =================
 // step 0 = 第一線 (E4)。每一步 = 半個線距。
@@ -857,7 +857,7 @@ let classStats = lsGet('nh-class', {});
 
 // ================= Google 試算表 =================
 const Cloud = {
-  url(){ return String(T.url||SHEET_URL||'').trim() },
+  url(){ return String(SHEET_URL||T.url||'').trim() },
   ready(){ return /^https:\/\/script\.google(usercontent)?\.com\//.test(this.url()) },
   async req(params, body){
     const ctl = new AbortController(), tm = setTimeout(()=>ctl.abort(), 15000);
@@ -2189,7 +2189,8 @@ function closeTeacher(){ closeAll(); if(teacherFrom==='game' && S.playing) resum
 function openTeacher(){
   show('ovTeacher');
   $('tMul').value=String(T.timeMul); $('tUnlock').checked=!!T.unlockAll; $('tShopLock').checked=!!T.shopLock; $('tVoice').checked=!!prefs.voice;
-  $('tUrl').value=T.url||SHEET_URL; $('tPin').value=T.pin;
+  $('tUrl').value=SHEET_URL||T.url; $('tUrl').readOnly=!!SHEET_URL; $('tPin').value=T.pin;
+  if(SHEET_URL) $('tpTestMsg').textContent='試算表網址已經寫在遊戲檔案裡。按「測試連線」檢查是否正常。';
   fillTeacher(); refreshClass().then(fillTeacher);
 }
 function fillTeacher(){
@@ -2220,11 +2221,16 @@ $('tpZeroAll').addEventListener('click',async()=>{
   catch(e){ msg.textContent='試算表沒有歸零：'+(e.message||'連不到試算表')+'。請確認老師密碼和 Apps Script 裡的一樣。' }
 });
 $('tpTest').addEventListener('click',async()=>{
-  T.url=$('tUrl').value.trim(); saveT();
+  if(!SHEET_URL){ T.url=$('tUrl').value.trim(); saveT() }
   const m=$('tpTestMsg');
   if(!Cloud.ready()){ m.textContent='網址格式不對，應該是 https://script.google.com/macros/s/…/exec'; setDot(''); return }
   m.textContent='連線中…';
-  try{ await Cloud.get({action:'ping'}); m.textContent='連線成功！'+(pending.length?`正在補傳 ${pending.length} 筆資料。`:''); await refreshClass(); fillTeacher(); flush() }
+  try{
+    const j=await Cloud.get({action:'ping'});
+    if(!j.sheet){ m.textContent='這個網址連得上，但不是音符勇者的程式（可能是別的遊戲的網址）。請確認 Apps Script 已貼上最新的 Code.gs 並部署新版本。'; setDot('off'); return }
+    m.textContent=`連線成功！寫入的試算表：「${j.sheet}」`+(pending.length?`，正在補傳 ${pending.length} 筆資料。`:'。');
+    await refreshClass(); fillTeacher(); flush();
+  }
   catch(e){ m.textContent='連不上：'+(e.message||'請確認部署時「誰可以存取」選了「所有人」') }
 });
 
