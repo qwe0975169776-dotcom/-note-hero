@@ -503,6 +503,12 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 .aura-rainbow #heroBod,.aura-master #heroBod,.pv.aura-rainbow>svg,.pv.aura-master>svg{animation:auraRb 2.4s linear infinite}
 @keyframes auraRb{0%,100%{filter:drop-shadow(0 0 6px #ff5c8a) drop-shadow(0 0 14px #ff5c8a)}25%{filter:drop-shadow(0 0 6px #ffd23f) drop-shadow(0 0 14px #ffd23f)}50%{filter:drop-shadow(0 0 6px #5ce1ff) drop-shadow(0 0 14px #5ce1ff)}75%{filter:drop-shadow(0 0 6px #7be07b) drop-shadow(0 0 14px #7be07b)}}
 .aura-shadow #heroBod{--aura:#4b2fa0}
+
+/* v8：發光粒子固定大小，不再被商店預覽的 svg 尺寸撐大 */
+.ap{width:14px!important;height:14px!important;max-width:none;aspect-ratio:auto}
+.ap svg,.sk .pv .ap svg{width:100%!important;height:100%!important}
+.sk .pv{overflow:hidden}
+.sk .pv .ap{width:11px!important;height:11px!important}
 </style>
 </head>
 <body>
@@ -805,9 +811,10 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 const $ = id => document.getElementById(id);
 
 // 版本號：每次更新加 1，畫面上會顯示，方便確認上傳的是最新版
-const VERSION = 7, VERSION_DATE = '2026-10-07';
+const VERSION = 8, VERSION_DATE = '2026-10-07';
 // 更新日誌：每次更新在最上面加一筆（顯示在老師面板）
 const CHANGELOG = [
+  {v:8, date:'2026-10-07', fix:['修正造型發光粒子在商店被放大、跑出卡片外的問題']},
   {v:7, date:'2026-10-07', add:['老師面板新增「測試模式」：全部關卡、造型、武器、特效、寵物、道具解鎖，資料只存在這台裝置，不進試算表、排行榜和廣播'], fix:['移除「偉展老師」測試帳號，這個名字現在是一般玩家']},
   {v:6, date:'2026-10-07', add:['達人之島：8 關高難度關卡，每題 3～5 個音、時間很短，只有 3 顆愛心（最後 3 關只有 2 顆），答錯扣光就挑戰失敗','每種武器都有 3 種專屬擊打特效，可在商店「擊打特效」解鎖並分別設定','造型動態效果：會發光，並有火焰、雪花、泡泡、音符、閃電等專屬粒子','老師面板新增「關閉冒險地圖」，和「鎖住商店」一起改成全班裝置同步生效','新徽章：音符達人；達人之島限定造型「音符達人」'], fix:['造型價格調高（最高 3000 金幣）','打怪時不再出現彈幕，改在過關、地圖等畫面才飄出','舊的擊打特效自動換成對應武器的新特效，不會損失']},
   {v:5, date:'2026-10-07', add:['歌曲關卡：瑪莉有隻小綿羊、蝴蝶、歡樂頌、小星星、兩隻老虎，答對一段就用武器音色彈出旋律，最後完整演奏','全班合作世界魔王：老師在老師面板開啟，全班共用血條，最後一擊全頻廣播','道具：時間沙漏、提示卡、護盾（商店「道具」分頁）','每日任務：每天 3 個任務，完成可領金幣','夥伴寵物：打敗地區魔王收服，每關可用一次技能（收藏「夥伴」分頁）','新徽章：小小演奏家、世界魔王討伐、第一隻夥伴']},
