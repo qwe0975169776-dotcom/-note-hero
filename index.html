@@ -241,6 +241,156 @@ body.team .hudteam{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .missed{font-weight:900;color:var(--danger);margin:4px 0 8px}
 .missed.ok{color:var(--good)}
 .pinrow{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+/* ---------- v2：手機優先、可捲動、橫向排版 ---------- */
+html,body{height:auto;min-height:100%}
+body{overflow-y:auto}
+.app{height:auto;min-height:100vh;min-height:100dvh}
+.card{flex:1 0 auto;min-height:150px}
+button,.key,.lv,.hbtn{touch-action:manipulation}
+.overlay{padding:12px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:520px){ .panel{padding:16px 14px;border-radius:22px} .top h1{font-size:1.1rem} }
+.ver{font-family:var(--f-num);font-weight:800;font-size:.8rem;background:var(--ink);color:var(--paper);border-radius:999px;padding:1px 9px;white-space:nowrap}
+.dd{max-height:70vh;overflow:auto}
+.chip{white-space:nowrap}
+select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+
+/* 橫向手機：左邊戰場、右邊五線譜、按鈕在下面 */
+@media (orientation:landscape) and (max-height:560px){
+  .app{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);grid-template-areas:"top top" "scene card" "hud card" "keys keys" "team team";gap:8px;padding-block:6px;align-content:start}
+  .top{grid-area:top}
+  .top h1{font-size:1.05rem}
+  .scene{grid-area:scene;height:clamp(110px,40vh,180px)}
+  .hud{grid-area:hud}
+  .hudteam{grid-area:hud}
+  .card{grid-area:card;min-height:0;padding-block:4px 10px}
+  .staff{max-height:48vh}
+  .keys{grid-area:keys;grid-template-columns:repeat(8,1fr)}
+  .key{min-height:50px;padding:4px 0}
+  .teamkeys{grid-area:team}
+  body.team .teamkeys{grid-template-columns:1fr 1fr}
+  .tk .kg{grid-template-columns:repeat(8,1fr);gap:4px}
+  .tk .key{min-height:44px}
+  .tk .key .l{display:none}
+  .msg{font-size:1rem;top:4px}
+}
+
+/* 場景：五個地區 */
+.scene.r-meadow{--sky-a:#bfe3f5;--sky-b:#e3f3fb;--gnd:#7cc36b;--gnd-dk:#4f9a46}
+.scene.r-forest{--sky-a:#a9d7c0;--sky-b:#e2f2df;--gnd:#4f9a46;--gnd-dk:#2f6b34}
+.scene.r-sea{--sky-a:#2b7fc0;--sky-b:#8fd6ef;--gnd:#f0d9a0;--gnd-dk:#c9a868}
+.scene.r-snow{--sky-a:#bcd9ef;--sky-b:#f2f8fc;--gnd:#ffffff;--gnd-dk:#b9d3e8}
+.scene.r-castle{--sky-a:#7d72b8;--sky-b:#f2b9a2;--gnd:#9a8f88;--gnd-dk:#6c625c}
+.scene.r-castle .ground::after{background:repeating-linear-gradient(90deg,transparent 0 6%,rgba(0,0,0,.14) 6% 6.4%),repeating-linear-gradient(0deg,transparent 0 45%,rgba(0,0,0,.12) 45% 50%)}
+.scene.r-sea .ground::after,.scene.r-snow .ground::after{background:none}
+.weather{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.weather i{position:absolute;top:-10px;border-radius:50%;background:#fff;opacity:.85;animation:fall linear infinite}
+.weather.bub i{top:auto;bottom:-14px;background:transparent;border:2px solid rgba(255,255,255,.75);animation:rise2 linear infinite}
+@keyframes fall{to{transform:translate(-30px,230px)}}
+@keyframes rise2{to{transform:translate(12px,-240px)}}
+
+/* 多音題 */
+.seqhint{position:absolute;top:10px;right:12px;font-weight:900;font-size:.95rem;background:#eef0fb;color:var(--c-la);border-radius:999px;padding:3px 12px;z-index:1}
+@media (max-width:520px){ .seqhint{top:auto;bottom:10px;left:12px;right:auto} }
+
+/* 主畫面 */
+.rankcard{display:flex;align-items:center;gap:14px;background:#fff;border:3px solid var(--line);border-radius:20px;padding:12px 14px;text-align:left;margin-bottom:14px}
+.rankcard .medal{width:58px;height:58px;font-size:1.4rem;flex:none}
+.rankcard .rc{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.rankcard .rc b{font-size:1.25rem}
+.rankcard .rc small{font-weight:700;color:var(--ink-soft)}
+.rankcard .rbar{height:12px;border:2px solid var(--line);border-radius:999px;overflow:hidden;background:var(--paper)}
+.rankcard .rbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#ffe08a)}
+.homegrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.hbtn{border:3px solid var(--line);border-radius:20px;background:#fff;padding:16px 12px;display:flex;flex-direction:column;gap:4px;align-items:center;box-shadow:0 5px 0 var(--line);min-height:84px;justify-content:center}
+.hbtn b{font-size:1.25rem;font-weight:900}
+.hbtn small{font-size:.8rem;font-weight:700;color:var(--ink-soft)}
+.hbtn.adv{background:var(--gold)}
+.hbtn.prac{background:#dff3e4}
+.hbtn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--line)}
+
+/* 冒險地圖 */
+.regions{display:flex;flex-direction:column;gap:16px}
+.region{position:relative;border:3px solid var(--line);border-radius:22px;padding:14px;background:linear-gradient(160deg,var(--r1),var(--r2));color:#fff;overflow:hidden;text-align:left}
+.region.locked{filter:grayscale(.85) brightness(.95)}
+.region .rh2{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.region h3{margin:0;font-size:1.35rem;font-weight:900;-webkit-text-stroke:1px rgba(0,0,0,.35);paint-order:stroke fill}
+.region .rd{font-weight:800;font-size:.9rem;background:rgba(0,0,0,.25);border-radius:999px;padding:2px 10px}
+.region .lockmsg{font-weight:900;background:var(--line);border-radius:999px;padding:2px 10px;font-size:.85rem}
+.path{position:relative;margin:12px 0 4px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;align-items:center}
+.path::before{content:"";position:absolute;left:8%;right:8%;top:50%;border-top:5px dashed rgba(255,255,255,.7);transform:translateY(-50%)}
+.node{position:relative;justify-self:center;width:min(60px,100%);aspect-ratio:1;border-radius:50%;border:3px solid var(--line);background:#fff;color:var(--ink);font-family:var(--f-num);font-weight:800;font-size:1.2rem;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 4px 0 var(--line);padding:0}
+.node:nth-child(even){transform:translateY(-10px)}
+.node .ns{font-size:.62rem;color:var(--gold-dk);letter-spacing:-.05em;line-height:1;margin-top:1px}
+.node.boss{width:min(68px,100%);background:#ffe0dc}
+.node.boss .bn{font-family:var(--f-display);font-size:.95rem;font-weight:900;color:#b8322b}
+.node.cur{box-shadow:0 0 0 5px var(--gold),0 4px 0 var(--line);animation:bob 1.2s ease-in-out infinite}
+.node:disabled{background:#d9d6cc;color:#8a8679;box-shadow:0 2px 0 var(--line);cursor:default}
+.node.done{background:#fff8d9}
+@keyframes bob{50%{translate:0 -4px}}
+.rewardrow{display:flex;align-items:center;gap:10px;margin-top:10px;background:rgba(255,255,255,.88);color:var(--ink);border-radius:14px;padding:6px 10px;border:2px solid var(--line)}
+.rewardrow .rpv{width:40px;flex:none}
+.rewardrow .rpv svg{width:40px;height:auto;overflow:visible}
+.rewardrow span{font-weight:800;font-size:.88rem;min-width:0}
+.rewardrow .got{margin-left:auto;font-weight:900;color:var(--good);white-space:nowrap}
+
+/* 練習 */
+.lessons{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.lesson-card{border:3px solid var(--line);border-radius:18px;background:#fff;padding:12px;text-align:left;display:flex;gap:10px;align-items:center;box-shadow:0 4px 0 var(--line)}
+.lesson-card .no{width:44px;height:44px;flex:none;border-radius:50%;background:var(--c-sol);color:#fff;display:grid;place-items:center;font-family:var(--f-num);font-weight:800;font-size:1.3rem;border:3px solid var(--line)}
+.lesson-card.done .no{background:var(--good)}
+.lesson-card .lt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.lesson-card b{font-size:1.1rem}
+.lesson-card small{font-size:.8rem;color:var(--ink-soft);font-weight:700;line-height:1.4}
+.lesson-card .stamp{margin-left:auto;font-weight:900;color:var(--good);font-size:.85rem;white-space:nowrap}
+.lessonov{align-items:stretch}
+.panel.lesson{display:flex;flex-direction:column;gap:10px}
+.lhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.lhead h3{margin:0;font-size:1.2rem;flex:1;text-align:left;min-width:0}
+.big.small{padding:6px 12px;font-size:.95rem}
+.ldots{display:flex;gap:5px}
+.ldots i{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);background:#fff}
+.ldots i.ok{background:var(--good)}
+.ldots i.now{background:var(--gold)}
+.lprompt{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-size:clamp(1.4rem,5vw,2rem);font-weight:900}
+.say{border:2px solid var(--line);border-radius:999px;background:#fff;font-weight:900;font-size:.9rem;padding:4px 12px}
+.lstaffwrap{background:#fff;border:3px solid var(--line);border-radius:18px;padding:6px}
+.pstaff{width:100%;height:auto;max-height:52vh;display:block;touch-action:manipulation}
+.pstaff .zone{cursor:pointer}
+.lfeed{min-height:1.6em;font-weight:900;font-size:1.15rem}
+.lfeed.good{color:var(--good)}
+.lfeed.bad{color:var(--danger)}
+.lans{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.lans .big{min-width:130px;font-size:1.3rem}
+.lans .zbtn{color:#fff!important;-webkit-text-stroke:1px rgba(0,0,0,.3);font-size:1.6rem}
+@media (orientation:landscape) and (max-height:560px){ .pstaff{max-height:56vh} .lprompt{font-size:1.3rem} }
+
+/* 過關獎勵、段位 */
+.reward{margin:10px auto 4px;display:flex;align-items:center;gap:12px;justify-content:center;background:#fff4cf;border:3px solid var(--line);border-radius:18px;padding:10px 14px;max-width:440px}
+.reward .rpv svg{width:64px;height:auto;overflow:visible}
+.reward b{display:block;font-size:1.1rem}
+.reward small{font-weight:700;color:var(--ink-soft)}
+.tierup{margin:8px auto;font-weight:900;font-size:1.15rem;color:#8a3fa0}
+.tiers{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:4px 0 10px}
+.tiers span{display:inline-flex;align-items:center;gap:4px;font-size:.78rem;font-weight:800;border:2px solid var(--line);border-radius:999px;padding:1px 8px 1px 2px;background:#fff}
+.tiers .medal{width:22px;height:22px;font-size:.7rem;border-width:2px}
+.rh{margin:10px 0 6px;text-align:left}
+.board{display:flex;flex-direction:column;gap:6px;text-align:left}
+.brow{display:grid;grid-template-columns:2.2em 34px minmax(0,1fr) auto;gap:10px;align-items:center;background:#fff;border:2px solid var(--line);border-radius:14px;padding:6px 10px;font-variant-numeric:tabular-nums}
+.brow.me{background:#fff4cf;box-shadow:0 0 0 3px var(--gold)}
+.brow .no{font-family:var(--f-num);font-weight:800;font-size:1.1rem;text-align:center}
+.brow .medal{width:34px;height:34px;font-size:.9rem;border-width:2px}
+.brow .nm{font-weight:900;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.brow .nm small{display:block;font-weight:700;font-size:.75rem;color:var(--ink-soft)}
+.brow .sc{font-family:var(--f-num);font-weight:800;text-align:right}
+.chiprank{display:inline-flex;align-items:center;gap:4px}
+
+/* 攻擊特效 */
+.proj{position:absolute;pointer-events:none;z-index:3;width:30px;height:30px;margin:-15px 0 0 -15px}
+.proj svg{width:100%;height:100%;overflow:visible;display:block}
+.beam{position:absolute;pointer-events:none;z-index:3;height:16px;border-radius:999px;transform-origin:left center}
+.ring{position:absolute;pointer-events:none;z-index:3;border:5px solid #ffd23f;border-radius:50%;box-shadow:0 0 0 3px rgba(255,255,255,.7)}
+.sk .pv svg.mini{width:70px}
 </style>
 </head>
 <body>
@@ -250,20 +400,21 @@ body.team .hudteam{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   <div class="top">
     <h1>音符勇者</h1>
     <span class="ver" id="ver"></span>
-    <span class="chip" id="lvChip">第 1 關</span>
     <button class="who" id="who" title="換玩家"><span class="st" id="cloudDot"></span><span id="whoName">訪客</span></button>
     <span class="coins" id="coins"><span class="coin"></span><span id="coinNum">0</span></span>
+    <span class="chip" id="lvChip">音符草原 1-1</span>
     <span class="sp"></span>
     <button class="tbtn" id="btnHint" aria-pressed="false">提示線</button>
-    <button class="tbtn shop" id="btnShop">商店</button>
-    <button class="tbtn" id="btnDex">收藏</button>
-    <button class="tbtn" id="btnMenu">選關</button>
     <div class="menuwrap">
-      <button class="tbtn" id="btnMore" aria-expanded="false">設定 ▾</button>
+      <button class="tbtn" id="btnMore" aria-expanded="false">選單 ▾</button>
       <div class="dd" id="more" hidden>
+        <button class="tbtn" id="btnMap">回冒險地圖</button>
+        <button class="tbtn" id="btnHome">回主畫面</button>
+        <button class="tbtn" id="btnShop">商店</button>
+        <button class="tbtn" id="btnDex">收藏</button>
         <button class="tbtn" id="btnTimer" aria-pressed="true">限時</button>
-        <button class="tbtn" id="btnMusic" aria-pressed="true">♫ 音樂</button>
-        <button class="tbtn" id="btnSound" aria-pressed="true">♪ 音效</button>
+        <button class="tbtn" id="btnMusic" aria-pressed="true">音樂</button>
+        <button class="tbtn" id="btnSound" aria-pressed="true">音效</button>
         <button class="tbtn" id="btnFull">全螢幕</button>
         <button class="tbtn" id="btnTeacher">老師面板</button>
       </div>
@@ -272,6 +423,7 @@ body.team .hudteam{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 
   <div class="scene" id="scene">
     <div class="decor" id="decor"></div>
+    <div class="weather" id="weather"></div>
     <div class="dark" id="dark"></div>
     <div class="ground"></div>
     <div class="actor hero" id="hero"><div class="shadow"></div><div class="bod" id="heroBod"></div></div>
@@ -290,6 +442,7 @@ body.team .hudteam{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 
   <div class="card">
     <div class="msg" id="msg" hidden></div>
+    <div class="seqhint" id="seqhint" hidden></div>
     <svg class="staff" id="staff" viewBox="0 0 360 190" aria-label="五線譜"></svg>
     <div class="timer" id="timer"><i id="timerFill"></i></div>
     <button class="next" id="btnNext" hidden>下一題 ▶</button>
@@ -319,18 +472,52 @@ body.team .hudteam{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   </div>
 </div>
 
-<!-- 選關 -->
-<div class="overlay" id="ovStart" hidden>
+<!-- 主畫面 -->
+<div class="overlay" id="ovHome" hidden>
   <div class="panel">
-    <h2 id="hello">音符勇者</h2>
-    <p>看五線譜上的音符，點出它是哪一個音！</p>
-    <div class="levels" id="levels"></div>
-    <div class="mode">
-      <button class="big" id="btnTeam">分組對抗</button>
-      <button class="big alt" id="btnShop2">商店・換造型</button>
-      <button class="big alt" id="btnDex2">圖鑑・徽章</button>
-      <button class="big alt" id="btnSwitch">換玩家</button>
+    <div class="rankcard" id="homeRank"></div>
+    <div class="homegrid">
+      <button class="hbtn adv" id="hAdv"><b>冒險地圖</b><small id="hAdvSub">5 個地區・25 關</small></button>
+      <button class="hbtn prac" id="hPrac"><b>練習模式</b><small id="hPracSub">先熟悉五線譜</small></button>
+      <button class="hbtn" id="hTeam"><b>分組對抗</b><small>兩組同時搶答</small></button>
+      <button class="hbtn" id="hRank"><b>排行榜</b><small>看看全班段位</small></button>
+      <button class="hbtn" id="hShop"><b>商店</b><small>造型・武器・特效</small></button>
+      <button class="hbtn" id="hDex"><b>收藏</b><small>圖鑑・徽章</small></button>
     </div>
+    <div class="row"><button class="big alt" id="btnSwitch">換玩家</button><button class="big alt" id="btnTeacher3">老師面板</button></div>
+    <div class="sub" id="verHome"></div>
+  </div>
+</div>
+
+<!-- 冒險地圖 -->
+<div class="overlay" id="ovMap" hidden>
+  <div class="panel wide mappanel">
+    <div class="shophead"><h2>冒險地圖</h2><button class="big alt" id="btnMapBack">返回</button></div>
+    <div class="regions" id="regions"></div>
+  </div>
+</div>
+
+<!-- 練習選單 -->
+<div class="overlay" id="ovPractice" hidden>
+  <div class="panel wide">
+    <div class="shophead"><h2>練習模式</h2><button class="big alt" id="btnPracBack">返回</button></div>
+    <p>不限時、沒有怪獸，慢慢來。建議從第 1 課開始。</p>
+    <div class="lessons" id="lessons"></div>
+  </div>
+</div>
+
+<!-- 練習進行中 -->
+<div class="overlay lessonov" id="ovLesson" hidden>
+  <div class="panel wide lesson">
+    <div class="lhead">
+      <button class="big alt small" id="btnLessonExit">離開</button>
+      <h3 id="lTitle">認識線和間</h3>
+      <div class="ldots" id="lDots"></div>
+    </div>
+    <div class="lprompt"><span id="lPrompt">點第三線</span><button class="say" id="btnSay" aria-label="再聽一次">再聽一次</button></div>
+    <div class="lstaffwrap"><svg class="pstaff" id="pstaff" viewBox="0 30 360 272" aria-label="練習五線譜"></svg></div>
+    <div class="lfeed" id="lFeed"></div>
+    <div class="lans" id="lAns"></div>
   </div>
 </div>
 
@@ -343,6 +530,7 @@ body.team .hudteam{display:grid;grid-template-columns:1fr 1fr;gap:14px}
       <input id="teamA" type="text" maxlength="8" aria-label="第一組名稱" style="border-color:#e8473d">
       <input id="teamB" type="text" maxlength="8" aria-label="第二組名稱" style="border-color:#2f7fd6">
     </div>
+    <p>選一個地區：</p>
     <div class="levels" id="teamLevels"></div>
     <div class="row"><button class="big alt" id="btnTeamBack">返回</button></div>
   </div>
@@ -356,11 +544,12 @@ body.team .hudteam{display:grid;grid-template-columns:1fr 1fr;gap:14px}
     <div class="stat" id="winStat"></div>
     <div class="missed" id="winMissed"></div>
     <div class="earn" id="winEarnWrap"><span class="coin"></span><span id="winEarn">+0</span></div>
+    <div class="reward" id="winReward" hidden></div>
+    <div class="tierup" id="winTier" hidden></div>
     <div class="row">
       <button class="big alt" id="btnAgain">再玩一次</button>
       <button class="big" id="btnNextLv">下一關 ▶</button>
-      <button class="big alt" id="btnWinShop">去商店</button>
-      <button class="big alt" id="btnBack">選關</button>
+      <button class="big alt" id="btnWinMap">冒險地圖</button>
     </div>
   </div>
 </div>
@@ -374,7 +563,8 @@ body.team .hudteam{display:grid;grid-template-columns:1fr 1fr;gap:14px}
       <button class="big alt" id="btnShopClose">返回</button>
     </div>
     <div class="tabs" role="tablist">
-      <button class="tab" id="tabSkin" role="tab" aria-selected="true">勇者造型</button>
+      <button class="tab" id="tabSkin" role="tab" aria-selected="true">造型</button>
+      <button class="tab" id="tabWpn" role="tab" aria-selected="false">武器</button>
       <button class="tab" id="tabFx" role="tab" aria-selected="false">擊打特效</button>
     </div>
     <div class="skins" id="skins"></div>
@@ -384,15 +574,24 @@ body.team .hudteam{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 <!-- 收藏 -->
 <div class="overlay" id="ovDex" hidden>
   <div class="panel wide">
-    <div class="shophead">
-      <h2>我的收藏</h2>
-      <button class="big alt" id="btnDexClose">返回</button>
-    </div>
+    <div class="shophead"><h2>我的收藏</h2><button class="big alt" id="btnDexClose">返回</button></div>
     <div class="tabs" role="tablist">
       <button class="tab" id="tabMon" role="tab" aria-selected="true">怪獸圖鑑</button>
       <button class="tab" id="tabBadge" role="tab" aria-selected="false">成就徽章</button>
     </div>
     <div class="grid" id="dexGrid"></div>
+  </div>
+</div>
+
+<!-- 排行榜 -->
+<div class="overlay" id="ovRank" hidden>
+  <div class="panel wide">
+    <div class="shophead"><h2>排行榜</h2><button class="big alt" id="btnRankClose">返回</button></div>
+    <div class="rankcard" id="rankMe"></div>
+    <div class="tiers" id="tierList"></div>
+    <h3 class="rh">全班排名</h3>
+    <div class="board" id="board"></div>
+    <div class="sub" id="boardNote"></div>
   </div>
 </div>
 
@@ -417,15 +616,16 @@ body.team .hudteam{display:grid;grid-template-columns:1fr 1fr;gap:14px}
     <div class="tp">
       <section>
         <h4>遊戲設定</h4>
-        <div class="r"><label>每題秒數</label>第 1 關 <input type="number" id="tT1" min="3" max="30"> 第 2 關 <input type="number" id="tT2" min="3" max="30"> 第 3 關 <input type="number" id="tT3" min="3" max="30"></div>
-        <div class="r"><label for="tGoal">過關需要</label><input type="number" id="tGoal" min="4" max="30"> 格勇氣值（每答對一題 1 格，三連擊多 1 格）</div>
+        <div class="r"><label for="tMul">答題時間</label><select id="tMul"><option value="1.5">寬鬆（1.5 倍）</option><option value="1.25">稍寬（1.25 倍）</option><option value="1">標準</option><option value="0.8">緊湊（0.8 倍）</option></select></div>
+        <div class="r"><label for="tUnlock">解鎖全部關卡</label><input type="checkbox" id="tUnlock"> 上課時可以直接帶到任何一關</div>
         <div class="r"><label for="tShopLock">鎖住商店</label><input type="checkbox" id="tShopLock"> 上課時不讓小朋友進商店</div>
+        <div class="r"><label for="tVoice">練習語音</label><input type="checkbox" id="tVoice"> 練習模式用語音唸題目</div>
       </section>
       <section>
         <h4>金幣</h4>
         <div class="r"><span>目前玩家：<b id="tpWho">訪客</b>，<b id="tpCoins">0</b> 金幣</span></div>
         <div class="r"><button class="sbtn" id="tpGive50">發 50 金幣</button><button class="sbtn" id="tpGive100">發 100 金幣</button><button class="sbtn alt" id="tpZero">這位玩家歸零</button></div>
-        <div class="r"><button class="sbtn warn" id="tpZeroAll">全班金幣歸零</button><span class="hint" id="tpZeroAllMsg">會把試算表裡每個人的目前金幣改成 0，累計獲得不變。</span></div>
+        <div class="r"><button class="sbtn warn" id="tpZeroAll">全班金幣歸零</button><span class="hint" id="tpZeroAllMsg">會把試算表裡每個人的目前金幣改成 0，累計獲得和段位不變。</span></div>
       </section>
       <section>
         <h4>全班最常答錯的音</h4>
@@ -449,55 +649,27 @@ body.team .hudteam{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 (function(){
 const $ = id => document.getElementById(id);
 
-// 想把試算表網址寫死在檔案裡，就貼在這裡；也可以在「設定 → 老師面板」貼上。
 // 版本號：每次更新加 1，畫面上會顯示，方便確認上傳的是最新版
-const VERSION = 1, VERSION_DATE = '2026-10-07';
+const VERSION = 2, VERSION_DATE = '2026-10-07';
 
+// 想把試算表網址寫死在檔案裡，就貼在這裡；也可以在「選單 → 老師面板」貼上。
 const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyMzNB3ElbCxvcaJ5JnMq0HNWryWZTnFJbkifYSALIoZB7htYBx81u6Sb0D7yvEzIC4/exec';
 
 // ================= data =================
 // step 0 = 第一線 (E4)。每一步 = 半個線距。
 const NOTES = {
-  do:  {zy:'ㄉㄡ',   letter:'C', step:-2, f:261.63},
-  re:  {zy:'ㄖㄨㄟ', letter:'D', step:-1, f:293.66},
-  mi:  {zy:'ㄇㄧ',   letter:'E', step:0,  f:329.63},
-  fa:  {zy:'ㄈㄚ',   letter:'F', step:1,  f:349.23},
-  sol: {zy:'ㄙㄛ',   letter:'G', step:2,  f:392.00},
-  la:  {zy:'ㄌㄚ',   letter:'A', step:3,  f:440.00},
-  si:  {zy:'ㄒㄧ',   letter:'B', step:4,  f:493.88},
-  hdo: {zy:'ㄉㄡ',   letter:'C', step:5,  f:523.25, high:true},
+  do:  {zy:'ㄉㄡ',   letter:'C', step:-2, f:261.63, say:'兜'},
+  re:  {zy:'ㄖㄨㄟ', letter:'D', step:-1, f:293.66, say:'瑞'},
+  mi:  {zy:'ㄇㄧ',   letter:'E', step:0,  f:329.63, say:'咪'},
+  fa:  {zy:'ㄈㄚ',   letter:'F', step:1,  f:349.23, say:'發'},
+  sol: {zy:'ㄙㄛ',   letter:'G', step:2,  f:392.00, say:'嗦'},
+  la:  {zy:'ㄌㄚ',   letter:'A', step:3,  f:440.00, say:'拉'},
+  si:  {zy:'ㄒㄧ',   letter:'B', step:4,  f:493.88, say:'西'},
+  hdo: {zy:'ㄉㄡ',   letter:'C', step:5,  f:523.25, say:'高音兜', high:true},
 };
 const KEYS = ['do','re','mi','fa','sol','la','si','hdo'];
+const STEP2KEY = {'-2':'do','-1':'re','0':'mi','1':'fa','2':'sol','3':'la','4':'si','5':'hdo'};
 const zyName = k => (NOTES[k].high?'高音':'') + NOTES[k].zy;
-const LEVELS = [
-  {n:1, title:'ㄉㄡ ㄖㄨㄟ ㄇㄧ', pool:['do','re','mi'],              place:'草原'},
-  {n:2, title:'ㄉㄡ 到 ㄙㄛ',     pool:['do','re','mi','fa','sol'],  place:'森林'},
-  {n:3, title:'ㄉㄡ 到 高音ㄉㄡ', pool:KEYS,                         place:'城堡', boss:true},
-  {n:4, title:'低音與升降記號', locked:true},
-];
-const MONS = [
-  {id:'slimeG', name:'綠史萊姆',   lv:0, c:'#5fbf5a', horn:false, where:'草原'},
-  {id:'slimeP', name:'粉紅史萊姆', lv:0, c:'#ff8fbf', horn:false, where:'草原'},
-  {id:'hornP',  name:'紫角怪',     lv:1, c:'#9b62c9', horn:true,  where:'森林'},
-  {id:'hornO',  name:'橘角怪',     lv:1, c:'#f28a2e', horn:true,  where:'森林'},
-  {id:'hornB',  name:'藍角怪',     lv:1, c:'#2fa3d6', horn:true,  where:'森林'},
-  {id:'boss',   name:'大魔王',     lv:2, c:'#d9473f', horn:true,  where:'城堡', big:true, boss:true},
-];
-const BADGES = [
-  {id:'win1',    m:'勝', name:'第一次勝利', desc:'第一次打敗怪獸'},
-  {id:'c5',      m:'5',  name:'5 連擊',     desc:'連續答對 5 題'},
-  {id:'c10',     m:'10', name:'10 連擊',    desc:'連續答對 10 題'},
-  {id:'c20',     m:'20', name:'20 連擊',    desc:'連續答對 20 題'},
-  {id:'perfect', m:'零', name:'零失誤',     desc:'一題都沒答錯就過關'},
-  {id:'fast',    m:'快', name:'閃電手',     desc:'2 秒內答對一題'},
-  {id:'boss',    m:'王', name:'打倒大魔王', desc:'在城堡打敗大魔王'},
-  {id:'stars',   m:'星', name:'全關三星',   desc:'第 1 到 3 關都拿三顆星'},
-  {id:'q100',    m:'百', name:'百題達人',   desc:'累計答對 100 題'},
-  {id:'skin5',   m:'裝', name:'造型收藏家', desc:'擁有 5 套造型'},
-  {id:'fx3',     m:'效', name:'特效收藏家', desc:'擁有 3 種擊打特效'},
-  {id:'dex',     m:'博', name:'怪獸博士',   desc:'怪獸圖鑑全部收集'},
-];
-const LANE = 9;
 
 // 20 套造型
 const SKINS = [
@@ -541,23 +713,137 @@ const FX = [
 ];
 
 
+// ---------- 地區通關獎勵造型 ----------
+SKINS.push(
+  {id:'mushroom', name:'蘑菇勇者', tag:'草原通關獎勵', price:0, reward:'meadow', head:'mushroom',   a:'#e8473d', b:'#ffffff', body:'#c49a6c', skin:'#ffd9b8', wpn:'sword',   w:'#d6c39a'},
+  {id:'elf',      name:'精靈遊俠', tag:'森林通關獎勵', price:0, reward:'forest', head:'elf',        a:'#3f8f4a', b:'#9be07b', body:'#2f7a45', skin:'#ffe2c4', wpn:'flute',   w:'#c9a46a'},
+  {id:'diver',    name:'潛水隊長', tag:'海灣通關獎勵', price:0, reward:'sea',    head:'diver',      a:'#9fe3ff', b:'#f5b82e', body:'#2fa3d6', skin:'#f0c9a0', wpn:'bubble',  w:'#7fd0ff'},
+  {id:'snowp',    name:'冰雪王子', tag:'雪山通關獎勵', price:0, reward:'snow',   head:'snowking',   a:'#e8473d', b:'#bfe9ff', body:'#5a8fd6', skin:'#ffe2c4', wpn:'rainbow', w:'#bfe9ff'},
+  {id:'starkn',   name:'星空騎士', tag:'城堡通關獎勵', price:0, reward:'castle', head:'starknight', a:'#2e3a6b', b:'#ffd23f', body:'#3d3a8a', skin:'#ffd9b8', wpn:'dragon',  w:'#7be07b'},
+);
+
+// ---------- 武器（決定攻擊方式） ----------
+// style: melee 近身斬擊 / proj 發射飛行物 / beam 光線 / wave 音波 / summon 召喚
+const WEAPONS = [
+  {id:'auto',      name:'造型武器',   tag:'跟著造型走', price:0},
+  {id:'starwand',  name:'星星法杖',   tag:'發射星星',   price:150, draw:'wand',      color:'#ffd23f', style:'proj', proj:'star'},
+  {id:'boomerang', name:'迴力鏢',     tag:'飛出去再飛回來', price:250, draw:'boomerang', color:'#f28a2e', style:'proj', proj:'boomerang'},
+  {id:'yoyo',      name:'溜溜球',     tag:'甩出去打怪', price:300, draw:'yoyo',      color:'#ff5c8a', style:'proj', proj:'yoyo'},
+  {id:'drum',      name:'雷霆小鼓',   tag:'音波震震震', price:450, draw:'drum',      color:'#e8473d', style:'wave'},
+  {id:'blaster',   name:'太空光線槍', tag:'彩色光線',   price:600, draw:'blaster',   color:'#5ce1ff', style:'beam', beam:['#5ce1ff','#ffffff']},
+  {id:'flute',     name:'音符長笛',   tag:'森林通關獎勵', price:0, reward:'forest', draw:'flute',   color:'#c9a46a', style:'proj', proj:'note'},
+  {id:'bubble',    name:'泡泡魔杖',   tag:'海灣通關獎勵', price:0, reward:'sea',    draw:'bubble',  color:'#7fd0ff', style:'proj', proj:'bubble'},
+  {id:'rainbow',   name:'彩虹權杖',   tag:'雪山通關獎勵', price:0, reward:'snow',   draw:'rainbow', color:'#bfe9ff', style:'beam', beam:'rainbow'},
+  {id:'dragon',    name:'小龍召喚',   tag:'城堡通關獎勵', price:0, reward:'castle', draw:'dragon',  color:'#7be07b', style:'summon'},
+];
+// 造型本身的武器對應的攻擊方式
+const DRAW_STYLE = {wand:{style:'proj',proj:'star'}, flute:{style:'proj',proj:'note'}, bubble:{style:'proj',proj:'bubble'},
+  boomerang:{style:'proj',proj:'boomerang'}, yoyo:{style:'proj',proj:'yoyo'}, drum:{style:'wave'},
+  blaster:{style:'beam',beam:['#5ce1ff','#fff']}, rainbow:{style:'beam',beam:'rainbow'}, dragon:{style:'summon'}};
+
+// ---------- 地區與關卡 ----------
+const REGIONS = [
+  {id:'meadow', name:'音符草原', desc:'認識ㄉㄡ、ㄖㄨㄟ、ㄇㄧ', pool:['do','re','mi'],                  t:10, song:'meadow', mons:['slimeG','slimeP'], boss:'slimeK', reward:{skin:'mushroom'},             c1:'#9fdc8a', c2:'#4f9a46'},
+  {id:'forest', name:'迷霧森林', desc:'加入ㄈㄚ、ㄙㄛ',         pool:['do','re','mi','fa','sol'],       t:10, song:'forest', mons:['hornP','hornO'],   boss:'hornK',  reward:{skin:'elf',wpn:'flute'},     c1:'#8cc79a', c2:'#2f6b34'},
+  {id:'sea',    name:'珊瑚海灣', desc:'加入ㄌㄚ',               pool:['do','re','mi','fa','sol','la'],  t:9,  song:'sea',    mons:['fishB','fishC'],   boss:'seaK',   reward:{skin:'diver',wpn:'bubble'},  c1:'#7fd0f0', c2:'#1f6fb2'},
+  {id:'snow',   name:'冰雪山脈', desc:'八個音全部登場',         pool:KEYS,                              t:9,  song:'snow',   mons:['snowW','snowI'],   boss:'snowK',  reward:{skin:'snowp',wpn:'rainbow'}, c1:'#dff1fb', c2:'#7fb6e0'},
+  {id:'castle', name:'魔王城堡', desc:'最終挑戰：打倒大魔王',   pool:KEYS,                              t:8,  song:'castle', mons:['shadow','flame'],  boss:'boss',   reward:{skin:'starkn',wpn:'dragon'}, c1:'#a08cc8', c2:'#4a3d6b'},
+];
+const STAGE_PLAN = [
+  {n:1, seq:[1],     tmul:1.0,  goal:8},
+  {n:2, seq:[1],     tmul:0.8,  goal:8},
+  {n:3, seq:[1,2],   tmul:0.9,  goal:9},
+  {n:4, seq:[2],     tmul:0.8,  goal:10},
+  {n:5, seq:[1,2,3], tmul:0.75, goal:12, boss:true},
+];
+const STAGES = [];
+REGIONS.forEach((R,ri)=>STAGE_PLAN.forEach(p=>{
+  let seq = p.seq;
+  if(ri===0 && p.n===4) seq=[1,2];
+  if(ri===0 && p.n===5) seq=[1,2];
+  STAGES.push({id:`${R.id}-${p.n}`, r:ri, n:p.n, seq, time:Math.max(4, Math.round(R.t*p.tmul*(1-ri*0.05)*10)/10), goal:p.goal, boss:!!p.boss});
+}));
+const stageById = id => STAGES.find(s=>s.id===id);
+
+const MONS = [
+  {id:'slimeG', name:'綠史萊姆',   r:0, c:'#5fbf5a'},
+  {id:'slimeP', name:'粉紅史萊姆', r:0, c:'#ff8fbf'},
+  {id:'slimeK', name:'史萊姆國王', r:0, c:'#3fa95a', big:true, crown:true, boss:true},
+  {id:'hornP',  name:'紫角怪',     r:1, c:'#9b62c9', horn:true},
+  {id:'hornO',  name:'橘角怪',     r:1, c:'#f28a2e', horn:true},
+  {id:'hornK',  name:'森林角王',   r:1, c:'#5a3f8f', horn:true, big:true, crown:true, boss:true},
+  {id:'fishB',  name:'泡泡魚怪',   r:2, c:'#2fa3d6', fins:true, spots:true},
+  {id:'fishC',  name:'珊瑚怪',     r:2, c:'#ff7f6b', fins:true, finC:'#ffb3a6'},
+  {id:'seaK',   name:'深海大王',   r:2, c:'#1f5f9e', fins:true, finC:'#5ce1ff', big:true, crown:true, boss:true},
+  {id:'snowW',  name:'雪球怪',     r:3, c:'#d7e9f7', cap:true},
+  {id:'snowI',  name:'冰晶怪',     r:3, c:'#7fc8ef', horn:true, hornC:'#e6f7ff'},
+  {id:'snowK',  name:'冰霜巨怪',   r:3, c:'#5b9bd0', cap:true, horn:true, hornC:'#e6f7ff', big:true, crown:true, boss:true},
+  {id:'shadow', name:'黑影怪',     r:4, c:'#4a3d6b', horn:true},
+  {id:'flame',  name:'火焰怪',     r:4, c:'#e8573d', horn:true, hornC:'#ffd23f'},
+  {id:'boss',   name:'大魔王',     r:4, c:'#d9473f', horn:true, big:true, crown:true, boss:true},
+];
+
+// ---------- 段位 ----------
+const TIERS = [
+  {name:'音符寶寶', min:0,   c:'#d9cbb8', m:'寶'},
+  {name:'銅音符',   min:40,  c:'#d0905f', m:'銅'},
+  {name:'銀音符',   min:120, c:'#c3ccd8', m:'銀'},
+  {name:'金音符',   min:250, c:'#f5b82e', m:'金'},
+  {name:'白金音符', min:420, c:'#9fe6dc', m:'白'},
+  {name:'鑽石音符', min:620, c:'#8fd0ff', m:'鑽'},
+  {name:'音樂大師', min:850, c:'#d68ad0', m:'師'},
+];
+
+const BADGES = [
+  {id:'win1',     m:'勝', name:'第一次勝利', desc:'第一次打敗怪獸'},
+  {id:'c5',       m:'5',  name:'5 連擊',     desc:'連續答對 5 題'},
+  {id:'c10',      m:'10', name:'10 連擊',    desc:'連續答對 10 題'},
+  {id:'c20',      m:'20', name:'20 連擊',    desc:'連續答對 20 題'},
+  {id:'perfect',  m:'零', name:'零失誤',     desc:'一題都沒答錯就過關'},
+  {id:'fast',     m:'快', name:'閃電手',     desc:'2 秒內答對一題'},
+  {id:'seq3',     m:'三', name:'三音連發',   desc:'一次答對 3 個音'},
+  {id:'practice', m:'譜', name:'五線譜小博士', desc:'完成全部 6 個練習'},
+  {id:'region',   m:'區', name:'地區英雄',   desc:'打敗第一個地區魔王'},
+  {id:'boss',     m:'王', name:'打倒大魔王', desc:'在魔王城堡打敗大魔王'},
+  {id:'stars',    m:'星', name:'三星地區',   desc:'一個地區 5 關全部三顆星'},
+  {id:'q100',     m:'百', name:'百題達人',   desc:'累計答對 100 個音'},
+  {id:'skin5',    m:'裝', name:'造型收藏家', desc:'擁有 5 套造型'},
+  {id:'wpn3',     m:'武', name:'武器收藏家', desc:'擁有 3 種武器'},
+  {id:'fx3',      m:'效', name:'特效收藏家', desc:'擁有 3 種擊打特效'},
+  {id:'dex',      m:'博', name:'怪獸博士',   desc:'怪獸圖鑑全部收集'},
+];
+
+// ---------- 練習模式 ----------
+const LESSONS = [
+  {id:'p1', title:'認識線和間', desc:'五條線、四個間，從下面往上數', intro:'五線譜有五條線，和四個間。我們從最下面開始往上數。'},
+  {id:'p2', title:'線上還是間裡', desc:'看音符是穿過線，還是夾在兩條線中間', intro:'線穿過音符的肚子，就是線上。音符夾在兩條線中間，就是間裡。'},
+  {id:'p3', title:'誰比較高', desc:'越上面的音越高', intro:'在五線譜上，越上面的音，聲音越高。'},
+  {id:'p4', title:'兩個好朋友', desc:'記住ㄉㄡ和ㄇㄧ', intro:'ㄉㄡ住在下加一線，ㄇㄧ住在第一線。記住這兩個好朋友。'},
+  {id:'p5', title:'爬樓梯', desc:'從ㄉㄡ一格一格往上數', intro:'從ㄉㄡ開始，一格一格往上爬。線、間、線、間，一邊爬一邊唱。'},
+  {id:'p6', title:'放音符', desc:'把音符放到正確的位置', intro:'聽題目，把音符放到正確的位置。'},
+];
+const LANE = 9;
+
+
 // ================= storage helpers =================
 function lsGet(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d }catch(e){ return d } }
 function lsSet(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)) }catch(e){} }
 
 // 老師設定（存在這台電腦）
-const TDEF = {pin:'1234', url:'', times:[10,9,8], goal:10, shopLock:false, teamA:'紅隊', teamB:'藍隊'};
+const TDEF = {pin:'1234', url:'', timeMul:1, shopLock:false, unlockAll:false, teamA:'紅隊', teamB:'藍隊'};
 const T = Object.assign({}, TDEF, lsGet('nh-teacher',{}));
 const saveT = () => lsSet('nh-teacher',T);
-const prefs = Object.assign({hint:false}, lsGet('nh-prefs',{}));
+const prefs = Object.assign({hint:false, voice:true}, lsGet('nh-prefs',{}));
 const savePrefs = () => lsSet('nh-prefs',prefs);
 
 // ================= player =================
-const newSave = () => ({coins:0,total:0,owned:['knight'],skin:'knight',fxOwned:['basic'],fx:'basic',stars:{},badges:[],dex:{},notes:{},right:0,best:0,ts:0});
+const newSave = () => ({coins:0,total:0,owned:['knight'],skin:'knight',fxOwned:['basic'],fx:'basic',wpnOwned:['auto'],wpn:'auto',prog:{},cleared:[],practice:{},badges:[],dex:{},notes:{},right:0,best:0,ts:0});
 function normSave(s){
   const d=Object.assign(newSave(), s||{});
-  ['owned','fxOwned','badges'].forEach(k=>{ if(!Array.isArray(d[k])) d[k]=newSave()[k] });
-  ['stars','dex','notes'].forEach(k=>{ if(!d[k]||typeof d[k]!=='object') d[k]={} });
+  ['owned','fxOwned','wpnOwned','cleared','badges'].forEach(k=>{ if(!Array.isArray(d[k])) d[k]=newSave()[k] });
+  ['prog','practice','dex','notes'].forEach(k=>{ if(!d[k]||typeof d[k]!=='object') d[k]={} });
+  if(!d.wpnOwned.includes('auto')) d.wpnOwned.unshift('auto');
+  if(!WEAPONS.some(x=>x.id===d.wpn)) d.wpn='auto';
   if(!d.owned.includes('knight')) d.owned.unshift('knight');
   if(!d.fxOwned.includes('basic')) d.fxOwned.unshift('basic');
   if(!SKINS.some(x=>x.id===d.skin)) d.skin='knight';
@@ -622,10 +908,23 @@ function persistLocal(){
   const cache=lsGet('nh-players',{}); cache[player.name]={save, ts:save.ts}; lsSet('nh-players',cache);
 }
 const badgeNames = () => save.badges.map(id=>(BADGES.find(b=>b.id===id)||{}).name).filter(Boolean);
+function rankScore(sv=save){
+  let s=0; for(const k in sv.prog) s+=(sv.prog[k]||0)*10;
+  s += (sv.cleared||[]).length*30 + Object.keys(sv.practice||{}).length*5;
+  return s;
+}
+function tierOf(score){ let t=TIERS[0]; TIERS.forEach(x=>{ if(score>=x.min) t=x }); return t }
+function weakNotes(sv=save){
+  return Object.entries(sv.notes||{}).filter(([k,v])=>v.asked>=3 && v.wrong>0)
+    .map(([k,v])=>({k,r:v.wrong/v.asked})).sort((a,b)=>b.r-a.r).slice(0,3).map(x=>zyName(x.k)).join('、');
+}
+function progressText(sv=save){
+  const n=STAGES.filter(st=>sv.prog[st.id]).length; return `${n}/${STAGES.length} 關`;
+}
 function commit(record, notes){
   persistLocal();
   if(notes) addLocalClass(notes);
-  if(player.name) send({action:'save', name:player.name, save:Object.assign({}, save, {badgeNames:badgeNames()}), record, notes});
+  if(player.name){ const sc=rankScore(); send({action:'save', name:player.name, save:Object.assign({}, save, {badgeNames:badgeNames(), rankScore:sc, tierName:tierOf(sc).name, weak:weakNotes(), progress:progressText()}), record, notes}); }
   else if(record) send({action:'record', record, notes});
 }
 
@@ -682,12 +981,30 @@ function sFx(kind, big){ sfx(()=>{
 }) }
 function duck(sec=.9){ if(!musBus) return; const t=ac.currentTime; musBus.gain.cancelScheduledValues(t); musBus.gain.setValueAtTime(musBus.gain.value,t); musBus.gain.linearRampToValueAtTime(S.music?.15:0,t+.04); musBus.gain.linearRampToValueAtTime(S.music?.55:0,t+sec); }
 
-// ---------- 背景音樂：A小調冒險曲，怪獸靠近時加速並加入鼓聲 ----------
+// ---------- 背景音樂：每個地區一首，怪獸靠近時加速並加入鼓聲 ----------
 const mtof = m => 440*Math.pow(2,(m-69)/12);
-const LEAD = [69,0,72,76, 74,0,72,71,  69,0,72,0, 65,67,69,0,  72,0,76,79, 77,0,76,74,  71,0,74,0, 79,77,76,74,
-              76,0,72,69, 71,0,72,74,  72,0,69,0, 65,0,69,72,  71,0,72,74, 76,0,79,0,  74,0,71,67, 69,0,0,0];
-const BASS = [45,45,57,45, 41,41,53,41, 48,48,60,48, 43,43,55,43, 45,45,57,45, 41,41,53,41, 43,43,55,43, 45,45,52,45];
-const BGM = {playing:false, step:0, next:0, timer:0, danger:0};
+const SONGS = {
+  meadow:{tempo:124, lead:'triangle', lv:.07, bass:'triangle', bv:.15, drums:1,
+    L:[72,0,76,79, 76,0,72,0, 74,0,77,81, 79,0,77,76, 72,0,76,79, 81,79,77,76, 74,0,71,74, 72,0,0,0],
+    B:[48,55,48,55, 53,60,53,60, 48,55,48,55, 43,50,48,48]},
+  forest:{tempo:100, lead:'sine', lv:.09, bass:'triangle', bv:.15, drums:0,
+    L:[69,0,0,72, 76,0,74,0, 72,0,71,0, 69,0,0,0, 65,0,69,72, 71,0,69,68, 69,0,0,0, 0,0,64,0],
+    B:[45,0,52,0, 41,0,48,0, 43,0,50,0, 40,0,47,0]},
+  sea:{tempo:104, lead:'sine', lv:.09, bass:'sine', bv:.2, drums:0,
+    L:[77,0,81,0, 84,0,81,79, 77,0,0,74, 76,77,79,0, 81,0,79,77, 76,0,74,72, 74,0,76,77, 77,0,0,0],
+    B:[41,48,53,48, 46,53,58,53, 48,55,60,55, 41,48,53,48]},
+  snow:{tempo:112, lead:'sine', lv:.08, bass:'triangle', bv:.14, drums:1, bell:true,
+    L:[76,0,79,0, 83,0,79,76, 78,0,74,0, 71,0,0,0, 72,0,76,79, 84,0,83,79, 78,0,79,81, 76,0,0,0],
+    B:[40,47,52,47, 38,45,50,45, 36,43,48,43, 35,42,47,42]},
+  castle:{tempo:136, lead:'square', lv:.045, bass:'sawtooth', bv:.06, drums:2,
+    L:[74,0,74,77, 81,0,79,77, 76,0,76,79, 77,0,74,0, 74,0,74,77, 81,0,84,82, 81,79,77,76, 74,0,0,0],
+    B:[38,38,50,38, 34,34,46,34, 36,36,48,36, 33,33,45,33]},
+  calm:{tempo:92, lead:'triangle', lv:.06, bass:'sine', bv:.16, drums:0,
+    L:[72,0,0,76, 79,0,0,76, 77,0,76,0, 74,0,0,0, 72,0,0,76, 79,0,81,79, 77,0,74,0, 72,0,0,0],
+    B:[48,0,55,0, 53,0,60,0, 43,0,50,0, 48,0,55,0]},
+};
+const BGM = {playing:false, step:0, next:0, timer:0, danger:0, song:SONGS.calm};
+function setSong(name){ const s=SONGS[name]||SONGS.calm; if(BGM.song!==s){ BGM.song=s; BGM.step=0 } }
 function bgmStart(){
   if(BGM.playing || !ctx()) return;
   BGM.playing=true; BGM.step=0; BGM.next=ac.currentTime+.1;
@@ -695,17 +1012,17 @@ function bgmStart(){
   BGM.timer=setInterval(bgmTick,25);
 }
 function bgmTick(){
-  const spb = 60/(BGM.danger ? 150 : 116)/2;
+  const sg=BGM.song, spb = 60/(sg.tempo + (BGM.danger?22:0))/2;
   while(BGM.next < ac.currentTime+.15){
-    const st=BGM.step, t=BGM.next;
-    const m=LEAD[st]; if(m) tone(mtof(m), spb*.9, 'square', .045, t);
-    if(st%2===0){ const b=BASS[st/2|0]; tone(mtof(b), spb*1.8, 'triangle', .16, t); }
-    noise(.04, st%2?.05:.025, 0, musBus, 6000, t);
-    if(BGM.danger){
-      if(st%4===0){ tone(120, .18, 'sine', .35, t, 40); }
+    const st=BGM.step % sg.L.length, t=BGM.next;
+    const m=sg.L[st]; if(m){ tone(mtof(m), spb*.9, sg.lead, sg.lv, t); if(sg.bell) tone(mtof(m+12), spb*.6, 'sine', sg.lv*.4, t); }
+    if(st%2===0){ const b=sg.B[(st/2|0)%sg.B.length]; if(b) tone(mtof(b), spb*1.8, sg.bass, sg.bv, t); }
+    if(sg.drums>=1) noise(.04, st%2?.05:.025, 0, musBus, 6000, t);
+    if(sg.drums>=2 || BGM.danger){
+      if(st%4===0) tone(120, .18, 'sine', .35, t, 40);
       if(st%8===4) noise(.12,.12,0,musBus,1500,t);
     }
-    BGM.next += spb; BGM.step=(st+1)%LEAD.length;
+    BGM.next += spb; BGM.step=(BGM.step+1)%sg.L.length;
   }
 }
 function tone(f,dur,type,vol,t,slide){
@@ -726,6 +1043,14 @@ function weapon(k){
     case 'spoon': return g(`<rect x="-2.5" y="-34" width="5" height="40" rx="2" fill="${c}" ${L}/><ellipse cx="0" cy="-44" rx="9" ry="12" fill="${c}" ${L}/>`);
     case 'lolli': return g(`<rect x="-2" y="-30" width="4" height="36" rx="2" fill="#fff" ${L}/><circle cx="0" cy="-42" r="13" fill="${c}" ${L}/><path d="M0 -42 m-7 0 a7 7 0 1 1 7 7 a4 4 0 1 1 -4 -4" fill="none" stroke="#fff" stroke-width="3"/>`);
     case 'cane':  return g(`<path d="M0 6 L0 -40 Q0 -54 -10 -54 Q-20 -54 -20 -44" fill="none" stroke="#2b3550" stroke-width="10" stroke-linecap="round"/><path d="M0 6 L0 -40 Q0 -54 -10 -54 Q-20 -54 -20 -44" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M0 6 L0 -40 Q0 -54 -10 -54 Q-20 -54 -20 -44" fill="none" stroke="${c}" stroke-width="5" stroke-dasharray="5 5" stroke-linecap="butt"/>`);
+    case 'bubble':   return g(`<rect x="-2" y="-34" width="4" height="40" rx="2" fill="#8fd0ff" ${L}/><circle cx="0" cy="-44" r="11" fill="${c}" fill-opacity=".35" stroke="${c}" stroke-width="4"/><circle cx="0" cy="-44" r="11" fill="none" stroke="#2b3550" stroke-width="1.5"/>`);
+    case 'boomerang':return g(`<path d="M-2 -6 L-16 -44 Q-12 -52 -6 -48 L2 -22 L16 -46 Q22 -48 24 -40 L4 -4Z" fill="${c}" ${L}/>`);
+    case 'yoyo':     return g(`<path d="M0 0 V-26" stroke="#2b3550" stroke-width="1.5"/><circle cx="0" cy="-36" r="11" fill="${c}" ${L}/><circle cx="0" cy="-36" r="4" fill="#fff" stroke="#2b3550" stroke-width="1.5"/>`);
+    case 'flute':    return g(`<rect x="-3.5" y="-60" width="7" height="66" rx="3" fill="${c}" ${L}/><circle cx="0" cy="-48" r="1.8" fill="#2b3550"/><circle cx="0" cy="-38" r="1.8" fill="#2b3550"/><circle cx="0" cy="-28" r="1.8" fill="#2b3550"/><path d="M6 -62 q6 -4 8 2" fill="none" stroke="#5a63c9" stroke-width="2"/>`);
+    case 'drum':     return g(`<rect x="-2" y="-36" width="4" height="40" rx="2" fill="#8a5a34" ${L}/><circle cx="0" cy="-40" r="6" fill="#fff" ${L}/>`)+`<g><rect x="22" y="68" width="30" height="18" rx="4" fill="${c}" ${L}/><ellipse cx="37" cy="68" rx="15" ry="4.5" fill="#fff" ${L}/><path d="M24 74 L50 82 M24 82 L50 74" stroke="#ffd23f" stroke-width="2"/></g>`;
+    case 'blaster':  return `<g><path d="M66 58 L74 72 L82 70 L78 58Z" fill="#5a63c9" ${L}/><ellipse cx="82" cy="56" rx="14" ry="9" fill="${c}" ${L}/><rect x="93" y="52" width="12" height="8" rx="3" fill="#ff7a3d" ${L}/><circle cx="80" cy="54" r="3" fill="#fff"/><path d="M74 48 L78 40 L84 48" fill="#ffd23f" ${L}/></g>`;
+    case 'rainbow':  return g(`<rect x="-2.5" y="-44" width="5" height="50" rx="2" fill="#fff" ${L}/>${['#e8473d','#f2c335','#4fb35a','#2fa3d6','#5a63c9'].map((col,i)=>`<path d="M${-16+i*3} -44 A${16-i*3} ${16-i*3} 0 0 1 ${16-i*3} -44" fill="none" stroke="${col}" stroke-width="3"/>`).join('')}<circle cx="0" cy="-46" r="4" fill="#ffd23f" ${L}/>`);
+    case 'dragon':   return `<g><path d="M70 40 Q86 30 88 44 Q80 40 76 48Z" fill="#9be07b" ${L}/><ellipse cx="74" cy="46" rx="10" ry="7" fill="${c}" ${L}/><circle cx="84" cy="38" r="7" fill="${c}" ${L}/><circle cx="86" cy="37" r="1.8" fill="#2b3550"/><path d="M90 40 l5 1" stroke="#2b3550" stroke-width="2" stroke-linecap="round"/><path d="M80 32 l1 -5 l3 4" fill="#ffd23f" ${L}/><path d="M64 48 Q58 52 62 56" fill="none" stroke="${c}" stroke-width="4" stroke-linecap="round"/></g>`;
     default:      return g(`<rect x="-3.5" y="-50" width="7" height="44" rx="2" fill="${c}" ${L}/><rect x="-11" y="-9" width="22" height="6" rx="2" fill="#f5b82e" ${L}/><rect x="-2.5" y="-4" width="5" height="11" rx="2" fill="#5b4636" ${L}/>`);
   }
 }
@@ -753,6 +1078,11 @@ function heroSVG(k){
     case 'viking':  back=`<path d="M27 26 Q8 22 10 0 Q18 16 32 18Z" fill="${b}" ${L}/><path d="M69 26 Q88 22 86 0 Q78 16 64 18Z" fill="${b}" ${L}/>`; front=`<path d="M25 36 A23 23 0 0 1 71 36 Z" fill="${a}" ${L}/><rect x="24" y="30" width="48" height="6" rx="2" fill="#c98608" ${L}/><path d="M56 48 Q66 58 60 70 Q48 74 36 70 Q30 58 40 48 Q48 54 56 48Z" fill="#e0893a" ${L}/>`; break;
     case 'santa':   front=`<path d="M26 28 Q44 -6 76 10 L72 28Z" fill="${a}" ${L}/><circle cx="78" cy="12" r="6" fill="#fff" ${L}/><rect x="22" y="24" width="52" height="10" rx="5" fill="#fff" ${L}/><path d="M27 45 Q30 72 48 74 Q66 72 69 45 Q60 52 48 50 Q36 52 27 45Z" fill="#fff" ${L}/>`; break;
     case 'flower':  back=[0,45,90,135,180,225,270,315].map(d=>`<circle cx="${48+26*Math.cos(d*Math.PI/180)}" cy="${38+26*Math.sin(d*Math.PI/180)}" r="10" fill="${b}" ${L}/>`).join(''); front=`<path d="M27 30 Q48 10 69 30 Q58 22 48 26 Q38 22 27 30Z" fill="${a}"/><circle cx="66" cy="22" r="5" fill="#ffd23f" ${L}/>`; break;
+    case 'mushroom': front=`<path d="M16 32 Q48 -18 80 32 Q48 22 16 32Z" fill="${a}" ${L}/><circle cx="34" cy="16" r="4" fill="${b}"/><circle cx="52" cy="8" r="5" fill="${b}"/><circle cx="66" cy="20" r="3.5" fill="${b}"/>`; break;
+    case 'elf':      back=`<path d="M28 40 L6 24 L30 32Z" fill="${k.skin}" ${L}/><path d="M68 40 L90 24 L66 32Z" fill="${k.skin}" ${L}/>`; front=`<path d="M24 32 Q48 4 72 32 Q48 20 24 32Z" fill="${a}" ${L}/><path d="M64 18 Q80 6 84 18 Q74 22 64 18Z" fill="${b}" ${L}/>`; break;
+    case 'diver':    front=`<circle cx="48" cy="38" r="28" fill="${a}" fill-opacity=".3" ${L}/><path d="M30 22 Q38 14 50 13" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="22" y="58" width="52" height="9" rx="4" fill="${b}" ${L}/><circle cx="21" cy="38" r="4" fill="${b}" ${L}/><circle cx="75" cy="38" r="4" fill="${b}" ${L}/>`; break;
+    case 'snowking': front=`<path d="M30 22 L30 6 L36 14 L42 0 L48 12 L54 0 L60 14 L66 6 L66 22Z" fill="${b}" ${L}/><circle cx="48" cy="17" r="3" fill="#fff"/><rect x="26" y="55" width="44" height="9" rx="4" fill="${a}" ${L}/><path d="M60 60 L66 78 L58 76Z" fill="${a}" ${L}/>`; break;
+    case 'starknight':back=`<path d="M32 56 L16 104 L80 104 L64 56Z" fill="#5a63c9" ${L}/>`; front=`<path d="M24 38 A24 24 0 0 1 72 38 Z" fill="${a}" ${L}/><path d="M48 10 l3 6 6 .8 -4.5 4.2 1.2 6 -5.7 -3 -5.7 3 1.2 -6 -4.5 -4.2 6 -.8Z" fill="${b}" ${L}/><path d="M28 34 H68" stroke="#5ce1ff" stroke-width="3"/>`; break;
     case 'bear':    back=`<circle cx="29" cy="18" r="10" fill="${a}" ${L}/><circle cx="67" cy="18" r="10" fill="${a}" ${L}/><circle cx="29" cy="18" r="5" fill="${b}"/><circle cx="67" cy="18" r="5" fill="${b}"/><circle cx="48" cy="40" r="28" fill="${a}" ${L}/>`; front=cap; break;
   }
   const face = k.head==='ninja'
@@ -770,16 +1100,20 @@ function heroSVG(k){
 }
 function monSVG(m){
   const c=m.c, L=SW;
-  return `<svg viewBox="0 -8 110 108">
-    ${m.horn?`<path d="M22 30 L12 2 L36 22Z M88 30 L98 2 L74 22Z" fill="#f2c335" ${L}/>`:''}
+  return `<svg viewBox="0 -14 110 114">
+    ${m.horn?`<path d="M22 30 L12 2 L36 22Z M88 30 L98 2 L74 22Z" fill="${m.hornC||'#f2c335'}" ${L}/>`:''}
     ${m.big?`<path d="M6 60 L-6 50 L8 44Z M104 60 L116 50 L102 44Z" fill="${c}" ${L}/>`:''}
+    ${m.fins?`<path d="M12 56 Q-8 46 -4 70 Q4 66 12 70Z M98 56 Q118 46 114 70 Q106 66 98 70Z" fill="${m.finC||c}" ${L}/><path d="M48 18 Q55 0 66 18" fill="${m.finC||c}" ${L}/>`:''}
     <path d="M10 92 Q4 40 30 24 Q55 10 80 24 Q106 40 100 92 Q92 84 84 92 Q76 84 68 92 Q60 84 55 92 Q48 84 42 92 Q34 84 26 92 Q18 84 10 92 Z" fill="${c}" ${L}/>
     <path d="M24 70 Q55 86 86 70" fill="none" stroke="rgba(0,0,0,.12)" stroke-width="10" stroke-linecap="round"/>
+    ${m.cap?`<path d="M20 36 Q30 14 55 14 Q80 14 90 36 Q80 28 72 34 Q64 26 55 32 Q46 26 38 34 Q30 28 20 36Z" fill="#ffffff" ${L}/>`:''}
+    ${m.spots?`<circle cx="26" cy="64" r="5" fill="rgba(255,255,255,.45)"/><circle cx="86" cy="60" r="4" fill="rgba(255,255,255,.45)"/><circle cx="78" cy="78" r="3" fill="rgba(255,255,255,.45)"/>`:''}
     <ellipse cx="40" cy="46" rx="11" ry="12" fill="#fff" ${L}/><ellipse cx="72" cy="46" rx="11" ry="12" fill="#fff" ${L}/>
     <circle class="pupil" cx="37" cy="48" r="5" fill="#2b3550"/><circle class="pupil" cx="69" cy="48" r="5" fill="#2b3550"/>
     <path d="M28 31 L49 38 M84 31 L63 38" stroke="#2b3550" stroke-width="4" stroke-linecap="round"/>
     <path d="M32 66 Q56 84 80 66 Q56 74 32 66 Z" fill="#fff" ${L}/>
     <path d="M40 68 l4 7 l4 -6 M64 69 l4 6 l4 -7" fill="none" stroke="#2b3550" stroke-width="2"/>
+    ${m.crown?`<path d="M38 18 L36 0 L46 9 L55 -6 L64 9 L74 0 L72 18Z" fill="#f5b82e" ${L}/><circle cx="55" cy="10" r="3" fill="#e8473d"/>`:''}
   </svg>`;
 }
 const RB_GRAD = `<defs><linearGradient id="rbg" x1="0" y1="1" x2="1" y2="0">${RB.map((c,i)=>`<stop offset="${i/(RB.length-1)}" stop-color="${c}"/>`).join('')}</linearGradient></defs>`;
@@ -889,50 +1223,55 @@ function slashFx(x,y,big,fx=curFx(),box=$('scene')){
 }
 
 
-// ================= staff =================
-const SVGNS='http://www.w3.org/2000/svg', LINE0=132, GAP=16, NX=232;
+// ================= 五線譜（遊戲） =================
+const SVGNS='http://www.w3.org/2000/svg', LINE0=132, GAP=16;
 const yOf = s => LINE0 - s*GAP/2;
 function el(tag,at,p){ const e=document.createElementNS(SVGNS,tag); for(const k in at) e.setAttribute(k,at[k]); (p||$('staff')).appendChild(e); return e }
-function tag(x,y,text,color){
-  const w=text.length*15+12;
-  el('rect',{x:x-w/2,y:y-11,width:w,height:22,rx:11,fill:'#fff',stroke:color,'stroke-width':2.5});
-  el('text',{x,y:y+6,'text-anchor':'middle','font-size':14,'font-weight':900,'font-family':'"Chiron GoRound TC","Noto Sans TC",sans-serif',fill:color}).textContent=text;
+const FONT='"Chiron GoRound TC","Noto Sans TC",sans-serif';
+function pill(p,x,y,text,fill,fs=20){
+  const w=text.length*(fs-1)+18;
+  el('rect',{x:x-w/2,y:y-fs*.9,width:w,height:fs*1.8,rx:fs*.9,fill,stroke:'#2b3550','stroke-width':2.5},p);
+  el('text',{x,y:y+fs*.35,'text-anchor':'middle','font-size':fs,'font-weight':900,'font-family':FONT,fill:'#fff',stroke:'rgba(0,0,0,.35)','stroke-width':1.2,'paint-order':'stroke'},p).textContent=text;
 }
-function drawStaff(k,color,label){
+function drawStaff(seq, states=[], active=-1){
   const s=$('staff'); s.innerHTML='';
   for(let i=0;i<5;i++) el('line',{x1:14,x2:346,y1:yOf(i*2),y2:yOf(i*2),stroke:'#2b3550','stroke-width':2.2});
   el('line',{x1:14,x2:14,y1:yOf(8),y2:yOf(0),stroke:'#2b3550','stroke-width':2.2});
   el('line',{x1:346,x2:346,y1:yOf(8),y2:yOf(0),stroke:'#2b3550','stroke-width':2.2});
   el('text',{x:22,y:yOf(2),'font-size':GAP*4,'font-family':'"Noto Music","Bravura","Segoe UI Symbol",serif',fill:'#2b3550'}).textContent='\u{1D11E}';
   if(prefs.hint){
-    // 基準音：下加一線是ㄉㄡ，第一線是ㄇㄧ（虛線音符＋名牌）
-    el('line',{x1:108,x2:136,y1:yOf(-2),y2:yOf(-2),stroke:'#e8473d','stroke-width':2.2,'stroke-dasharray':'4 3'});
-    el('ellipse',{cx:122,cy:yOf(-2),rx:7.5,ry:5.4,fill:'none',stroke:'#e8473d','stroke-width':2,'stroke-dasharray':'3 2'});
-    tag(88,yOf(-2),'ㄉㄡ','#c4321f');
-    el('ellipse',{cx:182,cy:yOf(0),rx:7.5,ry:5.4,fill:'none',stroke:'#c98608','stroke-width':2,'stroke-dasharray':'3 2'});
-    tag(152,yOf(0),'ㄇㄧ','#a86e00');
+    el('line',{x1:74,x2:100,y1:yOf(-2),y2:yOf(-2),stroke:'#e8473d','stroke-width':2.2,'stroke-dasharray':'4 3'});
+    el('ellipse',{cx:87,cy:yOf(-2),rx:7.5,ry:5.4,fill:'none',stroke:'#e8473d','stroke-width':2,'stroke-dasharray':'3 2'});
+    el('text',{x:87,y:yOf(-2)+20,'text-anchor':'middle','font-size':13,'font-weight':900,'font-family':FONT,fill:'#c4321f'}).textContent='ㄉㄡ';
+    el('ellipse',{cx:116,cy:yOf(0),rx:7.5,ry:5.4,fill:'none',stroke:'#c98608','stroke-width':2,'stroke-dasharray':'3 2'});
+    el('rect',{x:126,y:yOf(0)-8,width:30,height:16,rx:8,fill:'#fff',stroke:'#c98608','stroke-width':1.5});
+    el('text',{x:141,y:yOf(0)+5,'text-anchor':'middle','font-size':12,'font-weight':900,'font-family':FONT,fill:'#a86e00'}).textContent='ㄇㄧ';
   }
-  if(!k) return;
-  const n=NOTES[k], y=yOf(n.step), c=color||'#2b3550';
-  if(n.step<=-2) el('line',{x1:NX-17,x2:NX+17,y1:yOf(-2),y2:yOf(-2),stroke:'#2b3550','stroke-width':2.2});
-  if(n.step<4) el('line',{x1:NX+8.6,x2:NX+8.6,y1:y-1,y2:y-56,stroke:c,'stroke-width':2.6});
-  else         el('line',{x1:NX-8.6,x2:NX-8.6,y1:y+1,y2:y+56,stroke:c,'stroke-width':2.6});
-  el('ellipse',{cx:NX,cy:y,rx:9.6,ry:6.8,transform:`rotate(-22 ${NX} ${y})`,fill:c});
-  if(label){
-    const w=label.length*19+18, lx=NX+24;
-    el('rect',{x:lx,y:y-18,width:w,height:36,rx:18,fill:color,stroke:'#2b3550','stroke-width':2.5});
-    el('text',{x:lx+w/2,y:y+7,'text-anchor':'middle','font-size':20,'font-weight':900,'font-family':'"Chiron GoRound TC","Noto Sans TC",sans-serif',fill:'#fff',stroke:'rgba(0,0,0,.35)','stroke-width':1.2,'paint-order':'stroke'}).textContent=label;
-  }
+  if(!seq||!seq.length) return;
+  const xs = seq.length===1 ? [232] : seq.length===2 ? [200,290] : [180,250,320];
+  seq.forEach((k,i)=>{
+    const n=NOTES[k], x=xs[i], y=yOf(n.step), st=states[i], c=st?st.color:(active>=0 && i!==active ? '#8a93a6' : '#2b3550');
+    if(n.step<=-2) el('line',{x1:x-17,x2:x+17,y1:yOf(-2),y2:yOf(-2),stroke:'#2b3550','stroke-width':2.2});
+    if(n.step<4) el('line',{x1:x+8.6,x2:x+8.6,y1:y-1,y2:y-56,stroke:c,'stroke-width':2.6});
+    else         el('line',{x1:x-8.6,x2:x-8.6,y1:y+1,y2:y+56,stroke:c,'stroke-width':2.6});
+    el('ellipse',{cx:x,cy:y,rx:9.6,ry:6.8,transform:`rotate(-22 ${x} ${y})`,fill:c});
+    if(i===active && seq.length>1) el('path',{d:`M${x-8} 22 L${x+8} 22 L${x} 34Z`,fill:'#f5b82e',stroke:'#2b3550','stroke-width':2});
+    if(st && st.label){
+      if(seq.length===1){ const w=st.label.length*19+18; pill(s, x+24+w/2, y, st.label, st.color) }
+      else pill(s, x, 176, st.label, st.color, 15);
+    }
+  });
 }
 const colorOf = k => getComputedStyle(document.documentElement).getPropertyValue('--c-'+k).trim();
 
 // ================= state =================
-const S = {mode:'solo', lv:0, power:0, combo:0, best:0, right:0, wrong:0, hero:0, mon:LANE, cur:null, last:null, busy:false,
-  tId:0, qStart:0, earned:0, sess:{}, phase2:false, monId:null, qWrong:false,
-  team:null, locked:{A:false,B:false}, timerOn:true, sfx:true, music:true};
-const goal = () => Math.max(4, Math.min(30, Number(T.goal)||10));
-const timeLimit = () => Math.max(3, Math.min(30, Number(T.times[S.lv])||10));
+const S = {mode:'solo', stage:null, region:0, power:0, combo:0, best:0, right:0, wrong:0, hero:0, mon:LANE,
+  seq:[], pos:0, states:[], last:null, busy:false, tId:0, qStart:0, earned:0, sess:{}, phase2:false, monId:null, qWrong:false,
+  team:null, locked:{A:false,B:false}, timerOn:true, sfx:true, music:true, playing:false};
 const teamName = t => (t==='A'?T.teamA:T.teamB) || (t==='A'?'紅隊':'藍隊');
+const regionOf = () => REGIONS[S.region];
+const goal = () => S.mode==='team' ? 10 : S.stage.goal;
+const timeMul = () => Number(T.timeMul)||1;
 
 // ================= keys =================
 function makeKey(k, onClick, idPrefix){
@@ -949,7 +1288,7 @@ KEYS.forEach(k=>{
   $('keysB').appendChild(makeKey(k,(k,b)=>answerTeam('B',k,b),'kB-'));
 });
 function setKeys(){
-  const ok=new Set(LEVELS[S.lv].pool);
+  const ok=new Set(regionOf().pool);
   KEYS.forEach(k=>['key-','kA-','kB-'].forEach(p=>$(p+k).disabled=!ok.has(k)));
 }
 function clearKeyMarks(){ document.querySelectorAll('.key').forEach(b=>b.classList.remove('show','wrong')) }
@@ -961,33 +1300,51 @@ document.addEventListener('keydown',e=>{
   if((e.key==='Enter'||e.key===' ') && !$('btnNext').hidden){ e.preventDefault(); nextQ() }
 });
 
-// ================= scenes =================
+// ================= 場景 =================
 function rng(seed){ return ()=>{ seed=(seed*16807)%2147483647; return seed/2147483647 } }
-function setScene(i){
-  $('scene').className='scene lv'+(i+1);
-  const r=rng(7+i*31); let s='';
-  if(i===0){
+function setScene(ri){
+  const R=REGIONS[ri]; $('scene').className='scene r-'+R.id;
+  const r=rng(7+ri*31); let s='', wx='';
+  if(R.id==='meadow'){
     s=`<circle cx="870" cy="46" r="26" fill="#ffe27a"/><ellipse cx="200" cy="210" rx="330" ry="120" fill="#a9d89a"/><ellipse cx="780" cy="215" rx="390" ry="100" fill="#b8e0a8"/>`;
     [[120,40],[420,26],[640,52]].forEach(([x,y])=>{ s+=`<g fill="#fff" opacity=".9"><ellipse cx="${x}" cy="${y}" rx="38" ry="13"/><ellipse cx="${x+22}" cy="${y-8}" rx="22" ry="13"/></g>` });
-  }else if(i===1){
+    for(let k=0;k<14;k++){ const x=40+k*70+r()*30; s+=`<g transform="translate(${x} ${186+r()*10})"><circle r="5" fill="${['#ff8fbf','#ffd23f','#ffffff'][k%3]}"/><circle r="2" fill="#f28a2e"/></g>` }
+  }else if(R.id==='forest'){
     s=`<ellipse cx="500" cy="230" rx="700" ry="120" fill="#8cc79a"/>`;
     for(let k=0;k<16;k++){ const x=k*66-20+r()*30, h=90+r()*70; s+=`<path d="M${x} 200 L${x+34} ${200-h} L${x+68} 200Z" fill="#5aa36a"/>` }
     for(let k=0;k<11;k++){ const x=k*96-10+r()*30, h=110+r()*60; s+=`<rect x="${x+26}" y="180" width="10" height="20" fill="#6b4a2f"/><path d="M${x} 186 L${x+31} ${186-h} L${x+62} 186Z" fill="#2f7a45"/>` }
+    s+=`<rect x="0" y="0" width="1000" height="200" fill="#fff" opacity=".18"/>`;
+  }else if(R.id==='sea'){
+    for(let k=0;k<6;k++){ const x=80+k*170; s+=`<path d="M${x} 0 L${x+60} 0 L${x+140} 200 L${x+40} 200Z" fill="#fff" opacity=".08"/>` }
+    for(let k=0;k<14;k++){ const x=20+k*72+r()*20, h=60+r()*70; s+=`<path d="M${x} 200 Q${x-14} ${200-h*.5} ${x} ${200-h} Q${x+14} ${200-h*.5} ${x+4} 200Z" fill="#2f9e5b" opacity=".85"/>` }
+    for(let k=0;k<6;k++){ const x=60+k*170+r()*40; s+=`<g fill="#ff7f6b"><rect x="${x}" y="160" width="8" height="40" rx="4"/><rect x="${x-14}" y="172" width="8" height="28" rx="4"/><rect x="${x+14}" y="168" width="8" height="32" rx="4"/></g>` }
+    wx='bub';
+  }else if(R.id==='snow'){
+    s=`<path d="M-40 200 L160 40 L360 200Z" fill="#a9c7e0"/><path d="M110 80 L160 40 L210 80 L185 74 L160 90 L135 74Z" fill="#fff"/>`;
+    s+=`<path d="M300 200 L560 20 L820 200Z" fill="#93b6d6"/><path d="M490 68 L560 20 L630 68 L600 60 L560 80 L522 60Z" fill="#fff"/>`;
+    s+=`<path d="M680 200 L880 60 L1080 200Z" fill="#a9c7e0"/><path d="M836 92 L880 60 L924 92 L900 86 L880 100 L860 86Z" fill="#fff"/>`;
+    for(let k=0;k<9;k++){ const x=k*120+r()*40; s+=`<path d="M${x} 196 L${x+20} 150 L${x+40} 196Z" fill="#3f7a5a"/><path d="M${x+6} 170 L${x+20} 150 L${x+34} 170Z" fill="#fff"/>` }
+    wx='snow';
   }else{
     s=`<circle cx="160" cy="44" r="22" fill="#fff1c9" opacity=".9"/>`;
     const cx=640, base=200;
-    s+=`<g fill="#4a3d6b">`;
-    s+=`<rect x="${cx-150}" y="${base-90}" width="300" height="90"/>`;
+    s+=`<g fill="#4a3d6b"><rect x="${cx-150}" y="${base-90}" width="300" height="90"/>`;
     for(let k=0;k<10;k++) s+=`<rect x="${cx-150+k*31}" y="${base-102}" width="18" height="14"/>`;
-    [[cx-190,150],[cx+150,150],[cx-30,175]].forEach(([x,h])=>{ s+=`<rect x="${x}" y="${base-h}" width="${x===cx-30?60:40}" height="${h}"/><path d="M${x-8} ${base-h} L${x+(x===cx-30?30:20)} ${base-h-46} L${x+(x===cx-30?68:48)} ${base-h}Z" fill="#3a2f57"/>` });
+    [[cx-190,150,40],[cx+150,150,40],[cx-30,175,60]].forEach(([x,h,w])=>{ s+=`<rect x="${x}" y="${base-h}" width="${w}" height="${h}"/><path d="M${x-8} ${base-h} L${x+w/2} ${base-h-46} L${x+w+8} ${base-h}Z" fill="#3a2f57"/>` });
     s+=`</g><g fill="#ffd27a">`;
     [[cx-176,90],[cx+164,96],[cx-12,120],[cx+12,120],[cx-100,150],[cx+90,150]].forEach(([x,y])=>{ s+=`<rect x="${x}" y="${y}" width="10" height="16" rx="5"/>` });
     s+=`</g><path d="M${cx-22} 200 V170 Q${cx} 152 ${cx+22} 170 V200Z" fill="#2b2240"/>`;
   }
   $('decor').innerHTML=`<svg viewBox="0 0 1000 200" preserveAspectRatio="xMidYMax slice">${s}</svg>`;
+  const w=$('weather'); w.className='weather'+(wx?' '+wx:''); w.innerHTML='';
+  if(wx && !reduce){
+    for(let k=0;k<22;k++){ const i=document.createElement('i'), sz=wx==='snow'?3+Math.random()*5:6+Math.random()*10;
+      Object.assign(i.style,{left:Math.random()*100+'%',width:sz+'px',height:sz+'px',animationDuration:(4+Math.random()*5)+'s',animationDelay:(-Math.random()*8)+'s'});
+      w.appendChild(i) }
+  }
 }
 
-// ================= scene state =================
+// ================= 角色 =================
 const cellX = c => 9 + c*(82/LANE);
 function closeness(){ const gap=S.mon-S.hero-1; return 1-gap/(LANE-1) }
 function place(){
@@ -1001,17 +1358,27 @@ function place(){
   }
   $('hero').style.left=cellX(S.hero)+'%';
   $('monster').style.left=cellX(S.mon)+'%';
-  const c=closeness();
-  $('monster').style.setProperty('--s', (1+c*.55).toFixed(3));
+  const c=closeness(), big=curMon().big?1.15:1;
+  $('monster').style.setProperty('--s', ((1+c*.5)*big).toFixed(3));
   $('vign').style.opacity = c>.4 ? ((c-.4)/.6*.85).toFixed(2) : 0;
   $('dark').style.opacity = (c*.45).toFixed(2);
   BGM.danger = (c>=.7 || S.phase2) ? 1 : 0;
   document.querySelectorAll('#monBod .pupil').forEach(p=>p.setAttribute('fill', c>=.7?'#c4161c':'#2b3550'));
 }
+const curSkin = () => SKINS.find(s=>s.id===save.skin)||SKINS[0];
+function heroFor(skin, wpnId){
+  const W=WEAPONS.find(w=>w.id===wpnId);
+  return (W && W.id!=='auto') ? Object.assign({}, skin, {wpn:W.draw, w:W.color}) : skin;
+}
+function effWeapon(){
+  const W=WEAPONS.find(w=>w.id===save.wpn);
+  if(W && W.id!=='auto') return W;
+  return DRAW_STYLE[curSkin().wpn] || {style:'melee'};
+}
 const teamSkin = t => Object.assign({}, SKINS[0], t==='A' ? {body:'#d9473f', b:'#ffd23f'} : {body:'#2f7fd6', b:'#ffffff', a:'#e4ebf2'});
 function renderHero(){
   if(S.mode==='team'){ $('heroBod').innerHTML=heroSVG(teamSkin('A')); $('hero2Bod').innerHTML=heroSVG(teamSkin('B')); return }
-  $('heroBod').innerHTML=heroSVG(SKINS.find(s=>s.id===save.skin)||SKINS[0]);
+  $('heroBod').innerHTML=heroSVG(heroFor(curSkin(), save.wpn));
 }
 const curMon = () => MONS.find(m=>m.id===S.monId)||MONS[0];
 function renderMon(enraged){
@@ -1020,11 +1387,11 @@ function renderMon(enraged){
   $('monster').classList.toggle('enraged',!!enraged);
 }
 function hud(){
-  const g=goal();
   if(S.mode==='team'){
+    const g=goal();
     ['A','B'].forEach(t=>{ const d=S.team[t]; $('t'+t+'fill').style.width=Math.min(100,d.power/g*100)+'%'; $('t'+t+'cb').textContent=d.combo>1?`${d.combo}連`:'' });
-  }else{
-    const boss=!!LEVELS[S.lv].boss;
+  }else if(S.stage){
+    const g=goal(), boss=S.stage.boss;
     $('meter').classList.toggle('boss',boss);
     $('pwLabel').textContent = boss ? (S.phase2?'魔王血條 2/2':'魔王血條 1/2') : '勇氣值';
     const pct = boss ? Math.max(0,100-S.power/g*100) : Math.min(100,S.power/g*100);
@@ -1039,13 +1406,9 @@ function addCoins(n){
   $('coinNum').textContent=save.coins; const c=$('coins'); c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop'); sCoin();
 }
 
-// ================= badges =================
+// ================= 徽章 =================
 let toastQ=[], toasting=false;
-function award(id){
-  if(!player.name && !save) return;
-  if(save.badges.includes(id)) return;
-  save.badges.push(id); toastQ.push(id); runToast();
-}
+function award(id){ if(save.badges.includes(id)) return; save.badges.push(id); toastQ.push(id); runToast() }
 async function runToast(){
   if(toasting) return; toasting=true;
   while(toastQ.length){
@@ -1061,27 +1424,95 @@ async function runToast(){
 }
 function checkCollect(){
   if(save.owned.length>=5) award('skin5');
+  if(save.wpnOwned.length>=4) award('wpn3');
   if(save.fxOwned.length>=3) award('fx3');
   if(MONS.every(m=>save.dex[m.id])) award('dex');
-  if([1,2,3].every(n=>(save.stars[n]||0)>=3)) award('stars');
+  if(REGIONS.some((R,ri)=>STAGES.filter(s=>s.r===ri).every(s=>(save.prog[s.id]||0)>=3))) award('stars');
+  if(LESSONS.every(l=>save.practice[l.id])) award('practice');
 }
 
-// ================= attacks =================
-async function heroAttack(big, heroEl=$('hero'), dir=1){
-  const hb=heroEl.querySelector('.bod'), h=centerOf(heroEl), m=centerOf($('monster'));
-  const dx=dir*Math.max(10, Math.abs(m.x-h.x) - m.w*.55);
-  hb.animate([{transform:'translateX(0)'},{transform:`translateX(${-dir*10}px) scaleX(.9)`,offset:.2},{transform:`translateX(${dx}px) rotate(${dir*10}deg)`,offset:.55},{transform:`translateX(${dx}px) rotate(${-dir*14}deg)`,offset:.7},{transform:'translateX(0)'}],{duration:620,easing:'cubic-bezier(.4,0,.2,1)'});
-  await wait(330);
-  const fx=curFxFor(heroEl);
+// ================= 攻擊 =================
+function impact(big, fx, dir, slash){
+  const m=centerOf($('monster'));
   sFx(fx.snd,big); sHit(big);
   fxExtra($('scene'), m.x, m.y, fx);
-  slashFx(m.x, m.y, big, fx); flash(big?.6:.35, 140); shake(big?16:9, big?420:300);
+  if(slash) slashFx(m.x, m.y, big, fx);
+  flash(big?.6:.35, 140); shake(big?16:9, big?420:300);
   fxBurst($('scene'), m.x, m.y, big?20:12, fx, big?110:80);
   $('monBod').animate([{transform:'translateX(0)',filter:'brightness(3) saturate(0)'},{transform:`translateX(${dir*(big?40:24)}px) rotate(${dir*14}deg) scale(1.1,.85)`,filter:'brightness(2.2) saturate(.2)',offset:.25},{transform:`translateX(${dir*8}px) rotate(${-dir*4}deg)`,filter:'none',offset:.6},{transform:'translateX(0)',filter:'none'}],{duration:520,easing:'ease-out'});
   fxText(big?'會心一擊！':fx.text, m.x, m.y-m.h*.6, big?'gold':'');
 }
-const curFxFor = heroEl => S.mode==='team' ? FX[heroEl.id==='hero'?1:2] : curFx();
-
+function projSVG(kind){
+  switch(kind){
+    case 'note':      return `<svg viewBox="0 0 20 20">${partSVG('note',RB[Math.floor(Math.random()*RB.length)])}</svg>`;
+    case 'bubble':    return `<svg viewBox="0 0 20 20">${partSVG('bubble','#8fd8ff')}</svg>`;
+    case 'boomerang': return `<svg viewBox="0 0 40 40"><path d="M6 32 L14 6 L22 8 L16 24 L34 18 L34 26Z" fill="#f28a2e" stroke="#2b3550" stroke-width="2.5" stroke-linejoin="round"/></svg>`;
+    case 'yoyo':      return `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="#ff5c8a" stroke="#2b3550" stroke-width="3"/><circle cx="20" cy="20" r="5" fill="#fff" stroke="#2b3550" stroke-width="2"/></svg>`;
+    default:          return `<svg viewBox="0 0 20 20">${partSVG('star','#ffd23f')}</svg>`;
+  }
+}
+function spawnProj(kind, from, to, dur, delay, size, back){
+  const d=document.createElement('div'); d.className='proj'; d.innerHTML=projSVG(kind);
+  Object.assign(d.style,{left:from.x+'px',top:from.y+'px',width:size+'px',height:size+'px',margin:`${-size/2}px 0 0 ${-size/2}px`});
+  $('scene').appendChild(d);
+  const dx=to.x-from.x, dy=to.y-from.y, spin=kind==='boomerang'||kind==='yoyo'||kind==='star'?720:0, wob=kind==='bubble'?18:0;
+  const k=[{transform:'translate(0,0) rotate(0deg) scale(.6)',opacity:1},{transform:`translate(${dx*.5}px,${dy*.5-40+wob}px) rotate(${spin/2}deg) scale(1.1)`,opacity:1,offset:back?.22:.5},{transform:`translate(${dx}px,${dy}px) rotate(${spin}deg) scale(1)`,opacity:1,offset:back?.45:1}];
+  if(back) k.push({transform:`translate(${dx*.4}px,${dy*.4+30}px) rotate(${spin*1.5}deg) scale(.9)`,opacity:1,offset:.75},{transform:`translate(0,0) rotate(${spin*2}deg) scale(.6)`,opacity:0,offset:1});
+  const a=d.animate(k,{duration:back?dur*2.2:dur,delay,easing:'ease-in-out',fill:'backwards'});
+  a.onfinish=()=>d.remove();
+}
+async function heroAttack(big, heroEl=$('hero'), dir=1){
+  const hb=heroEl.querySelector('.bod'), h=centerOf(heroEl), m=centerOf($('monster'));
+  const W = S.mode==='team' ? {style:'melee'} : effWeapon();
+  const fx = S.mode==='team' ? FX[heroEl.id==='hero'?1:2] : curFx();
+  const hand={x:h.x+dir*h.w*.35, y:h.y-h.h*.05};
+  if(W.style==='proj'){
+    hb.animate([{transform:'translateX(0)'},{transform:`translateX(${-dir*8}px) rotate(${-dir*8}deg)`,offset:.35},{transform:`translateX(${dir*10}px) rotate(${dir*6}deg)`,offset:.6},{transform:'translateX(0)'}],{duration:520});
+    sfx(()=>osc(500,.25,'triangle',.12,0,null,1300));
+    await wait(200);
+    const n = W.proj==='note'||W.proj==='bubble' ? 3 : 1, size = W.proj==='boomerang'||W.proj==='yoyo' ? 34 : 30, back = W.proj==='boomerang'||W.proj==='yoyo';
+    for(let i=0;i<n;i++) spawnProj(W.proj, hand, {x:m.x+(i-1)*8, y:m.y+(i-1)*10}, 380, i*90, big?size*1.3:size, back);
+    await wait(back?380:380); impact(big, fx, dir, false);
+    if(n>1){ await wait(90); fxBurst($('scene'), m.x, m.y, 6, fx, 60) }
+  }else if(W.style==='beam'){
+    hb.animate([{transform:'translateX(0)'},{transform:`translateX(${-dir*6}px)`,offset:.2},{transform:`translateX(${-dir*14}px)`,offset:.4},{transform:'translateX(0)'}],{duration:600});
+    sfx(()=>{ osc(1400,.35,'sawtooth',.07,0,null,300); osc(900,.35,'square',.04,0,null,200) });
+    const b=document.createElement('div'); b.className='beam';
+    const len=Math.abs(m.x-hand.x);
+    const grad = W.beam==='rainbow' ? `linear-gradient(180deg,${RB.join(',')})` : `linear-gradient(180deg,${W.beam[0]},${W.beam[1]} 50%,${W.beam[0]})`;
+    Object.assign(b.style,{left:(dir>0?hand.x:m.x)+'px',top:(hand.y-8)+'px',width:len+'px',background:grad,boxShadow:`0 0 14px ${W.beam==='rainbow'?'#fff':W.beam[0]}`,transformOrigin:dir>0?'left center':'right center'});
+    $('scene').appendChild(b);
+    b.animate([{transform:'scaleX(0)',opacity:1},{transform:'scaleX(1)',opacity:1,offset:.25},{transform:'scaleX(1) scaleY(1.4)',opacity:.9,offset:.5},{transform:'scaleX(1) scaleY(.2)',opacity:0}],{duration:560}).onfinish=()=>b.remove();
+    await wait(150); impact(big, fx, dir, false);
+  }else if(W.style==='wave'){
+    hb.animate([{transform:'translateY(0)'},{transform:'translateY(-14%)',offset:.3},{transform:'translateY(0) scale(1.08,.92)',offset:.6},{transform:'translateY(0)'}],{duration:520});
+    sfx(()=>{ osc(80,.4,'sine',.5,0,null,40); noise(.2,.3,0,null,200); osc(80,.4,'sine',.4,.12,null,40) });
+    for(let i=0;i<3;i++){
+      const r=document.createElement('div'); r.className='ring'; const sz=24;
+      Object.assign(r.style,{left:(hand.x-sz/2)+'px',top:(hand.y-sz/2)+'px',width:sz+'px',height:sz+'px',borderColor:i%2?'#ff7a3d':'#ffd23f'});
+      $('scene').appendChild(r);
+      r.animate([{transform:'translate(0,0) scale(.5)',opacity:1},{transform:`translate(${m.x-hand.x}px,${m.y-hand.y}px) scale(3)`,opacity:.9,offset:.8},{transform:`translate(${m.x-hand.x}px,${m.y-hand.y}px) scale(4)`,opacity:0}],{duration:520,delay:i*110,fill:'backwards',easing:'ease-out'}).onfinish=()=>r.remove();
+    }
+    await wait(420); impact(big, fx, dir, false);
+  }else if(W.style==='summon'){
+    const d=document.createElement('div'); d.className='proj';
+    d.innerHTML=`<svg viewBox="0 0 60 50"><path d="M18 22 Q4 2 26 10 Q20 16 22 24Z" fill="#9be07b" stroke="#2b3550" stroke-width="2.5"/><path d="M34 22 Q54 0 44 20Z" fill="#9be07b" stroke="#2b3550" stroke-width="2.5"/><ellipse cx="28" cy="30" rx="16" ry="11" fill="#7be07b" stroke="#2b3550" stroke-width="3"/><circle cx="44" cy="22" r="9" fill="#7be07b" stroke="#2b3550" stroke-width="3"/><circle cx="47" cy="20" r="2" fill="#2b3550"/><path d="M12 32 Q2 34 6 42" fill="none" stroke="#7be07b" stroke-width="5" stroke-linecap="round"/><path d="M40 13 l2 -6 l3 5" fill="#ffd23f" stroke="#2b3550" stroke-width="1.5"/></svg>`;
+    const sz=big?78:62; Object.assign(d.style,{left:h.x+'px',top:(h.y-h.h*.6)+'px',width:sz+'px',height:sz+'px',margin:`${-sz/2}px 0 0 ${-sz/2}px`});
+    $('scene').appendChild(d);
+    sfx(()=>{ osc(600,.3,'square',.06,0,null,900); osc(300,.4,'sawtooth',.05,.2,null,150) });
+    const tx=m.x-h.x-dir*m.w*.6, ty=(m.y-m.h*.4)-(h.y-h.h*.6), fl=dir<0?' scaleX(-1)':'';
+    d.animate([{transform:`translate(0,0) scale(.3)${fl}`,opacity:0},{transform:`translate(${tx*.5}px,${ty-50}px) scale(1)${fl}`,opacity:1,offset:.4},{transform:`translate(${tx}px,${ty}px) scale(1.1)${fl}`,opacity:1,offset:.55},{transform:`translate(${tx}px,${ty}px) scale(1)${fl}`,opacity:1,offset:.8},{transform:`translate(${tx*.3}px,${ty-90}px) scale(.6)${fl}`,opacity:0}],{duration:1300,easing:'ease-in-out'}).onfinish=()=>d.remove();
+    await wait(720);
+    fxBurst($('scene'), m.x-dir*m.w*.2, m.y-m.h*.1, 14, Object.assign({},fx,{parts:['flame'],cols:['#ff6a2b','#ffb02e','#ffe066']}), 70);
+    sfx(()=>noise(.4,.4,0,null,150));
+    impact(big, fx, dir, false);
+  }else{
+    const dx=dir*Math.max(10, Math.abs(m.x-h.x) - m.w*.55);
+    hb.animate([{transform:'translateX(0)'},{transform:`translateX(${-dir*10}px) scaleX(.9)`,offset:.2},{transform:`translateX(${dx}px) rotate(${dir*10}deg)`,offset:.55},{transform:`translateX(${dx}px) rotate(${-dir*14}deg)`,offset:.7},{transform:'translateX(0)'}],{duration:620,easing:'cubic-bezier(.4,0,.2,1)'});
+    await wait(330);
+    impact(big, fx, dir, true);
+  }
+}
 async function monsterAdvance(adjacent){
   const mb=$('monBod');
   sGrowl();
@@ -1124,7 +1555,7 @@ async function monsterDefeat(){
 async function bossEnrage(){
   S.phase2=true;
   const m=centerOf($('monster'));
-  say('魔王生氣了！第二階段！','bad');
+  say(`${curMon().name}生氣了！第二階段！`,'bad');
   sGrowl(); sBoom();
   $('flash').style.background='#ff3b2e'; flash(.55,500); setTimeout(()=>$('flash').style.background='#fff',520);
   shake(26,800);
@@ -1134,39 +1565,51 @@ async function bossEnrage(){
   await wait(900);
 }
 
-// ================= questions =================
+// ================= 出題 =================
 function weightOf(k){
   const c=classStats[k]||{}, p=save.notes[k]||{}, s=S.sess[k]||{};
   const cr=(c.wrong||0)/((c.asked||0)+4), pr=(p.wrong||0)/((p.asked||0)+3);
   return 1 + cr*4 + (S.mode==='solo'?pr*3:0) + (s.wrong?1:0);
 }
-function pick(){
-  const pool=LEVELS[S.lv].pool.filter(k=>pool1(k));
-  function pool1(k){ return LEVELS[S.lv].pool.length<2 || k!==S.last }
+function pickOne(exclude){
+  const all=regionOf().pool, pool=all.length>1 ? all.filter(k=>k!==exclude) : all;
   const w=pool.map(weightOf), sum=w.reduce((a,b)=>a+b,0);
   let r=Math.random()*sum;
   for(let i=0;i<pool.length;i++){ r-=w[i]; if(r<=0) return pool[i] }
   return pool[pool.length-1];
+}
+function makeSeq(){
+  const lens = S.mode==='team' ? [1] : S.stage.seq;
+  const n = lens[Math.floor(Math.random()*lens.length)];
+  const seq=[]; let last=S.last;
+  for(let i=0;i<n;i++){ const k=pickOne(last); seq.push(k); last=k }
+  S.last=last; return seq;
 }
 function recordNote(k, wrong){
   const s=S.sess[k]||(S.sess[k]={asked:0,wrong:0}); s.asked++; if(wrong) s.wrong++;
   if(S.mode==='solo'){ const p=save.notes[k]||(save.notes[k]={asked:0,wrong:0}); p.asked++; if(wrong) p.wrong++ }
 }
 function missedText(){
-  const list=Object.entries(S.sess).filter(([k,v])=>v.wrong>0).sort((a,b)=>b[1].wrong-a[1].wrong);
-  return list.map(([k,v])=>`${zyName(k)}×${v.wrong}`).join('、');
+  return Object.entries(S.sess).filter(([k,v])=>v.wrong>0).sort((a,b)=>b[1].wrong-a[1].wrong).map(([k,v])=>`${zyName(k)}×${v.wrong}`).join('、');
 }
 function nextQ(){
+  if(!S.playing) return;
   $('btnNext').hidden=true; $('msg').hidden=true; clearKeyMarks();
   S.locked={A:false,B:false}; $('tkA').classList.remove('locked'); $('tkB').classList.remove('locked');
-  S.cur=pick(); S.last=S.cur; S.busy=false; S.qWrong=false; S.qStart=performance.now();
-  drawStaff(S.cur); startTimer();
+  S.seq=makeSeq(); S.pos=0; S.states=[]; S.busy=false; S.qWrong=false; S.qStart=performance.now();
+  $('seqhint').hidden = S.seq.length<2;
+  if(S.seq.length>1) $('seqhint').textContent=`依序答 ${S.seq.length} 個音`;
+  drawStaff(S.seq, S.states, S.seq.length>1?0:-1); startTimer();
+}
+function qTime(){
+  const base = S.mode==='team' ? regionOf().t : S.stage.time;
+  return Math.max(3, base*(1+0.7*(S.seq.length-1))*timeMul());
 }
 function startTimer(){
   cancelAnimationFrame(S.tId);
   const bar=$('timerFill'); $('timer').classList.toggle('off',!S.timerOn);
   if(!S.timerOn) return;
-  const lim=timeLimit()*1000, t0=performance.now();
+  const lim=qTime()*1000, t0=performance.now();
   const tick=now=>{
     const r=Math.max(0,1-(now-t0)/lim);
     bar.style.transform=`scaleX(${r})`; bar.style.background=r>.5?'var(--good)':r>.25?'var(--gold)':'var(--danger)';
@@ -1177,57 +1620,69 @@ function startTimer(){
 }
 function stopTimer(){ cancelAnimationFrame(S.tId); $('timer').classList.add('off') }
 function say(t,kind){ const m=$('msg'); m.textContent=t; m.className='msg '+kind; m.hidden=false }
+const labelState = k => ({color:colorOf(k), label:zyName(k)});
 
 // ---------- 單人 ----------
 async function answer(k,btn){
-  if(S.mode!=='solo' || S.busy || !S.cur) return;
-  S.busy=true; stopTimer();
-  const n=NOTES[S.cur], cur=S.cur, g=goal(), dt=performance.now()-S.qStart;
-  drawStaff(cur, colorOf(cur), zyName(cur));
+  if(S.mode!=='solo' || S.busy || !S.seq.length || !S.playing) return;
+  const cur=S.seq[S.pos], n=NOTES[cur];
   if(k===cur){
-    recordNote(cur,false);
+    recordNote(cur,false); save.right++;
+    S.states[S.pos]=labelState(cur); S.pos++;
     sNote(n.f);
-    S.right++; S.combo++; S.best=Math.max(S.best,S.combo); save.right++; save.best=Math.max(save.best,S.combo);
+    if(S.pos<S.seq.length){
+      drawStaff(S.seq, S.states, S.pos);
+      say(`${zyName(cur)}！還有 ${S.seq.length-S.pos} 個`,'good');
+      return;
+    }
+    S.busy=true; stopTimer();
+    const len=S.seq.length, g=goal(), dt=performance.now()-S.qStart;
+    drawStaff(S.seq, S.states, -1);
+    S.right+=len; S.combo++; S.best=Math.max(S.best,S.combo); save.best=Math.max(save.best,S.combo);
     if(S.combo>=5) award('c5'); if(S.combo>=10) award('c10'); if(S.combo>=20) award('c20');
-    if(dt<2000) award('fast'); if(save.right>=100) award('q100');
-    const big = S.combo%3===0;
-    S.power += big?2:1;
-    say(big?`${S.combo} 連擊！會心一擊！`:`答對了！是 ${zyName(cur)}`,'good');
+    if(len===1 && dt<2000) award('fast'); if(len===3) award('seq3'); if(save.right>=100) award('q100');
+    const big = S.combo%3===0 || len>=3;
+    S.power += len + (S.combo%3===0?1:0);
+    say(big?(len>=3?'三音連發！':`${S.combo} 連擊！會心一擊！`):(len>1?'全部答對！':`答對了！是 ${zyName(cur)}`),'good');
     const c=$('combo'); c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop');
     hud();
     await heroAttack(big);
-    addCoins(big?15:10);
-    const h=centerOf($('hero')); fxText(`+${big?15:10}`, h.x, h.y-h.h*.7, 'gold');
+    const coins=10*len+(big?5:0); addCoins(coins);
+    const h=centerOf($('hero')); fxText(`+${coins}`, h.x, h.y-h.h*.7, 'gold');
     persistLocal();
     await wait(250);
+    if(!S.playing) return;
     if(S.power>=g){ await win(); return }
-    if(LEVELS[S.lv].boss && !S.phase2 && S.power>=g/2){ await bossEnrage() }
+    if(S.stage.boss && !S.phase2 && S.power>=g/2){ await bossEnrage() }
     if(S.hero+1<S.mon){ S.hero++; sStep(); $('heroBod').animate([{transform:'translateY(0)'},{transform:'translateY(-18%)'},{transform:'translateY(0)'}],{duration:380}); }
     else if(S.mon<LANE){ S.mon++; }
     place();
     await wait(420);
     nextQ();
   }else{
+    S.busy=true; stopTimer();
     recordNote(cur,true);
     S.wrong++; S.combo=0; hud();
+    S.seq.forEach((kk,i)=>{ if(!S.states[i]) S.states[i]=labelState(kk) });
+    drawStaff(S.seq, S.states, -1);
     if(btn) btn.classList.add('wrong');
     $('key-'+cur).classList.add('show');
     say(k?`這是 ${zyName(cur)} 喔`:`時間到！這是 ${zyName(cur)}`,'bad');
     await monsterAdvance(S.mon-1<=S.hero);
-    sNote(n.f);
+    S.seq.forEach((kk,i)=>setTimeout(()=>sNote(NOTES[kk].f), i*450));
     $('btnNext').hidden=false; $('btnNext').focus({preventScroll:true});
   }
 }
 
 // ---------- 分組 ----------
 async function answerTeam(t,k,btn){
-  if(S.mode!=='team' || S.busy || !S.cur || S.locked[t]) return;
-  const cur=S.cur, n=NOTES[cur], d=S.team[t], g=goal();
+  if(S.mode!=='team' || S.busy || !S.seq.length || S.locked[t] || !S.playing) return;
+  const cur=S.seq[0], n=NOTES[cur], d=S.team[t], g=goal();
   if(k===cur){
     S.busy=true; stopTimer();
     recordNote(cur, S.qWrong);
     d.right++; d.combo++; const big=d.combo%3===0; d.power+=big?2:1;
-    drawStaff(cur, colorOf(cur), zyName(cur));
+    drawStaff(S.seq,[labelState(cur)]);
     sNote(n.f);
     say(big?`${teamName(t)} ${d.combo} 連擊！`:`${teamName(t)} 答對了！`,'good');
     hud();
@@ -1249,17 +1704,19 @@ async function answerTeam(t,k,btn){
 function reveal(timeout){
   if(S.busy) return;
   S.busy=true; stopTimer();
-  const cur=S.cur;
+  const cur=S.seq[0];
   recordNote(cur, true);
-  drawStaff(cur, colorOf(cur), zyName(cur));
+  drawStaff(S.seq,[labelState(cur)]);
   $('kA-'+cur).classList.add('show'); $('kB-'+cur).classList.add('show');
   say(timeout?`時間到！這是 ${zyName(cur)}`:`兩組都答錯了，這是 ${zyName(cur)}`,'bad');
   setTimeout(()=>sNote(NOTES[cur].f),300);
   $('btnNext').hidden=false;
 }
 
-// ================= win =================
+// ================= 過關 =================
 const starsFor = (r,w) => { const acc=r/Math.max(1,r+w); return acc>=.9?3:acc>=.7?2:1 };
+const stageLabel = st => `${REGIONS[st.r].name} ${st.r+1}-${st.n}`;
+function nextStageOf(st){ const i=STAGES.indexOf(st); return STAGES[i+1]||null }
 function showWin(o){
   $('winStars').textContent=o.stars||''; $('winStars').hidden=!o.stars;
   $('winTitle').textContent=o.title;
@@ -1268,88 +1725,170 @@ function showWin(o){
   $('winMissed').textContent = mt ? `這次最常錯：${mt}` : '這次全部答對！';
   $('winMissed').classList.toggle('ok',!mt);
   $('winEarnWrap').hidden = o.earn==null; if(o.earn!=null) $('winEarn').textContent=`+${o.earn}`;
-  const hasNext=LEVELS[S.lv+1]&&!LEVELS[S.lv+1].locked; $('btnNextLv').hidden=!hasNext;
-  $('btnWinShop').hidden = S.mode==='team';
-  $('ovWin').hidden=false; (hasNext?$('btnNextLv'):$('btnAgain')).focus();
+  $('winReward').hidden=!o.reward; if(o.reward) $('winReward').innerHTML=o.reward;
+  $('winTier').hidden=!o.tier; if(o.tier) $('winTier').textContent=o.tier;
+  const nx = S.mode==='solo' ? nextStageOf(S.stage) : null;
+  $('btnNextLv').hidden = !(nx && stageUnlocked(nx));
+  $('btnWinMap').textContent = S.mode==='team' ? '回主畫面' : '冒險地圖';
+  show('ovWin'); ($('btnNextLv').hidden?$('btnAgain'):$('btnNextLv')).focus({preventScroll:true});
 }
 async function win(){
+  S.playing=false;
   await monsterDefeat(); sFan();
-  const st=starsFor(S.right,S.wrong), lvn=LEVELS[S.lv].n, bonus=st*30, m=curMon();
-  save.stars[lvn]=Math.max(save.stars[lvn]||0,st); addCoins(bonus);
+  const st=S.stage, R=REGIONS[st.r], stars=starsFor(S.right,S.wrong), m=curMon();
+  const tierBefore=tierOf(rankScore());
+  save.prog[st.id]=Math.max(save.prog[st.id]||0,stars);
+  addCoins(stars*20 + (st.boss?50:0));
   save.dex[m.id]=(save.dex[m.id]||0)+1;
-  award('win1'); if(S.wrong===0) award('perfect'); if(m.boss) award('boss'); checkCollect();
-  const stars='★'.repeat(st)+'☆'.repeat(3-st);
-  commit({name:player.name||'訪客', mode:'單人', level:lvn, right:S.right, wrong:S.wrong, best:S.best, stars, coins:S.earned, missed:missedText()}, S.sess);
+  award('win1'); if(S.wrong===0) award('perfect');
+  let reward='';
+  if(st.boss && !save.cleared.includes(R.id)){
+    save.cleared.push(R.id); award('region');
+    const sk=SKINS.find(s=>s.id===R.reward.skin), W=R.reward.wpn&&WEAPONS.find(w=>w.id===R.reward.wpn);
+    if(sk && !save.owned.includes(sk.id)) save.owned.push(sk.id);
+    if(W && !save.wpnOwned.includes(W.id)) save.wpnOwned.push(W.id);
+    reward=`<div class="rpv">${heroSVG(heroFor(sk, W?W.id:'auto'))}</div><div><b>${R.name}通關獎勵！</b><small>新造型「${sk.name}」${W?`＋武器「${W.name}」`:''}，到商店就能換上</small></div>`;
+  }
+  if(st.boss && R.id==='castle') award('boss');
+  checkCollect();
+  const tierAfter=tierOf(rankScore());
+  const starTxt='★'.repeat(stars)+'☆'.repeat(3-stars);
+  commit({name:player.name||'訪客', mode:'冒險', level:stageLabel(st), right:S.right, wrong:S.wrong, best:S.best, stars:starTxt, coins:S.earned, missed:missedText()}, S.sess);
   await wait(700);
-  showWin({stars, title:`打敗${m.name}！第 ${lvn} 關過關`, stat:`<span>答對 ${S.right}</span><span>答錯 ${S.wrong}</span><span>最高連擊 ${S.best}</span>`, earn:S.earned});
+  showWin({stars:starTxt, title:`打敗${m.name}！${stageLabel(st)} 過關`, stat:`<span>答對 ${S.right} 個音</span><span>答錯 ${S.wrong}</span><span>最高連擊 ${S.best}</span>`, earn:S.earned, reward,
+    tier: tierAfter!==tierBefore ? `段位升級：${tierAfter.name}！` : ''});
 }
 async function teamWin(t){
+  S.playing=false;
   await monsterDefeat(); sFan();
-  const A=S.team.A, B=S.team.B, lvn=LEVELS[S.lv].n;
-  commit({name:`${teamName('A')} vs ${teamName('B')}`, mode:`分組（${teamName(t)}勝）`, level:lvn, right:A.right+B.right, wrong:A.wrong+B.wrong, best:Math.max(A.combo,B.combo), stars:'', coins:0, missed:missedText()}, S.sess);
+  const A=S.team.A, B=S.team.B;
+  commit({name:`${teamName('A')} vs ${teamName('B')}`, mode:`分組（${teamName(t)}勝）`, level:regionOf().name, right:A.right+B.right, wrong:A.wrong+B.wrong, best:Math.max(A.combo,B.combo), stars:'', coins:0, missed:missedText()}, S.sess);
   await wait(700);
   showWin({title:`${teamName(t)} 獲勝！`, stat:`<span style="color:#c4321f">${teamName('A')}：答對 ${A.right}、答錯 ${A.wrong}</span><span style="color:#1f63b8">${teamName('B')}：答對 ${B.right}、答錯 ${B.wrong}</span>`});
 }
 
-// ================= start =================
-function resetRound(lv){
-  ctx(); bgmStart();
-  const pool=MONS.filter(m=>m.lv===lv);
-  Object.assign(S,{lv,power:0,combo:0,best:0,right:0,wrong:0,hero:0,mon:LANE,cur:null,last:null,busy:false,earned:0,sess:{},phase2:false,
-    monId:pool[Math.floor(Math.random()*pool.length)].id});
+// ================= 開始 =================
+function stageUnlocked(st){
+  if(T.unlockAll) return true;
+  const i=STAGES.indexOf(st); if(i<=0) return true;
+  return !!save.prog[STAGES[i-1].id];
+}
+function resetRound(ri, monId){
+  ctx(); bgmStart(); setSong(REGIONS[ri].song);
+  Object.assign(S,{region:ri,power:0,combo:0,best:0,right:0,wrong:0,hero:0,mon:LANE,seq:[],pos:0,states:[],last:null,busy:false,earned:0,sess:{},phase2:false,monId,playing:true});
   $('monBod').getAnimations().forEach(a=>a.cancel());
-  renderMon(false); setScene(lv);
-  $('lvChip').textContent=`第 ${LEVELS[lv].n} 關・${LEVELS[lv].place}`;
+  renderMon(false); setScene(ri);
   closeAll();
+  window.scrollTo(0,0);
 }
-function start(lv){
-  S.mode='solo'; document.body.classList.remove('team'); $('hero2').hidden=true;
-  resetRound(lv); renderHero(); setKeys(); place(); hud(); nextQ();
+function startStage(id){
+  const st=stageById(id); if(!st) return;
+  S.mode='solo'; S.stage=st; document.body.classList.remove('team'); $('hero2').hidden=true;
+  const R=REGIONS[st.r];
+  const monId = st.boss ? R.boss : R.mons[Math.floor(Math.random()*R.mons.length)];
+  resetRound(st.r, monId);
+  $('lvChip').textContent=stageLabel(st)+(st.boss?' 魔王':'');
+  renderHero(); setKeys(); place(); hud(); nextQ();
 }
-function startTeam(lv){
-  S.mode='team'; document.body.classList.add('team'); $('hero2').hidden=false;
+function startTeam(ri){
+  S.mode='team'; S.stage=null; document.body.classList.add('team'); $('hero2').hidden=false;
   S.team={A:{power:0,combo:0,right:0,wrong:0},B:{power:0,combo:0,right:0,wrong:0}};
-  resetRound(lv);
+  resetRound(ri, REGIONS[ri].boss);
+  $('lvChip').textContent=`分組・${REGIONS[ri].name}`;
   ['A','B'].forEach(t=>{ $('t'+t+'name').textContent=teamName(t); $('tk'+t+'name').textContent=teamName(t) });
   renderHero(); setKeys(); place(); hud(); nextQ();
 }
-function again(){ S.mode==='team' ? startTeam(S.lv) : start(S.lv) }
-function nextLevel(){ S.mode==='team' ? startTeam(S.lv+1) : start(S.lv+1) }
+function again(){ S.mode==='team' ? startTeam(S.region) : startStage(S.stage.id) }
+function nextLevel(){ const nx=nextStageOf(S.stage); if(nx) startStage(nx.id) }
+function stopPlay(){ if(S.mode==='solo' && S.playing && S.stage) commit(); S.playing=false; stopTimer() }
 
-// ================= overlays =================
-const OVS=['ovLogin','ovStart','ovTeam','ovWin','ovShop','ovDex','ovPin','ovTeacher'];
+// ================= 畫面切換 =================
+const OVS=['ovLogin','ovHome','ovMap','ovPractice','ovLesson','ovTeam','ovWin','ovShop','ovDex','ovRank','ovPin','ovTeacher'];
 function closeAll(){ OVS.forEach(id=>$(id).hidden=true); $('more').hidden=true }
-function show(id){ cancelAnimationFrame(S.tId); closeAll(); $(id).hidden=false }
-function resumeIfPlaying(){ closeAll(); if(S.cur && !S.busy) startTimer() }
+function show(id){ cancelAnimationFrame(S.tId); closeAll(); $(id).hidden=false; $(id).scrollTop=0 }
+function resumeIfPlaying(){ closeAll(); if(S.playing && !S.busy) startTimer() }
+let backTo='home';
+function goBack(){ if(backTo==='game' && S.playing) resumeIfPlaying(); else home() }
 
-function levelCard(L,i,onPick,showStars){
-  const b=document.createElement('button'); b.className='lv'; b.id=(showStars?'lv-':'tlv-')+L.n;
-  const dots=L.pool?L.pool.map(k=>`<span style="background:var(--c-${k})">${NOTES[k].high?'高':NOTES[k].letter}</span>`).join(''):'<span style="background:#8a93a6">♯</span><span style="background:#8a93a6">♭</span>';
-  const st=save.stars[L.n]||0;
-  b.innerHTML=`<span class="n">LEVEL ${L.n}${L.place?'・'+L.place:''}</span><span class="t">${L.title}</span><span class="dots">${dots}</span><span class="stars">${L.locked?'敬請期待':(showStars&&st?'★'.repeat(st)+'☆'.repeat(3-st):'')}</span>`;
-  if(L.locked) b.disabled=true; else b.addEventListener('click',()=>onPick(i));
-  return b;
+function medalHTML(t){ return `<span class="medal" style="background:radial-gradient(circle at 35% 30%,#fff,${t.c} 65%)">${t.m}</span>` }
+function rankCardHTML(){
+  const sc=rankScore(), t=tierOf(sc), i=TIERS.indexOf(t), nx=TIERS[i+1];
+  const pct = nx ? Math.round((sc-t.min)/(nx.min-t.min)*100) : 100;
+  return `${medalHTML(t)}<div class="rc"><b>${escapeHTML(player.name||'訪客')}・${t.name}</b><small>段位積分 ${sc}${nx?`，再 ${nx.min-sc} 分升到「${nx.name}」`:'，已經是最高段位！'}</small><div class="rbar"><i style="width:${pct}%"></i></div></div>`;
 }
-function menu(){
-  ctx(); bgmStart();
-  if(S.mode==='solo' && S.cur) commit();
-  S.cur=null; stopTimer();
-  const box=$('levels'); box.innerHTML='';
-  LEVELS.forEach((L,i)=>box.appendChild(levelCard(L,i,start,true)));
-  $('hello').textContent = player.name ? `${player.name}，準備好了嗎？` : '音符勇者';
-  show('ovStart');
+function home(){
+  stopPlay(); ctx(); bgmStart(); setSong('calm');
+  $('homeRank').innerHTML=rankCardHTML();
+  $('hAdvSub').textContent=`已過 ${progressText()}`;
+  const pd=LESSONS.filter(l=>save.practice[l.id]).length;
+  $('hPracSub').textContent= pd ? `完成 ${pd}/6 課` : '先熟悉五線譜';
+  show('ovHome');
 }
+
+// ---------- 冒險地圖 ----------
+function openMap(){
+  stopPlay(); ctx(); bgmStart(); setSong('calm');
+  const box=$('regions'); box.innerHTML='';
+  const firstOpen = STAGES.find(st=>stageUnlocked(st) && !save.prog[st.id]);
+  REGIONS.forEach((R,ri)=>{
+    const sts=STAGES.filter(s=>s.r===ri), open=stageUnlocked(sts[0]);
+    const d=document.createElement('div'); d.className='region'+(open?'':' locked');
+    d.style.setProperty('--r1',R.c1); d.style.setProperty('--r2',R.c2);
+    const got=save.cleared.includes(R.id), sk=SKINS.find(s=>s.id===R.reward.skin), W=R.reward.wpn&&WEAPONS.find(w=>w.id===R.reward.wpn);
+    d.innerHTML=`<div class="rh2"><h3>${ri+1}. ${R.name}</h3><span class="rd">${R.desc}</span>${open?'':'<span class="lockmsg">打敗上一區的魔王才能進入</span>'}</div>
+      <div class="path"></div>
+      <div class="rewardrow"><span class="rpv">${heroSVG(heroFor(sk,W?W.id:'auto'))}</span><span>通關獎勵：${sk.name}${W?`＋${W.name}`:''}</span>${got?'<span class="got">已獲得</span>':''}</div>`;
+    const path=d.querySelector('.path');
+    sts.forEach(st=>{
+      const b=document.createElement('button'), stars=save.prog[st.id]||0, ok=stageUnlocked(st);
+      b.className='node'+(st.boss?' boss':'')+(stars?' done':'')+(st===firstOpen?' cur':'');
+      b.disabled=!ok;
+      b.setAttribute('aria-label',`${stageLabel(st)}${st.boss?' 魔王關':''}${stars?`，${stars} 顆星`:''}`);
+      b.innerHTML = st.boss ? `<span class="bn">魔王</span><span class="ns">${'★'.repeat(stars)}</span>` : `${st.n}<span class="ns">${stars?'★'.repeat(stars):(st.seq.some(n=>n>1)?'多音':'')}</span>`;
+      if(ok) b.addEventListener('click',()=>startStage(st.id));
+      path.appendChild(b);
+    });
+    box.appendChild(d);
+  });
+  show('ovMap');
+  const cur=box.querySelector('.node.cur'); if(cur) setTimeout(()=>cur.scrollIntoView({block:'center',behavior:'smooth'}),60);
+}
+
+// ---------- 分組 ----------
 function teamSetup(){
   $('teamA').value=T.teamA; $('teamB').value=T.teamB;
   const box=$('teamLevels'); box.innerHTML='';
-  LEVELS.forEach((L,i)=>box.appendChild(levelCard(L,i,lv=>{ T.teamA=$('teamA').value.trim()||'紅隊'; T.teamB=$('teamB').value.trim()||'藍隊'; saveT(); startTeam(lv) },false)));
+  REGIONS.forEach((R,ri)=>{
+    const b=document.createElement('button'); b.className='lv';
+    b.innerHTML=`<span class="t">${ri+1}・${R.name}</span><span class="dots">${R.pool.map(k=>`<span style="background:var(--c-${k})">${NOTES[k].high?'高':NOTES[k].letter}</span>`).join('')}</span>`;
+    b.addEventListener('click',()=>{ T.teamA=$('teamA').value.trim()||'紅隊'; T.teamB=$('teamB').value.trim()||'藍隊'; saveT(); startTeam(ri) });
+    box.appendChild(b);
+  });
   show('ovTeam');
 }
 
+// ---------- 排行榜 ----------
+async function openRank(){
+  $('rankMe').innerHTML=rankCardHTML();
+  $('tierList').innerHTML=TIERS.map(t=>`<span>${medalHTML(t)}${t.name} ${t.min}</span>`).join('');
+  show('ovRank');
+  const cache=lsGet('nh-players',{});
+  let rows=Object.keys(cache).map(n=>{ const sv=normSave(cache[n].save); return {name:n, score:rankScore(sv), prog:progressText(sv)} }), note='這台電腦上的玩家';
+  renderBoard(rows); $('boardNote').textContent= Cloud.ready() ? '讀取全班排名中…' : note;
+  if(Cloud.ready()){
+    try{ const j=await Cloud.get({action:'class'}); if(j.board && j.board.length){ rows=j.board.map(b=>({name:String(b.name), score:Number(b.score||0), prog:b.progress||''})); note='全班（Google 試算表）' } }catch(e){ note='連不到試算表，先顯示這台電腦上的玩家' }
+    if(!$('ovRank').hidden){ renderBoard(rows); $('boardNote').textContent=note }
+  }
+}
+function renderBoard(rows){
+  rows=rows.slice().sort((a,b)=>b.score-a.score).slice(0,50);
+  $('board').innerHTML = rows.length ? rows.map((r,i)=>{ const t=tierOf(r.score); return `<div class="brow${r.name===player.name?' me':''}"><span class="no">${i+1}</span>${medalHTML(t)}<span class="nm">${escapeHTML(r.name)}<small>${t.name}${r.prog?'・'+escapeHTML(r.prog):''}</small></span><span class="sc">${r.score}</span></div>` }).join('') : '<div class="sub">還沒有人上榜，快去冒險吧！</div>';
+}
+function escapeHTML(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])) }
+
 // ---------- 登入 ----------
 function loginScreen(){
-  if(S.mode==='solo' && S.cur) commit();
-  S.cur=null; stopTimer();
+  stopPlay();
   const cache=lsGet('nh-players',{});
   const names=Object.keys(cache).sort((a,b)=>(cache[b].ts||0)-(cache[a].ts||0)).slice(0,40);
   const box=$('recent'); box.innerHTML='';
@@ -1357,7 +1896,6 @@ function loginScreen(){
   $('loginCloud').textContent = Cloud.ready() ? '存檔會寫進 Google 試算表' : '還沒連接 Google 試算表，存檔先存在這台電腦（老師可按「老師面板」連接）';
   $('loginMsg').textContent=''; $('nameInput').value='';
   show('ovLogin');
-  setTimeout(()=>$('nameInput').focus(),50);
 }
 async function login(name){
   name=String(name||'').replace(/\s+/g,'');
@@ -1374,30 +1912,22 @@ async function login(name){
   const pickCloud = cloud && (!local || (cloud.ts||0)>=(local.ts||0));
   player.name=name; save=normSave(pickCloud?cloud:local);
   $('btnLogin').disabled=false;
-  commit();
-  renderHero(); hud();
-  refreshClass(); flush();
-  menu();
+  commit(); renderHero(); hud(); refreshClass(); flush();
+  home();
 }
-function guest(){
-  player.name=''; save=normSave(lsGet('nh-guest',null));
-  ctx(); bgmStart(); renderHero(); hud(); menu();
-}
+function guest(){ player.name=''; save=normSave(lsGet('nh-guest',null)); ctx(); bgmStart(); renderHero(); hud(); home() }
 
 // ---------- 商店 ----------
-let shopFrom='start', pendingBuy=null, shopTab='skin';
+let pendingBuy=null, shopTab='skin';
+function toastMsg(text){
+  const d=document.createElement('div'); d.className='toast'; d.innerHTML=`<span>${text}</span>`; document.body.appendChild(d);
+  d.animate([{opacity:0},{opacity:1,offset:.1},{opacity:1,offset:.85},{opacity:0}],{duration:2000}).onfinish=()=>d.remove();
+}
 function openShop(from){
-  if(T.shopLock){ say('商店暫時關閉中','bad'); if(from!=='game') { const m=$(from==='win'?'winMissed':'hello'); const old=m.textContent; m.textContent='老師把商店鎖住了'; setTimeout(()=>m.textContent=old,1500) } return }
-  ctx(); bgmStart();
-  shopFrom=from; pendingBuy=null; show('ovShop'); buildShop();
+  if(T.shopLock){ toastMsg('老師把商店鎖住了'); return }
+  backTo=from; ctx(); bgmStart(); pendingBuy=null; show('ovShop'); buildShop();
 }
-function closeShop(){
-  closeAll();
-  if(shopFrom==='win') $('ovWin').hidden=false;
-  else if(shopFrom==='game') resumeIfPlaying();
-  else menu();
-}
-function setTab(t){ shopTab=t; pendingBuy=null; $('tabSkin').setAttribute('aria-selected',t==='skin'); $('tabFx').setAttribute('aria-selected',t==='fx'); buildShop() }
+function setTab(t){ shopTab=t; pendingBuy=null; ['Skin','Wpn','Fx'].forEach(x=>$('tab'+x).setAttribute('aria-selected',t===x.toLowerCase())); buildShop() }
 function previewFx(fx,pv){
   const r=pv.getBoundingClientRect(), x=r.width/2, y=r.height*.45;
   sFx(fx.snd,false); fxExtra(pv,x,y,fx);
@@ -1405,45 +1935,51 @@ function previewFx(fx,pv){
   d.animate([{transform:'translate(-50%,-50%) scale(.3) rotate(-30deg)',opacity:1},{transform:'translate(-50%,-50%) scale(1.1)',opacity:1,offset:.45},{transform:'translate(-50%,-50%) scale(1.25) rotate(15deg)',opacity:0}],{duration:360}).onfinish=()=>d.remove();
   fxBurst(pv,x,y,12,fx,55,[9,16]);
 }
+const STYLE_NAME={melee:'近身攻擊',proj:'遠距發射',beam:'光線攻擊',wave:'音波攻擊',summon:'召喚攻擊'};
 function buildShop(){
   $('shopCoin').textContent=save.coins;
   const box=$('skins'); box.innerHTML='';
-  const isFx=shopTab==='fx', list=isFx?FX:SKINS, owned=isFx?save.fxOwned:save.owned, curId=isFx?save.fx:save.skin;
+  const tab=shopTab;
+  const list = tab==='fx'?FX : tab==='wpn'?WEAPONS : SKINS;
+  const owned = tab==='fx'?save.fxOwned : tab==='wpn'?save.wpnOwned : save.owned;
+  const curId = tab==='fx'?save.fx : tab==='wpn'?save.wpn : save.skin;
   list.forEach(it=>{
     const own=owned.includes(it.id), cur=curId===it.id;
     const d=document.createElement('div'); d.className='sk'+(cur?' on':'');
     let btn;
-    if(cur) btn=`<button class="cur" disabled>${isFx?'使用中':'穿著中'}</button>`;
-    else if(own) btn=`<button class="own" data-act="wear">${isFx?'使用':'穿上'}</button>`;
+    if(cur) btn=`<button class="cur" disabled>使用中</button>`;
+    else if(own) btn=`<button class="own" data-act="wear">${tab==='skin'?'穿上':'使用'}</button>`;
+    else if(it.reward) btn=`<button disabled>${REGIONS.find(R=>R.id===it.reward).name}通關獲得</button>`;
     else if(pendingBuy===it.id) btn=`<button class="confirm" data-act="buy">確定兌換？</button>`;
     else btn=`<button data-act="ask" ${save.coins<it.price?'disabled':''}><span class="coin"></span>${it.price}</button>`;
-    const pv=isFx?`<div class="pv fxpv" role="button" tabindex="0" aria-label="試看 ${it.name}">${slashSVG(it,false,'mini')}<span class="try">點我看看</span></div>`:`<div class="pv">${heroSVG(it)}</div>`;
-    d.innerHTML=`${pv}<div class="nm">${it.name}</div><div class="tag">${it.tag}</div>${btn}`;
-    if(isFx){ const p=d.querySelector('.fxpv'); const go=()=>{ ctx(); previewFx(it,p) }; p.addEventListener('click',go); p.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go() } }); }
+    let pv, tag=it.tag;
+    if(tab==='fx') pv=`<div class="pv fxpv" role="button" tabindex="0" aria-label="試看 ${it.name}">${slashSVG(it,false,'mini')}<span class="try">點我看看</span></div>`;
+    else if(tab==='wpn'){ pv=`<div class="pv">${heroSVG(heroFor(curSkin(), it.id))}</div>`; const st=it.style||(DRAW_STYLE[curSkin().wpn]||{style:'melee'}).style; tag=`${it.tag}・${STYLE_NAME[st]}` }
+    else pv=`<div class="pv">${heroSVG(it)}</div>`;
+    d.innerHTML=`${pv}<div class="nm">${it.name}</div><div class="tag">${tag}</div>${btn}`;
+    if(tab==='fx'){ const p=d.querySelector('.fxpv'); const go=()=>{ ctx(); previewFx(it,p) }; p.addEventListener('click',go); p.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go() } }); }
     const b=d.querySelector('button[data-act]');
     if(b) b.addEventListener('click',()=>{
       const act=b.dataset.act;
+      const equip=()=>{ if(tab==='fx'){ save.fx=it.id; sFx(it.snd) } else if(tab==='wpn'){ save.wpn=it.id; sStep() } else { save.skin=it.id; sStep() } renderHero() };
       if(act==='ask'){ pendingBuy=it.id; buildShop() }
-      else if(act==='buy'){
-        if(save.coins>=it.price){ save.coins-=it.price; owned.push(it.id); if(isFx) save.fx=it.id; else save.skin=it.id; sCoin(); sFan(); checkCollect(); renderHero(); hud(); commit() }
-        pendingBuy=null; buildShop();
-      }else if(act==='wear'){ if(isFx){ save.fx=it.id; ctx(); sFx(it.snd) } else { save.skin=it.id; renderHero(); sStep() } commit(); pendingBuy=null; buildShop() }
+      else if(act==='buy'){ if(save.coins>=it.price){ save.coins-=it.price; owned.push(it.id); equip(); sCoin(); sFan(); checkCollect(); hud(); commit() } pendingBuy=null; buildShop() }
+      else if(act==='wear'){ ctx(); equip(); commit(); pendingBuy=null; buildShop() }
     });
     box.appendChild(d);
   });
 }
 
 // ---------- 收藏 ----------
-let dexFrom='start', dexTab='mon';
-function openDex(from){ dexFrom=from; show('ovDex'); buildDex() }
-function closeDex(){ closeAll(); if(dexFrom==='game') resumeIfPlaying(); else menu() }
+let dexTab='mon';
+function openDex(from){ backTo=from; show('ovDex'); buildDex() }
 function setDexTab(t){ dexTab=t; $('tabMon').setAttribute('aria-selected',t==='mon'); $('tabBadge').setAttribute('aria-selected',t==='badge'); buildDex() }
 function buildDex(){
   const box=$('dexGrid'); box.innerHTML='';
   if(dexTab==='mon'){
     MONS.forEach(m=>{
       const n=save.dex[m.id]||0, d=document.createElement('div'); d.className='cell'+(n?'':' unknown');
-      d.innerHTML=`<div class="pic">${monSVG(m)}</div><b>${n?m.name:'？？？'}</b><small>${m.where}${n?`・打倒 ${n} 次`:'・還沒遇到'}</small>`;
+      d.innerHTML=`<div class="pic">${monSVG(m)}</div><b>${n?m.name:'？？？'}</b><small>${REGIONS[m.r].name}${m.boss?'・魔王':''}${n?`・打倒 ${n} 次`:'・還沒遇到'}</small>`;
       box.appendChild(d);
     });
   }else{
@@ -1455,15 +1991,205 @@ function buildDex(){
   }
 }
 
+// ================= 練習模式 =================
+const PL0=236, PG=36;                 // 練習用的大五線譜：第一線 y、線距
+const py = s => PL0 - s*PG/2;
+const CN=['一','二','三','四','五'];
+const posName = s => s%2===0 ? `第${CN[s/2]}線` : `第${CN[(s-1)/2]}間`;
+const stepFreq = s => [261.63,293.66,329.63,349.23,392,440,493.88,523.25,587.33,659.25,698.46][s+2];
+function speak(text){
+  if(!prefs.voice || !('speechSynthesis' in window)) return;
+  try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang='zh-TW'; u.rate=.9; u.pitch=1.1; speechSynthesis.speak(u) }catch(e){}
+}
+const sayZy = k => (NOTES[k].high?'高音':'')+NOTES[k].say;
+const L = {id:null, q:0, total:6, data:null, busy:false, sayText:'', last:null};
+function pel(tag,at){ return el(tag,at,$('pstaff')) }
+function drawP(opt={}){
+  const s=$('pstaff'); s.innerHTML='';
+  (opt.bands||[]).forEach(b=>pel('rect',{x:70,y:py(b.s)-(b.s%2===0?7:PG/2-4),width:282,height:b.s%2===0?14:PG-8,rx:7,fill:b.c,opacity:b.o||.45}));
+  for(let i=0;i<5;i++) pel('line',{x1:20,x2:352,y1:py(i*2),y2:py(i*2),stroke:'#2b3550','stroke-width':2.6});
+  pel('line',{x1:20,x2:20,y1:py(8),y2:py(0),stroke:'#2b3550','stroke-width':2.6});
+  pel('line',{x1:352,x2:352,y1:py(8),y2:py(0),stroke:'#2b3550','stroke-width':2.6});
+  pel('text',{x:28,y:py(2),'font-size':PG*4,'font-family':'"Noto Music","Bravura","Segoe UI Symbol",serif',fill:'#2b3550'}).textContent='\u{1D11E}';
+  (opt.tags||[]).forEach(t=>{ const w=t.text.length*15+14; pel('rect',{x:t.x-w/2,y:py(t.s)-12,width:w,height:24,rx:12,fill:'#fff',stroke:t.c,'stroke-width':2.5}); pel('text',{x:t.x,y:py(t.s)+6,'text-anchor':'middle','font-size':15,'font-weight':900,'font-family':FONT,fill:t.c}).textContent=t.text });
+  (opt.notes||[]).forEach(n=>{
+    const y=py(n.s), c=n.c||'#2b3550';
+    if(n.s<=-2) pel('line',{x1:n.x-24,x2:n.x+24,y1:py(-2),y2:py(-2),stroke:n.ghost?c:'#2b3550','stroke-width':2.6,'stroke-dasharray':n.ghost?'5 4':'none'});
+    if(n.ghost){ pel('ellipse',{cx:n.x,cy:y,rx:14,ry:10,transform:`rotate(-22 ${n.x} ${y})`,fill:'none',stroke:c,'stroke-width':3,'stroke-dasharray':'4 3'}) }
+    else{
+      if(n.s<4) pel('line',{x1:n.x+13,x2:n.x+13,y1:y-1,y2:y-PG*3.4,stroke:c,'stroke-width':3.2});
+      else pel('line',{x1:n.x-13,x2:n.x-13,y1:y+1,y2:y+PG*3.4,stroke:c,'stroke-width':3.2});
+      pel('ellipse',{cx:n.x,cy:y,rx:14.5,ry:10.2,transform:`rotate(-22 ${n.x} ${y})`,fill:c});
+    }
+    if(n.label){ const w=n.label.length*17+16; pel('rect',{x:n.x+24,y:y-14,width:w,height:28,rx:14,fill:n.lc||c,stroke:'#2b3550','stroke-width':2}); pel('text',{x:n.x+24+w/2,y:y+7,'text-anchor':'middle','font-size':17,'font-weight':900,'font-family':FONT,fill:'#fff'}).textContent=n.label }
+  });
+  if(opt.zones){
+    opt.zones.forEach(st=>{ const z=pel('rect',{x:60,y:py(st)-PG/4,width:300,height:PG/2,fill:'transparent',class:'zone'}); z.addEventListener('pointerdown',e=>{ e.preventDefault(); lessonTap(st) }) });
+  }
+}
+function lessonDots(){ $('lDots').innerHTML=Array.from({length:L.total},(_,i)=>`<i class="${i<L.q?'ok':i===L.q?'now':''}"></i>`).join('') }
+function setPrompt(text, sayText){ L.sayText=sayText||text; $('lPrompt').textContent=text; speak(L.sayText) }
+function feed(text, kind){ const f=$('lFeed'); f.textContent=text; f.className='lfeed '+(kind||'') }
+function ansButtons(list){
+  const box=$('lAns'); box.innerHTML='';
+  list.forEach(o=>{ const b=document.createElement('button'); b.className='big'+(o.cls?' '+o.cls:''); b.textContent=o.text; if(o.bg) b.style.background=o.bg; b.addEventListener('click',()=>o.on(b)); box.appendChild(b) });
+}
+function openPractice(){
+  stopPlay(); try{ speechSynthesis.cancel() }catch(e){}
+  ctx(); bgmStart(); setSong('calm');
+  const box=$('lessons'); box.innerHTML='';
+  LESSONS.forEach((l,i)=>{
+    const b=document.createElement('button'), done=save.practice[l.id];
+    b.className='lesson-card'+(done?' done':'');
+    b.innerHTML=`<span class="no">${i+1}</span><span class="lt"><b>${l.title}</b><small>${l.desc}</small></span>${done?'<span class="stamp">完成</span>':''}`;
+    b.addEventListener('click',()=>startLesson(l.id));
+    box.appendChild(b);
+  });
+  show('ovPractice');
+}
+let lessonRun=0;
+function startLesson(id){
+  const les=LESSONS.find(l=>l.id===id), run=++lessonRun;
+  Object.assign(L,{id, q:0, total:id==='p5'?4:6, busy:true, last:null, data:null});
+  $('lTitle').textContent=`第 ${LESSONS.indexOf(les)+1} 課・${les.title}`;
+  show('ovLesson'); feed(''); lessonDots(); $('lAns').innerHTML='';
+  setPrompt(les.title, les.intro);
+  if(id==='p1') demoP1(run);
+  else { drawP(id==='p4'?friendsHint():{}); setTimeout(()=>{ if(run===lessonRun) lessonQ() }, id==='p4'?3200:2400) }
+}
+async function demoP1(run){
+  drawP();
+  await wait(3200);
+  for(const s of [0,2,4,6,8,1,3,5,7]){
+    if(run!==lessonRun || $('ovLesson').hidden) return;
+    drawP({bands:[{s,c:s%2===0?'#f5b82e':'#2fa3d6'}], tags:[{s,x:300,text:posName(s),c:s%2===0?'#a86e00':'#1f6fb2'}]});
+    sfx(()=>osc(stepFreq(s),.3,'triangle',.15)); speak(posName(s));
+    await wait(1000);
+  }
+  if(run===lessonRun) lessonQ();
+}
+const friendsHint = () => ({notes:[{s:-2,x:110,ghost:true,c:'#e8473d',label:'ㄉㄡ',lc:'#e8473d'},{s:0,x:230,ghost:true,c:'#c98608',label:'ㄇㄧ',lc:'#c98608'}]});
+function rnd(arr,avoid){ let v; do{ v=arr[Math.floor(Math.random()*arr.length)] }while(arr.length>1 && v===avoid); return v }
+function lessonQ(){
+  if($('ovLesson').hidden) return;
+  L.busy=false; feed(''); lessonDots();
+  if(L.q>=L.total){ lessonDone(); return }
+  const id=L.id;
+  if(id==='p1'){
+    const s=rnd([0,1,2,3,4,5,6,7,8],L.last); L.last=s; L.data={s};
+    drawP({zones:[0,1,2,3,4,5,6,7,8]}); $('lAns').innerHTML='';
+    setPrompt(`點${posName(s)}`);
+  }else if(id==='p2'){
+    const s=rnd([0,1,2,3,4,5,6,7,8],L.last); L.last=s; L.data={s};
+    drawP({notes:[{s,x:200}]});
+    setPrompt('這個音符在線上，還是間裡？');
+    ansButtons([{text:'線上',bg:'#f5b82e',on:()=>p2(true)},{text:'間裡',bg:'#8fd0ff',on:()=>p2(false)}]);
+  }else if(id==='p3'){
+    const opts=[-2,0,1,2,3,4,5,6,7]; const a=rnd(opts); let b; do{ b=rnd(opts) }while(b===a);
+    L.data={a,b};
+    drawP({notes:[{s:a,x:130},{s:b,x:270}]});
+    setPrompt('哪一個音比較高？');
+    const play=()=>sfx(()=>{ osc(stepFreq(a),.5,'triangle',.25,.1); osc(stepFreq(b),.5,'triangle',.25,.8) });
+    setTimeout(play,900);
+    ansButtons([{text:'左邊的',on:()=>p3('a')},{text:'右邊的',on:()=>p3('b')},{text:'再聽一次',cls:'alt',on:play}]);
+  }else if(id==='p4'){
+    const k=rnd(['do','mi'],L.last); L.last=k; L.data={k};
+    const o=friendsHint(); o.notes.push({s:NOTES[k].step,x:310});
+    drawP(o);
+    setPrompt('這個音符是誰？');
+    ansButtons([{text:'ㄉㄡ',cls:'zbtn',bg:'var(--c-do)',on:()=>p4('do')},{text:'ㄇㄧ',cls:'zbtn',bg:'var(--c-mi)',on:()=>p4('mi')}]);
+  }else if(id==='p5'){
+    const k=rnd(['re','mi','fa','sol','la','si','hdo'],L.last); L.last=k; L.data={k, g:-2};
+    p5draw();
+    setPrompt('從ㄉㄡ往上爬，爬到黑色音符那裡','從兜開始往上爬，爬到黑色音符那裡');
+    ansButtons([{text:'往上爬一格 ▲',on:()=>p5move(1)},{text:'往下一格 ▼',cls:'alt',on:()=>p5move(-1)}]);
+  }else if(id==='p6'){
+    const k=rnd(KEYS,L.last); L.last=k; L.data={k};
+    drawP({zones:[-2,-1,0,1,2,3,4,5]}); $('lAns').innerHTML='';
+    setPrompt(`把音符放在 ${zyName(k)}`, `把音符放在 ${sayZy(k)}`);
+  }
+}
+function lessonGood(text, sound, sayText){
+  L.busy=true; L.q++; lessonDots(); feed(text,'good');
+  sfx(()=>{ if(sound) osc(sound,.5,'triangle',.25); osc(1046.5,.15,'sine',.12,.25); osc(1318.5,.25,'sine',.12,.35) });
+  speak(sayText||text.replace(/[！!]/g,''));
+  const run=lessonRun; setTimeout(()=>{ if(run===lessonRun) lessonQ() }, 1700);
+}
+function lessonBad(text, sayText){
+  L.busy=true; feed(text,'bad'); speak(sayText||text);
+  sfx(()=>osc(220,.25,'triangle',.12));
+  setTimeout(()=>{ L.busy=false }, 1200);
+}
+function lessonTap(st){
+  if(L.busy) return;
+  if(L.id==='p1'){
+    const t=L.data.s;
+    if(st===t){ drawP({bands:[{s:t,c:'#4fb35a',o:.6}],tags:[{s:t,x:300,text:posName(t),c:'#2f9e5b'}]}); lessonGood('答對了！', stepFreq(t)) }
+    else{ drawP({bands:[{s:st,c:'#e2574c'},{s:t,c:'#f5b82e',o:.6}],tags:[{s:st,x:300,text:posName(st),c:'#c4321f'},{s:t,x:160,text:posName(t),c:'#a86e00'}],zones:[0,1,2,3,4,5,6,7,8]}); lessonBad(`這是${posName(st)}，${posName(t)}在黃色那裡，再點一次`) }
+  }else if(L.id==='p6'){
+    const k=L.data.k, t=NOTES[k].step, got=STEP2KEY[st];
+    if(st===t){ drawP({notes:[{s:st,x:200,c:colorOf(k),label:zyName(k)}]}); lessonGood(`答對了！這是 ${zyName(k)}`, NOTES[k].f, `答對了！這是${sayZy(k)}`) }
+    else{
+      drawP({notes:[{s:st,x:160,c:'#8a93a6',label:zyName(got),lc:'#8a93a6'},{s:t,x:270,ghost:true,c:colorOf(k)}],zones:[-2,-1,0,1,2,3,4,5]});
+      sfx(()=>osc(NOTES[got].f,.4,'triangle',.2));
+      lessonBad(`這是 ${zyName(got)}，${zyName(k)} 在虛線那裡，再放一次`, `這是${sayZy(got)}，${sayZy(k)}在虛線那裡，再放一次`);
+    }
+  }
+}
+function p2(isLine){
+  if(L.busy) return;
+  const s=L.data.s, line=s%2===0;
+  if(isLine===line){ drawP({bands:[{s,c:'#4fb35a',o:.5}],notes:[{s,x:200,label:line?'線上':'間裡',lc:'#2f9e5b'}]}); lessonGood(line?'對！線穿過音符的肚子':'對！音符夾在兩條線中間', stepFreq(s)) }
+  else{ drawP({bands:[{s,c:'#f5b82e',o:.55}],notes:[{s,x:200}]}); lessonBad(line?'仔細看，有一條線穿過音符的肚子':'仔細看，音符夾在兩條線中間，沒有線穿過') }
+}
+function p3(pick){
+  if(L.busy) return;
+  const {a,b}=L.data, hi = a>b?'a':'b';
+  if(pick===hi){ drawP({notes:[{s:a,x:130,c:hi==='a'?'#2f9e5b':'#8a93a6',label:hi==='a'?'高':''},{s:b,x:270,c:hi==='b'?'#2f9e5b':'#8a93a6',label:hi==='b'?'高':''}]}); lessonGood('答對了！越上面越高', stepFreq(Math.max(a,b))) }
+  else lessonBad('再聽一次，越上面的音越高喔');
+}
+function p4(k){
+  if(L.busy) return;
+  const t=L.data.k, o=friendsHint();
+  if(k===t){ o.notes.push({s:NOTES[t].step,x:310,c:colorOf(t)}); drawP(o); lessonGood(`答對了！是 ${zyName(t)}`, NOTES[t].f, `答對了！是${sayZy(t)}`) }
+  else lessonBad(t==='do'?'看看虛線，有一條短短的加線穿過音符，是ㄉㄡ':'看看虛線，音符在最下面那條線上，是ㄇㄧ', t==='do'?'看看虛線，有一條短短的加線穿過音符，是兜':'看看虛線，音符在最下面那條線上，是咪');
+}
+function p5draw(done){
+  const {k,g}=L.data, t=NOTES[k].step, gk=STEP2KEY[g];
+  const notes=[{s:t,x:280,c:done?colorOf(k):'#2b3550',label:done?zyName(k):''}];
+  if(!done) notes.push({s:g,x:150,ghost:true,c:'#f28a2e',label:zyName(gk),lc:'#f28a2e'});
+  drawP({notes});
+}
+function p5move(d){
+  if(L.busy) return;
+  const t=NOTES[L.data.k].step, g=Math.max(-2,Math.min(5,L.data.g+d));
+  if(g===L.data.g){ feed(d>0?'已經到最上面了':'已經到ㄉㄡ了'); return }
+  L.data.g=g; const gk=STEP2KEY[g];
+  sfx(()=>osc(NOTES[gk].f,.4,'triangle',.25));
+  if(g===t){ p5draw(true); lessonGood(`爬到了！這個音是 ${zyName(gk)}`, NOTES[gk].f, `爬到了！這個音是${sayZy(gk)}`); return }
+  p5draw(); feed(`${zyName(gk)}${g>t?'，爬過頭了，往下一格':''}`, g>t?'bad':'');
+  speak(sayZy(gk));
+}
+function lessonDone(){
+  const first=!save.practice[L.id];
+  save.practice[L.id]=true; checkCollect();
+  if(first) addCoins(20);
+  commit();
+  drawP({tags:[{s:4,x:186,text:'完成！',c:'#2f9e5b'}]});
+  setPrompt(first?'完成了！獲得 20 金幣':'完成了！', first?'完成了！獲得二十個金幣':'完成了！');
+  sFan(); feed('');
+  const i=LESSONS.findIndex(l=>l.id===L.id), nx=LESSONS[i+1];
+  ansButtons([...(nx?[{text:`下一課：${nx.title}`,on:()=>startLesson(nx.id)}]:[{text:'去冒險！',on:openMap}]),{text:'練習選單',cls:'alt',on:openPractice}]);
+}
+
 // ---------- 老師 ----------
-let teacherFrom='start';
-function openPin(){ teacherFrom = $('ovStart').hidden&&$('ovLogin').hidden ? 'game' : ($('ovLogin').hidden?'start':'login'); show('ovPin'); $('pinInput').value=''; $('pinMsg').textContent=''; setTimeout(()=>$('pinInput').focus(),50) }
-function closeTeacher(){ closeAll(); if(teacherFrom==='game') resumeIfPlaying(); else if(teacherFrom==='login') loginScreen(); else menu() }
+let teacherFrom='home';
+function openPin(from){ teacherFrom=from; show('ovPin'); $('pinInput').value=''; $('pinMsg').textContent='' }
+function closeTeacher(){ closeAll(); if(teacherFrom==='game' && S.playing) resumeIfPlaying(); else if(teacherFrom==='login') loginScreen(); else home() }
 function openTeacher(){
   show('ovTeacher');
-  $('tT1').value=T.times[0]; $('tT2').value=T.times[1]; $('tT3').value=T.times[2];
-  $('tGoal').value=T.goal; $('tShopLock').checked=!!T.shopLock; $('tUrl').value=T.url||SHEET_URL; $('tPin').value=T.pin;
-  $('tpZeroAllMsg').textContent='會把試算表裡每個人的目前金幣改成 0，累計獲得不變。';
+  $('tMul').value=String(T.timeMul); $('tUnlock').checked=!!T.unlockAll; $('tShopLock').checked=!!T.shopLock; $('tVoice').checked=!!prefs.voice;
+  $('tUrl').value=T.url||SHEET_URL; $('tPin').value=T.pin;
   fillTeacher(); refreshClass().then(fillTeacher);
 }
 function fillTeacher(){
@@ -1472,11 +2198,10 @@ function fillTeacher(){
   $('tpNotes').innerHTML=rows.map(r=>`<tr><td><b>${zyName(r.k)}</b></td><td>${r.asked}</td><td>${r.wrong}</td><td>${r.asked?Math.round(r.rate*100)+'%':'—'}</td></tr>`).join('');
 }
 function bindT(id,fn){ $(id).addEventListener('change',()=>{ fn($(id)); saveT() }) }
-bindT('tT1',e=>T.times[0]=Math.max(3,Math.min(30,+e.value||10)));
-bindT('tT2',e=>T.times[1]=Math.max(3,Math.min(30,+e.value||9)));
-bindT('tT3',e=>T.times[2]=Math.max(3,Math.min(30,+e.value||8)));
-bindT('tGoal',e=>T.goal=Math.max(4,Math.min(30,+e.value||10)));
+bindT('tMul',e=>T.timeMul=Number(e.value)||1);
+bindT('tUnlock',e=>T.unlockAll=e.checked);
 bindT('tShopLock',e=>T.shopLock=e.checked);
+$('tVoice').addEventListener('change',e=>{ prefs.voice=e.target.checked; savePrefs() });
 bindT('tUrl',e=>{ T.url=e.value.trim(); setDot('') });
 bindT('tPin',e=>T.pin=e.value.trim()||'1234');
 $('tpGive50').addEventListener('click',()=>{ save.coins+=50; sCoin(); commit(); fillTeacher(); hud() });
@@ -1503,41 +2228,35 @@ $('tpTest').addEventListener('click',async()=>{
   catch(e){ m.textContent='連不上：'+(e.message||'請確認部署時「誰可以存取」選了「所有人」') }
 });
 
-// ================= wiring =================
-$('btnNext').addEventListener('click',nextQ);
-$('btnMenu').addEventListener('click',menu);
-$('btnBack').addEventListener('click',menu);
-$('btnAgain').addEventListener('click',again);
-$('btnNextLv').addEventListener('click',nextLevel);
-$('btnTeam').addEventListener('click',teamSetup);
-$('btnTeamBack').addEventListener('click',menu);
-$('btnShop').addEventListener('click',()=>openShop($('ovStart').hidden?'game':'start'));
-$('btnShop2').addEventListener('click',()=>openShop('start'));
-$('btnWinShop').addEventListener('click',()=>openShop('win'));
-$('btnShopClose').addEventListener('click',closeShop);
-$('tabSkin').addEventListener('click',()=>setTab('skin'));
-$('tabFx').addEventListener('click',()=>setTab('fx'));
-$('btnDex').addEventListener('click',()=>openDex($('ovStart').hidden?'game':'start'));
-$('btnDex2').addEventListener('click',()=>openDex('start'));
-$('btnDexClose').addEventListener('click',closeDex);
-$('tabMon').addEventListener('click',()=>setDexTab('mon'));
-$('tabBadge').addEventListener('click',()=>setDexTab('badge'));
-$('who').addEventListener('click',loginScreen);
-$('btnSwitch').addEventListener('click',loginScreen);
+// ================= 按鈕 =================
+const on=(id,fn)=>$(id).addEventListener('click',fn);
+on('btnNext',nextQ);
+on('btnAgain',again); on('btnNextLv',nextLevel);
+on('btnWinMap',()=>S.mode==='team'?home():openMap());
+on('btnMap',openMap); on('btnHome',home); on('btnMapBack',home);
+on('hAdv',openMap); on('hPrac',openPractice); on('hTeam',teamSetup); on('hRank',openRank);
+on('hShop',()=>openShop('home')); on('hDex',()=>openDex('home'));
+on('btnShop',()=>openShop(S.playing?'game':'home')); on('btnDex',()=>openDex(S.playing?'game':'home'));
+on('btnShopClose',goBack); on('btnDexClose',goBack); on('btnRankClose',home);
+on('btnPracBack',home); on('btnTeamBack',home);
+on('btnLessonExit',()=>{ lessonRun++; try{ speechSynthesis.cancel() }catch(e){} openPractice() });
+on('btnSay',()=>speak(L.sayText));
+on('tabSkin',()=>setTab('skin')); on('tabWpn',()=>setTab('wpn')); on('tabFx',()=>setTab('fx'));
+on('tabMon',()=>setDexTab('mon')); on('tabBadge',()=>setDexTab('badge'));
+on('who',loginScreen); on('btnSwitch',loginScreen);
 $('loginForm').addEventListener('submit',e=>{ e.preventDefault(); login($('nameInput').value) });
-$('btnGuest').addEventListener('click',guest);
-$('btnTeacher').addEventListener('click',openPin);
-$('btnTeacher2').addEventListener('click',openPin);
+on('btnGuest',guest);
+on('btnTeacher',()=>openPin(S.playing?'game':'home')); on('btnTeacher2',()=>openPin('login')); on('btnTeacher3',()=>openPin('home'));
 $('pinForm').addEventListener('submit',e=>{ e.preventDefault(); if($('pinInput').value===String(T.pin)) openTeacher(); else $('pinMsg').textContent='密碼不對' });
-$('btnPinClose').addEventListener('click',closeTeacher);
-$('btnTeacherClose').addEventListener('click',()=>{ closeTeacher(); if(S.mode==='solo'&&S.cur) hud() });
+on('btnPinClose',closeTeacher);
+on('btnTeacherClose',()=>{ closeTeacher(); hud() });
 $('btnMore').addEventListener('click',e=>{ e.stopPropagation(); const h=!$('more').hidden; $('more').hidden=h; $('btnMore').setAttribute('aria-expanded',!h) });
 document.addEventListener('click',e=>{ if(!$('more').hidden && !e.target.closest('.menuwrap')){ $('more').hidden=true; $('btnMore').setAttribute('aria-expanded','false') } });
-$('btnHint').addEventListener('click',e=>{ prefs.hint=!prefs.hint; savePrefs(); e.currentTarget.setAttribute('aria-pressed',prefs.hint); e.currentTarget.classList.toggle('on',prefs.hint); if(S.cur && !S.busy) drawStaff(S.cur); else if(!S.cur) drawStaff('mi') });
-$('btnTimer').addEventListener('click',e=>{ S.timerOn=!S.timerOn; e.currentTarget.setAttribute('aria-pressed',S.timerOn); if(!S.busy&&S.cur) startTimer(); else $('timer').classList.toggle('off',!S.timerOn) });
-$('btnSound').addEventListener('click',e=>{ S.sfx=!S.sfx; e.currentTarget.setAttribute('aria-pressed',S.sfx) });
-$('btnMusic').addEventListener('click',e=>{ S.music=!S.music; e.currentTarget.setAttribute('aria-pressed',S.music); ctx(); bgmStart(); if(musBus) musBus.gain.setTargetAtTime(S.music?.55:0, ac.currentTime, .05) });
-$('btnFull').addEventListener('click',()=>{
+on('btnHint',()=>{ prefs.hint=!prefs.hint; savePrefs(); $('btnHint').setAttribute('aria-pressed',prefs.hint); $('btnHint').classList.toggle('on',prefs.hint); drawStaff(S.seq, S.states, S.seq.length>1&&!S.busy?S.pos:-1) });
+on('btnTimer',()=>{ S.timerOn=!S.timerOn; $('btnTimer').setAttribute('aria-pressed',S.timerOn); if(!S.busy&&S.playing) startTimer(); else $('timer').classList.toggle('off',!S.timerOn) });
+on('btnSound',()=>{ S.sfx=!S.sfx; $('btnSound').setAttribute('aria-pressed',S.sfx) });
+on('btnMusic',()=>{ S.music=!S.music; $('btnMusic').setAttribute('aria-pressed',S.music); ctx(); bgmStart(); if(musBus) musBus.gain.setTargetAtTime(S.music?.55:0, ac.currentTime, .05) });
+on('btnFull',()=>{
   const d=document;
   if(d.fullscreenElement||d.webkitFullscreenElement){ (d.exitFullscreen||d.webkitExitFullscreen).call(d) }
   else { const r=d.documentElement, f=r.requestFullscreen||r.webkitRequestFullscreen; if(f){ try{ const p=f.call(r); if(p&&p.catch) p.catch(()=>{}) }catch(e){} } }
@@ -1547,11 +2266,12 @@ document.addEventListener('visibilitychange',()=>{ if(!ac) return; if(document.h
 window.addEventListener('pagehide',()=>{ persistLocal() });
 window.addEventListener('online',flush);
 
-// ================= boot =================
+// ================= 啟動 =================
 $('ver').textContent=`版本 ${VERSION}`; $('ver').title=`更新日期 ${VERSION_DATE}`;
-$('verLogin').textContent=`版本 ${VERSION}（${VERSION_DATE}）`;
+$('verLogin').textContent=`版本 ${VERSION}（${VERSION_DATE}）`; $('verHome').textContent=`版本 ${VERSION}（${VERSION_DATE}）`;
 $('btnHint').setAttribute('aria-pressed',prefs.hint); $('btnHint').classList.toggle('on',prefs.hint);
-S.monId='slimeG'; setScene(0); renderMon(false); renderHero(); setKeys(); place(); hud(); drawStaff('mi');
+S.stage=STAGES[0]; S.region=0; S.monId='slimeG';
+setScene(0); renderMon(false); renderHero(); setKeys(); place(); hud(); drawStaff(['mi']);
 setDot(''); flush();
 loginScreen();
 })();
