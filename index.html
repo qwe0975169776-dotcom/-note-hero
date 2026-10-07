@@ -529,6 +529,76 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 .ed .r h4{margin:0}
 .ed td:first-child,.ed th{white-space:nowrap}
 @media (max-width:520px){ .ed td input[type=number],.ed td input[type=text]{width:4.2em;padding:5px 6px} .ed th,.ed td{padding:4px 3px} }
+
+/* v10 戰場跑馬燈：遊戲中的廣播都在這裡，不擋五線譜和按鈕 */
+.ticker{position:absolute;left:6px;right:6px;top:5px;height:24px;overflow:hidden;z-index:4;pointer-events:none}
+.tkr{position:absolute;top:0;left:0;height:24px;box-sizing:border-box;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;background:rgba(36,50,74,.8);color:#fff;border-radius:999px;padding:0 12px 0 3px;font-weight:900;font-size:.8rem}
+.tkr .medal{width:19px;height:19px;font-size:.62rem;border-width:1.5px}
+.tkr b{color:#ffd23f}
+.tkr>span:only-child{padding-left:9px}
+
+/* v10 人物大小跟著戰場高度，戰場變矮時人物不會超出去 */
+.scene{container-type:size}
+@supports (width:1cqh){ .actor{width:min(12%,30cqh)} }
+
+/* v10 手機直式：整個遊戲畫面剛好一頁，不用往下拉 */
+@media (orientation:portrait) and (max-width:640px){
+  .app{height:100vh;height:100dvh;min-height:0;gap:6px;padding-block:6px;padding-inline:10px}
+  .top{gap:5px;flex-wrap:nowrap;min-width:0}
+  .top h1{display:none}
+  .top .who,.top .chip,.top .tbtn{font-size:.8rem;padding:3px 8px}
+  .top .coins{font-size:.95rem;padding:1px 9px 1px 3px}
+  .top .coins .coin{width:20px;height:20px}
+  .top .chip{overflow:hidden;text-overflow:ellipsis;min-width:0;flex:0 1 auto}
+  .top .who{max-width:7em;overflow:hidden}
+  .scene{height:auto;flex:1 1 0;min-height:92px;max-height:210px}
+  .hud{gap:6px;flex-wrap:nowrap}
+  .meter{min-width:0;gap:5px}
+  .meter label{font-size:.8rem}
+  .combo{min-width:0;font-size:.85rem}
+  .combo b{font-size:1.2rem}
+  .items{flex-wrap:nowrap;gap:4px}
+  .ibtn{width:34px;height:34px;padding:3px;border-width:2px}
+  .ibtn b{font-size:.62rem}
+  .ibtn.petbtn svg{width:24px;height:24px}
+  .card{flex:1.7 1 0;min-height:120px;padding:4px 8px 10px}
+  .staff{max-height:100%}
+  .keys{gap:6px;padding-bottom:2px}
+  .key{min-height:54px;padding:4px 0;border-radius:15px;box-shadow:0 4px 0 var(--line)}
+  body.team .teamkeys{gap:8px}
+  .tk .key{min-height:46px}
+}
+@media (orientation:portrait) and (max-width:640px) and (max-height:700px){
+  .key{min-height:50px}
+  .scene{min-height:84px}
+}
+
+/* v10 手機橫式：戰場、五線譜、按鈕都塞進一個畫面 */
+@media (orientation:landscape) and (max-height:560px){
+  .app{height:100vh;height:100dvh;min-height:0;grid-template-rows:auto minmax(0,1fr) auto auto auto;gap:6px;padding-block:5px}
+  .scene{height:auto;min-height:70px}
+  .card{min-height:0}
+  .staff{max-height:100%}
+  .hud{gap:6px;flex-wrap:nowrap}
+  .meter{min-width:0}
+  .items{flex-wrap:nowrap;gap:4px}
+  .ibtn{width:34px;height:34px}
+  .key{min-height:46px}
+}
+/* v10 修正：上方列不換行、勇氣值條不被道具擠扁 */
+@media (orientation:portrait) and (max-width:640px){
+  .top>*{white-space:nowrap;flex-shrink:0}
+  .top .chip{flex-shrink:1}
+  .top .who{max-width:5.5em;text-overflow:ellipsis;flex-shrink:1}
+  .top .who #whoName{overflow:hidden;text-overflow:ellipsis}
+  .top .sp{flex:1 1 0;min-width:0}
+}
+@media (orientation:portrait) and (max-width:640px), (orientation:landscape) and (max-height:560px){
+  .hud{flex-wrap:wrap;row-gap:4px}
+  .meter{flex:1 1 55%}
+  .items{flex:1 1 100%}
+  .items:empty{display:none}
+}
 </style>
 </head>
 <body>
@@ -561,6 +631,7 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
   </div>
 
   <div class="scene" id="scene">
+    <div class="ticker" id="ticker" aria-live="polite"></div>
     <div class="decor" id="decor"></div>
     <div class="weather" id="weather"></div>
     <div class="dark" id="dark"></div>
@@ -850,9 +921,10 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 const $ = id => document.getElementById(id);
 
 // 版本號：每次更新加 1，畫面上會顯示，方便確認上傳的是最新版
-const VERSION = 9, VERSION_DATE = '2026-10-07';
+const VERSION = 10, VERSION_DATE = '2026-10-07';
 // 更新日誌：每次更新在最上面加一筆（顯示在老師面板）
 const CHANGELOG = [
+  {v:10, date:'2026-10-07', add:['遊戲中的廣播、徽章和提示訊息改成在戰場上方的小跑馬燈，不會再擋住五線譜和按鈕'], fix:['手機直式和橫式：一進關卡就能看到五線譜和全部音符按鈕，不用往下拉（戰場和人物會依螢幕大小自動縮放）']},
   {v:9, date:'2026-10-07', add:['遊戲修改器（老師面板）：可以改商店價格和上下架、每一關的答題秒數／一次幾個音／過關格數／愛心、各種金幣獎勵，以及每位玩家的金幣、關卡、送東西、刪除帳號','修改器的數值存在試算表「修改器」分頁，也可以直接在試算表裡改；Users 分頁的「目前積分」直接改也會生效','試算表新增「修改紀錄」分頁，記錄每次從修改器做的調整'], fix:[]},
   {v:8, date:'2026-10-07', fix:['修正造型發光粒子在商店被放大、跑出卡片外的問題']},
   {v:7, date:'2026-10-07', add:['老師面板新增「測試模式」：全部關卡、造型、武器、特效、寵物、道具解鎖，資料只存在這台裝置，不進試算表、排行榜和廣播'], fix:['移除「偉展老師」測試帳號，這個名字現在是一般玩家']},
@@ -1737,6 +1809,7 @@ async function runToast(){
   if(toasting) return; toasting=true;
   while(toastQ.length){
     const b=BADGES.find(x=>x.id===toastQ.shift()); if(!b) continue;
+    if(inBattle()){ sfx(()=>{ [784,988,1319].forEach((f,i)=>osc(f,.25,'triangle',.15,i*.09)) }); ticker(`<span class="medal">${b.m}</span><span>獲得徽章：${b.name}！</span>`); continue }
     const d=document.createElement('div'); d.className='toast';
     d.innerHTML=`<span class="medal">${b.m}</span><span>獲得徽章：${b.name}！</span>`;
     document.body.appendChild(d);
@@ -2172,8 +2245,23 @@ function reveal(timeout){
 const DM = {lanes:[0,0,0,0], since:Date.now()-120000, mine:new Set(), timer:0, q:[]};
 const inBattle = () => S.playing && !anyOverlay();
 function flushDanmaku(){ if(inBattle()) return; const q=DM.q.splice(0); q.forEach(([n,t],i)=>setTimeout(()=>danmaku(n,t), i*700)) }
+const TK={q:[], busy:false};
+function ticker(html){ TK.q.push(html); if(TK.q.length>6) TK.q.shift(); runTicker() }
+async function runTicker(){
+  if(TK.busy) return; TK.busy=true;
+  while(TK.q.length){
+    const box=$('ticker'); const d=document.createElement('div'); d.className='tkr'; d.innerHTML=TK.q.shift(); box.appendChild(d);
+    const W=box.clientWidth, w=d.offsetWidth;
+    const an = reduce ? d.animate([{opacity:0},{opacity:1,offset:.1},{opacity:1,offset:.9},{opacity:0}],{duration:3000})
+                      : d.animate([{transform:`translateX(${W}px)`},{transform:`translateX(${-w-10}px)`}],{duration:Math.max(4500,(W+w)*11),easing:'linear'});
+    try{ await an.finished }catch(e){}
+    d.remove();
+  }
+  TK.busy=false;
+}
+function clearDanmaku(){ $('danmaku').querySelectorAll('.dm').forEach(d=>{ d.getAnimations().forEach(a=>a.pause()); d.animate([{opacity:1},{opacity:0}],{duration:250}).onfinish=()=>d.remove() }) }
 function danmaku(name, text){
-  if(inBattle()){ DM.q.push([name,text]); if(DM.q.length>8) DM.q.shift(); return }
+  if(inBattle()){ ticker(`<span class="medal">${escapeHTML(String(name).slice(0,1))}</span><span><b>${escapeHTML(name)}</b> ${escapeHTML(text)}</span>`); return }
   const lane = DM.lanes.indexOf(Math.min(...DM.lanes)), now=performance.now();
   DM.lanes[lane]=now+2600;
   const d=document.createElement('div'); d.className='dm';
@@ -2288,7 +2376,7 @@ function resetRound(ri, monId){
   $('hero').classList.remove('shielded');
   $('monBod').getAnimations().forEach(a=>a.cancel());
   renderMon(false); setScene(ri);
-  closeAll();
+  closeAll(); clearDanmaku();
   window.scrollTo(0,0);
 }
 function startStage(id){
@@ -2476,6 +2564,7 @@ function guest(){ player.test=false; player.name=''; save=normSave(lsGet('nh-gue
 // ---------- 商店 ----------
 let pendingBuy=null, shopTab='skin';
 function toastMsg(text){
+  if(inBattle()){ ticker(`<span>${text}</span>`); return }
   const d=document.createElement('div'); d.className='toast'; d.innerHTML=`<span>${text}</span>`; document.body.appendChild(d);
   d.animate([{opacity:0},{opacity:1,offset:.1},{opacity:1,offset:.85},{opacity:0}],{duration:2000}).onfinish=()=>d.remove();
 }
