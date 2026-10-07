@@ -421,6 +421,88 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 .log li.fix{color:#1f63b8}
 .log .now{display:inline-block;background:var(--ink);color:var(--paper);border-radius:999px;padding:0 8px;font-size:.75rem;margin-left:6px}
 .tbtn.god{background:#ffe0dc}
+
+/* ---------- v5 ---------- */
+.items{display:flex;gap:6px;flex-wrap:wrap}
+.ibtn{position:relative;width:46px;height:46px;border:2.5px solid var(--line);border-radius:12px;background:#fff;padding:5px;box-shadow:0 3px 0 var(--line)}
+.ibtn svg{width:100%;height:100%;display:block;overflow:visible}
+.ibtn b{position:absolute;right:-6px;bottom:-6px;min-width:18px;height:18px;border-radius:9px;background:var(--ink);color:#fff;font-family:var(--f-num);font-size:.7rem;display:grid;place-items:center;padding:0 3px;border:2px solid #fff}
+.ibtn.petbtn{width:auto;min-width:46px;padding:3px 6px}
+.ibtn.petbtn svg{width:34px;height:34px}
+.ibtn.petbtn b{position:static;display:inline-grid;margin-left:2px;background:var(--gold);color:var(--ink);border-color:var(--line)}
+.ibtn.petbtn{display:inline-flex;align-items:center}
+.ibtn:disabled{opacity:.4;box-shadow:none}
+.ibtn:active:not(:disabled){transform:translateY(3px);box-shadow:0 0 0 var(--line)}
+.pet{position:absolute;left:-34%;bottom:52%;width:62%;animation:petbob 1.1s ease-in-out infinite;z-index:1}
+.pet svg{width:100%;height:auto;display:block;overflow:visible}
+@keyframes petbob{50%{transform:translateY(-12%)}}
+.hero.shielded .bod{filter:drop-shadow(0 0 6px #5ce1ff) drop-shadow(0 0 2px #fff)}
+.timer.frozen i{background:linear-gradient(90deg,#8fd0ff,#e6f7ff,#8fd0ff) 0 0/200% 100%!important;box-shadow:0 0 10px #8fd0ff}
+.timer.frozen i::after{background:radial-gradient(ellipse at 50% 70%,#fff 0 20%,#bfe9ff 40%,transparent 70%)}
+.raidban{width:100%;display:flex;align-items:center;gap:12px;background:linear-gradient(120deg,#7a1f3d,#d9473f);color:#fff!important;border:3px solid var(--line);border-radius:20px;padding:12px 14px;margin-bottom:12px;text-align:left;box-shadow:0 5px 0 var(--line);animation:pulse2 1.4s ease-in-out infinite}
+.raidban .rbt{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.raidban b{font-size:1.2rem}
+.raidban small{font-weight:700;opacity:.9}
+.raidban .rbar{height:12px;border:2px solid #fff;border-radius:999px;overflow:hidden;background:rgba(0,0,0,.25)}
+.raidban .rbar i{display:block;height:100%;background:linear-gradient(90deg,#ffd23f,#ff8a1c)}
+.raidban .big{pointer-events:none;padding:8px 14px;font-size:1rem;color:var(--ink)}
+@keyframes pulse2{50%{box-shadow:0 5px 0 var(--line),0 0 0 6px rgba(255,90,60,.35)}}
+.hbtn.song{background:#e9e4ff}
+.hbtn .dot{display:inline-block;min-width:20px;height:20px;border-radius:10px;background:var(--danger);color:#fff;font-size:.75rem;line-height:20px;padding:0 5px;margin-left:4px}
+.dlist{display:flex;flex-direction:column;gap:12px;text-align:left}
+.dq{display:flex;align-items:center;gap:12px;background:#fff;border:3px solid var(--line);border-radius:16px;padding:10px 12px}
+.dq.got{background:#eef7ef}
+.dqt{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.dqt b{font-size:1.05rem}
+.dqt small{font-family:var(--f-num);font-weight:800;color:var(--ink-soft)}
+.dq .rbar{height:10px;border:2px solid var(--line);border-radius:999px;overflow:hidden;background:var(--paper)}
+.dq .rbar i{display:block;height:100%;background:var(--good)}
+.dq .big{padding:8px 12px;font-size:.95rem;white-space:nowrap}
+.cell .pic.petpic svg{width:70px}
+.cell button{border:2px solid var(--line);border-radius:10px;background:var(--gold);font-weight:900;padding:4px 10px;margin-top:4px}
+.cell button:disabled{background:var(--good);color:#fff}
+@media (orientation:landscape) and (max-height:560px){ .ibtn{width:38px;height:38px;padding:4px} .ibtn.petbtn svg{width:28px;height:28px} }
+
+.meter.raid .bar::after{display:none}
+
+/* ---------- v6 ---------- */
+/* 達人之島 */
+.scene.r-master{--sky-a:#120c2b;--sky-b:#3b2b6b;--gnd:#2e2a4f;--gnd-dk:#5fd0c4}
+.scene.r-master .ground::after{background:repeating-linear-gradient(90deg,transparent 0 8%,rgba(95,208,196,.18) 8% 8.6%)}
+.weather.star i{background:#ffd23f;box-shadow:0 0 6px #ffd23f;animation-name:fall}
+.region.master{border-color:#ffd23f;box-shadow:0 0 0 3px #ffd23f inset}
+.region.master h3{color:#ffd23f}
+.region .rule{display:inline-flex;align-items:center;gap:4px;font-weight:900;font-size:.85rem;background:#ffd23f;color:var(--ink);border-radius:999px;padding:2px 10px}
+.lives{display:flex;gap:4px;align-items:center}
+.lives svg{width:24px;height:22px;display:block}
+.lives .lost{filter:grayscale(1);opacity:.35}
+.lives .break{animation:heartbreak .6s}
+@keyframes heartbreak{30%{transform:scale(1.5) rotate(-12deg)}60%{transform:scale(.8) rotate(10deg)}}
+/* 商店：特效分組標題 */
+.shopsec{grid-column:1/-1;font-weight:900;font-size:1.05rem;text-align:left;padding:6px 4px 0;border-bottom:2px dashed #d8d2bd}
+.shopsec small{font-weight:700;color:var(--ink-soft);margin-left:6px}
+/* 造型動態效果 */
+#hero:not(.noaura) #heroBod svg{animation:idle 2.6s ease-in-out infinite}
+@keyframes idle{50%{transform:translateY(-3%)}}
+.aurap{position:absolute;inset:-18% -20% 0 -20%;pointer-events:none;z-index:0}
+.sk .pv{position:relative}
+.sk .pv .aurap{inset:0}
+.ap{position:absolute;width:14%;aspect-ratio:1;max-width:16px;opacity:0}
+.ap svg{width:100%;height:100%;display:block;overflow:visible}
+.ap.tw{animation:apTw 1.8s ease-in-out infinite}
+.ap.rise{animation:apRise 2s ease-in infinite}
+.ap.fall{animation:apFall 2.6s linear infinite}
+.ap.fl{animation:apFl .9s steps(2) infinite}
+@keyframes apTw{0%,100%{opacity:0;transform:scale(.3) rotate(0)}50%{opacity:1;transform:scale(1) rotate(90deg)}}
+@keyframes apRise{0%{opacity:0;transform:translateY(0) scale(.6)}20%{opacity:1}100%{opacity:0;transform:translateY(-140%) scale(1)}}
+@keyframes apFall{0%{opacity:0;transform:translateY(-60%) rotate(0)}20%{opacity:1}100%{opacity:0;transform:translateY(160%) rotate(180deg)}}
+@keyframes apFl{0%{opacity:1}50%{opacity:0}}
+.aura-glow #heroBod,.aura-sparkle #heroBod,.aura-gold #heroBod,.aura-petal #heroBod,.aura-shadow #heroBod,.aura-electric #heroBod,.aura-fire #heroBod,.aura-frost #heroBod,.aura-bubble #heroBod,.aura-notes #heroBod,
+.pv.aura-glow>svg,.pv.aura-sparkle>svg,.pv.aura-gold>svg,.pv.aura-petal>svg,.pv.aura-shadow>svg,.pv.aura-electric>svg,.pv.aura-fire>svg,.pv.aura-frost>svg,.pv.aura-bubble>svg,.pv.aura-notes>svg{animation:auraPulse 1.8s ease-in-out infinite}
+@keyframes auraPulse{0%,100%{filter:drop-shadow(0 0 3px var(--aura)) drop-shadow(0 0 7px var(--aura))}50%{filter:drop-shadow(0 0 6px var(--aura)) drop-shadow(0 0 16px var(--aura))}}
+.aura-rainbow #heroBod,.aura-master #heroBod,.pv.aura-rainbow>svg,.pv.aura-master>svg{animation:auraRb 2.4s linear infinite}
+@keyframes auraRb{0%,100%{filter:drop-shadow(0 0 6px #ff5c8a) drop-shadow(0 0 14px #ff5c8a)}25%{filter:drop-shadow(0 0 6px #ffd23f) drop-shadow(0 0 14px #ffd23f)}50%{filter:drop-shadow(0 0 6px #5ce1ff) drop-shadow(0 0 14px #5ce1ff)}75%{filter:drop-shadow(0 0 6px #7be07b) drop-shadow(0 0 14px #7be07b)}}
+.aura-shadow #heroBod{--aura:#4b2fa0}
 </style>
 </head>
 <body>
@@ -457,7 +539,7 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
     <div class="weather" id="weather"></div>
     <div class="dark" id="dark"></div>
     <div class="ground"></div>
-    <div class="actor hero" id="hero"><div class="shadow"></div><div class="bod" id="heroBod"></div></div>
+    <div class="actor hero" id="hero"><div class="shadow"></div><div class="aurap" id="heroAura"></div><div class="pet" id="pet" hidden></div><div class="bod" id="heroBod"></div></div>
     <div class="actor hero" id="hero2" hidden><div class="shadow"></div><div class="bod" id="hero2Bod"></div></div>
     <div class="actor monster" id="monster"><div class="shadow"></div><div class="bod" id="monBod"></div></div>
   </div>
@@ -465,6 +547,8 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
   <div class="hud hudsolo">
     <div class="meter" id="meter"><label for="pw" id="pwLabel">勇氣值</label><div class="bar" id="pw" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="pwFill"></i></div></div>
     <div class="combo" id="combo">連擊 <b>0</b></div>
+    <div class="lives" id="lives" hidden></div>
+    <div class="items" id="items"></div>
   </div>
   <div class="hudteam">
     <div class="tmeter A"><label id="tAname">紅隊</label><div class="bar"><i id="tAfill"></i></div><span class="cb" id="tAcb"></span></div>
@@ -506,9 +590,12 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 <div class="overlay" id="ovHome" hidden>
   <div class="panel">
     <div class="rankcard" id="homeRank"></div>
+    <button class="raidban" id="raidBanner" hidden></button>
     <div class="homegrid">
       <button class="hbtn adv" id="hAdv"><b>冒險地圖</b><small id="hAdvSub">5 個地區・25 關</small></button>
       <button class="hbtn prac" id="hPrac"><b>練習模式</b><small id="hPracSub">先熟悉五線譜</small></button>
+      <button class="hbtn song" id="hSong"><b>歌曲關卡</b><small>讀譜彈出一首歌</small></button>
+      <button class="hbtn" id="hDaily"><b>每日任務</b><small id="hDailySub">每天 3 個任務</small></button>
       <button class="hbtn" id="hTeam"><b>分組對抗</b><small>兩組同時搶答</small></button>
       <button class="hbtn" id="hRank"><b>排行榜</b><small>看看全班段位</small></button>
       <button class="hbtn" id="hShop"><b>商店</b><small>造型・武器・特效</small></button>
@@ -547,6 +634,23 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
     <div class="lstaffwrap"><svg class="pstaff" id="pstaff" viewBox="0 30 360 272" aria-label="練習五線譜"></svg></div>
     <div class="lfeed" id="lFeed"></div>
     <div class="lans" id="lAns"></div>
+  </div>
+</div>
+
+<!-- 歌曲 -->
+<div class="overlay" id="ovSongs" hidden>
+  <div class="panel wide">
+    <div class="shophead"><h2>歌曲關卡</h2><button class="big alt" id="btnSongsBack">返回</button></div>
+    <p>音符串起來是一首歌！答對一段，勇者就把那段旋律彈出來。</p>
+    <div class="levels" id="songList"></div>
+  </div>
+</div>
+
+<!-- 每日任務 -->
+<div class="overlay" id="ovDaily" hidden>
+  <div class="panel">
+    <div class="shophead"><h2>每日任務</h2><button class="big alt" id="btnDailyBack">返回</button></div>
+    <div class="dlist" id="dailyList"></div>
   </div>
 </div>
 
@@ -595,6 +699,7 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
       <button class="tab" id="tabSkin" role="tab" aria-selected="true">造型</button>
       <button class="tab" id="tabWpn" role="tab" aria-selected="false">武器</button>
       <button class="tab" id="tabFx" role="tab" aria-selected="false">擊打特效</button>
+      <button class="tab" id="tabItem" role="tab" aria-selected="false">道具</button>
     </div>
     <div class="skins" id="skins"></div>
   </div>
@@ -607,6 +712,7 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
     <div class="tabs" role="tablist">
       <button class="tab" id="tabMon" role="tab" aria-selected="true">怪獸圖鑑</button>
       <button class="tab" id="tabBadge" role="tab" aria-selected="false">成就徽章</button>
+      <button class="tab" id="tabPet" role="tab" aria-selected="false">夥伴</button>
     </div>
     <div class="grid" id="dexGrid"></div>
   </div>
@@ -647,8 +753,24 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
         <h4>遊戲設定</h4>
         <div class="r"><label for="tMul">答題時間</label><select id="tMul"><option value="1.5">寬鬆（1.5 倍）</option><option value="1.25">稍寬（1.25 倍）</option><option value="1">標準</option><option value="0.8">緊湊（0.8 倍）</option></select></div>
         <div class="r"><label for="tUnlock">解鎖全部關卡</label><input type="checkbox" id="tUnlock"> 上課時可以直接帶到任何一關</div>
-        <div class="r"><label for="tShopLock">鎖住商店</label><input type="checkbox" id="tShopLock"> 上課時不讓小朋友進商店</div>
+        <div class="r"><label for="tLockAdv">關閉冒險地圖</label><input type="checkbox" id="tLockAdv"> 先讓小朋友做練習，之後再打開（全班同步）</div>
+        <div class="r"><label for="tShopLock">鎖住商店</label><input type="checkbox" id="tShopLock"> 上課時不讓小朋友進商店（全班同步）</div>
+        <div class="hint" id="cfgMsg"></div>
         <div class="r"><label for="tVoice">練習語音</label><input type="checkbox" id="tVoice"> 練習模式用語音唸題目</div>
+      </section>
+      <section>
+        <h4>測試模式</h4>
+        <div class="r"><button class="sbtn" id="tpTestMode">用測試模式開始玩</button></div>
+        <div class="hint">全部關卡、造型、武器、特效、寵物和道具都解鎖，還有 10 萬金幣和「直接過關」（在遊戲選單裡）。資料只存在這台裝置，不會寫進試算表、不上排行榜、不發廣播。要離開時按上方的名字換回一般玩家。</div>
+      </section>
+      <section>
+        <h4>世界魔王（全班合作）</h4>
+        <div class="r"><label for="raidName">魔王名字</label><input type="text" id="raidName" maxlength="10" value="世界魔王"></div>
+        <div class="r"><label for="raidRegion">場景與音域</label><select id="raidRegion"></select></div>
+        <div class="r"><label for="raidHp">血量</label><input type="number" id="raidHp" min="10" max="5000" value="300"> <span class="hint">每答對一個音扣 1 血，全班 25 人大約 300～500</span></div>
+        <div class="r"><button class="sbtn" id="raidStart">開啟世界魔王</button><button class="sbtn alt" id="raidStop">結束</button></div>
+        <div class="hint" id="raidStatus"></div>
+        <div class="hint" id="raidMsg"></div>
       </section>
       <section>
         <h4>金幣</h4>
@@ -683,15 +805,18 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 const $ = id => document.getElementById(id);
 
 // 版本號：每次更新加 1，畫面上會顯示，方便確認上傳的是最新版
-const VERSION = 4, VERSION_DATE = '2026-10-07';
+const VERSION = 7, VERSION_DATE = '2026-10-07';
 // 更新日誌：每次更新在最上面加一筆（顯示在老師面板）
 const CHANGELOG = [
+  {v:7, date:'2026-10-07', add:['老師面板新增「測試模式」：全部關卡、造型、武器、特效、寵物、道具解鎖，資料只存在這台裝置，不進試算表、排行榜和廣播'], fix:['移除「偉展老師」測試帳號，這個名字現在是一般玩家']},
+  {v:6, date:'2026-10-07', add:['達人之島：8 關高難度關卡，每題 3～5 個音、時間很短，只有 3 顆愛心（最後 3 關只有 2 顆），答錯扣光就挑戰失敗','每種武器都有 3 種專屬擊打特效，可在商店「擊打特效」解鎖並分別設定','造型動態效果：會發光，並有火焰、雪花、泡泡、音符、閃電等專屬粒子','老師面板新增「關閉冒險地圖」，和「鎖住商店」一起改成全班裝置同步生效','新徽章：音符達人；達人之島限定造型「音符達人」'], fix:['造型價格調高（最高 3000 金幣）','打怪時不再出現彈幕，改在過關、地圖等畫面才飄出','舊的擊打特效自動換成對應武器的新特效，不會損失']},
+  {v:5, date:'2026-10-07', add:['歌曲關卡：瑪莉有隻小綿羊、蝴蝶、歡樂頌、小星星、兩隻老虎，答對一段就用武器音色彈出旋律，最後完整演奏','全班合作世界魔王：老師在老師面板開啟，全班共用血條，最後一擊全頻廣播','道具：時間沙漏、提示卡、護盾（商店「道具」分頁）','每日任務：每天 3 個任務，完成可領金幣','夥伴寵物：打敗地區魔王收服，每關可用一次技能（收藏「夥伴」分頁）','新徽章：小小演奏家、世界魔王討伐、第一隻夥伴']},
   {v:4, date:'2026-10-07', add:['魔王生氣後難度加倍：題目變成 3～5 個音、時間縮短、答錯怪獸一次逼近兩步','後面的地區從第一關就開始多音題','時間條加上火焰燃燒效果','每種武器都有自己的擊打特效（鎚子震地、光線槍灼燒、小龍噴火等）','全頻廣播彈幕：有人過新關卡、拿到新收藏或新裝備時，全班畫面都會飄過','老師測試帳號「偉展老師」：關卡全開、10 萬金幣、可直接過關','老師面板新增更新日誌'], fix:['版本號從主畫面移到老師面板的更新日誌']},
   {v:3, date:'2026-10-07', add:['測試連線會檢查是否真的寫得進音符勇者的試算表'], fix:['修正試算表網址誤用成動感節拍組合器的網址，資料寫不進去的問題','遊戲檔案裡寫好的網址優先，不會被舊設定蓋掉']},
   {v:2, date:'2026-10-07', add:['練習模式 6 課（語音唸題目）','冒險地圖：5 個地區、25 關、地區魔王與通關獎勵造型','武器商店：法杖、迴力鏢、音波鼓、光線槍、召喚小龍等遠距攻擊','段位與全班排行榜','手機橫向排版，所有畫面都能捲動']},
   {v:1, date:'2026-10-07', add:['五線譜識音打怪、注音唱名、高音ㄉㄡ','商店造型與擊打特效、背景音樂','錯題加強、提示線、分組對抗、老師面板、圖鑑與徽章','Google 試算表存檔']},
 ];
-const GOD_NAMES = ['偉展老師'];   // 老師測試帳號：關卡全開、不列入排行榜與廣播
+const TEST_NAME = '測試模式';   // 老師面板的測試模式：全部解鎖，只存在這台裝置
 
 // 想把試算表網址寫死在檔案裡，就貼在這裡；也可以在「選單 → 老師面板」貼上。
 const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwXP1Wicuj-VIqFdxN4dTJ1T3ys7-2WvI5SaFypRc4fdYx8tcvnP3ORQ8H7EUwdTtxPJw/exec';
@@ -855,6 +980,10 @@ const BADGES = [
   {id:'wpn3',     m:'武', name:'武器收藏家', desc:'擁有 3 種武器'},
   {id:'fx3',      m:'效', name:'特效收藏家', desc:'擁有 3 種擊打特效'},
   {id:'dex',      m:'博', name:'怪獸博士',   desc:'怪獸圖鑑全部收集'},
+  {id:'song',     m:'奏', name:'小小演奏家', desc:'完成全部 5 首歌曲關卡'},
+  {id:'raid',     m:'討', name:'世界魔王討伐', desc:'和全班一起打倒世界魔王'},
+  {id:'pet',      m:'伴', name:'第一隻夥伴', desc:'收服第一隻夥伴寵物'},
+  {id:'master',   m:'達', name:'音符達人',   desc:'通過達人之島全部 8 關'},
 ];
 
 // ---------- 練習模式 ----------
@@ -867,6 +996,57 @@ const LESSONS = [
   {id:'p6', title:'放音符', desc:'把音符放到正確的位置', intro:'聽題目，把音符放到正確的位置。'},
 ];
 const LANE = 9;
+
+// ---------- 達人之島（高難度，有愛心限制） ----------
+REGIONS.push({id:'master', name:'達人之島', desc:'高手限定：答錯會扣愛心，扣光就失敗', pool:KEYS, t:2.6, song:'master', mons:['mShadow','mCrystal'], boss:'mBoss', reward:{skin:'maestro'}, c1:'#3b2b6b', c2:'#120c2b', master:true});
+[
+  {seq:[3],   seq2:[3],   time:2.6, groups:5, lives:3},
+  {seq:[3,4], seq2:[3,4], time:2.5, groups:5, lives:3},
+  {seq:[4],   seq2:[4],   time:2.4, groups:6, lives:3},
+  {seq:[4,5], seq2:[4,5], time:2.3, groups:6, lives:3},
+  {seq:[5],   seq2:[5],   time:2.2, groups:6, lives:3},
+  {seq:[4,5], seq2:[4,5], time:2.0, groups:7, lives:2},
+  {seq:[5],   seq2:[5],   time:1.9, groups:7, lives:2},
+  {seq:[4,5], seq2:[5],   time:1.8, groups:8, lives:2, boss:true},
+].forEach((p,i)=>STAGES.push({id:`master-${i+1}`, r:5, n:i+1, seq:p.seq, seq2:p.seq2, boss:!!p.boss, time:p.time, goal:Math.round(p.groups*avg(p.seq)), lives:p.lives, noHint:true}));
+MONS.push(
+  {id:'mShadow',  name:'暗影音符怪', r:5, c:'#3b3466', horn:true, hornC:'#ffd23f', spots:true},
+  {id:'mCrystal', name:'水晶怪',     r:5, c:'#5fd0c4', horn:true, hornC:'#e6f7ff', fins:true, finC:'#b8f4ff'},
+  {id:'mBoss',    name:'音符大魔神', r:5, c:'#6b2fa0', horn:true, hornC:'#ffd23f', fins:true, finC:'#ff5c8a', big:true, crown:true, boss:true},
+);
+SKINS.push({id:'maestro', name:'音符達人', tag:'達人之島限定', price:0, reward:'master', head:'maestro', a:'#3f8f4a', b:'#f5b82e', body:'#1e1b3a', skin:'#ffd9b8', wpn:'rainbow', w:'#ffd23f'});
+
+// ---------- 每種武器的專屬擊打特效（主題沿用 FX 的顏色、粒子、音效） ----------
+const WFX_FAM = {
+  sword:['劍',[['basic','劍氣'],['fire','火焰劍氣'],['thunder','雷光劍']]],
+  hammer:['鎚子',[['basic','大地震'],['fire','熔岩鎚'],['ice','冰川鎚']]],
+  spear:['長槍',[['basic','突刺'],['thunder','雷槍'],['meteor','流星槍']]],
+  candy:['糖果武器',[['candy','糖果爆炸'],['heart','愛心糖'],['rainbow','彩虹糖']]],
+  wand:['法杖',[['star','星光'],['meteor','流星雨'],['petal','櫻花魔法']]],
+  boomerang:['迴力鏢',[['basic','疾風'],['fire','火焰迴旋'],['ice','冰刃迴旋']]],
+  yoyo:['溜溜球',[['basic','彈跳'],['heart','愛心溜溜'],['candy','糖果溜溜']]],
+  flute:['音符長笛',[['note','音符'],['petal','櫻花樂章'],['star','星空樂章']]],
+  drum:['雷霆小鼓',[['note','音波'],['thunder','雷鳴鼓'],['fire','火焰鼓']]],
+  blaster:['太空光線槍',[['basic','光束'],['ice','冰凍光線'],['rainbow','彩虹光線']]],
+  bubble:['泡泡魔杖',[['bubble','泡泡'],['heart','愛心泡泡'],['candy','糖果泡泡']]],
+  rainbow:['彩虹權杖',[['rainbow','彩虹'],['star','星光彩虹'],['petal','櫻花彩虹']]],
+  dragon:['小龍召喚',[['fire','火焰吐息'],['thunder','雷電吐息'],['meteor','流星吐息']]],
+};
+const WFX=[];
+Object.entries(WFX_FAM).forEach(([fam,[fname,vs]])=>vs.forEach(([theme,name],i)=>WFX.push({id:`${fam}-${theme}`, fam, theme, name, price:[0,300,600][i], tag:`${fname}專屬`})));
+const famOf = k => ({spoon:'candy',lolli:'candy',cane:'candy'}[k]) || (WFX_FAM[k]?k:'sword');
+
+// ---------- 造型動態效果與價格：[效果, 顏色, 價格] ----------
+const AURA = {
+  ranger:['glow','#7be07b',300], wizard:['sparkle','#b58cff',400], king:['gold','#ffd23f',500], cat:['glow','#ffb35a',500],
+  bunny:['petal','#ff8fbf',600], pirate:['glow','#ff6b5e',700], ninja:['shadow','#7a5cff',700], astro:['electric','#5ce1ff',900],
+  chef:['sparkle','#ffffff',900], cowboy:['gold','#ffcf7a',1000], samurai:['fire','#ff6a2b',1200], princess:['sparkle','#ff8fbf',1200],
+  robot:['electric','#5ce1ff',1500], dino:['bubble','#9be07b',1500], pumpkin:['fire','#ff9d1c',1800], viking:['frost','#bfe9ff',2000],
+  santa:['frost','#ffffff',2200], flower:['petal','#ffb7cf',2500], bear:['gold','#ffd23f',3000],
+  mushroom:['sparkle','#ff8fbf'], elf:['notes','#7be07b'], diver:['bubble','#8fd8ff'], snowp:['frost','#bfe9ff'], starkn:['rainbow','#ffd23f'], maestro:['master','#ffd23f'],
+};
+SKINS.forEach(s=>{ const a=AURA[s.id]; if(a){ s.aura=a[0]; s.ac=a[1]; if(a[2]!=null && !s.reward) s.price=a[2] } });
+
 
 
 // ================= storage helpers =================
@@ -881,22 +1061,29 @@ const prefs = Object.assign({hint:false, voice:true}, lsGet('nh-prefs',{}));
 const savePrefs = () => lsSet('nh-prefs',prefs);
 
 // ================= player =================
-const newSave = () => ({coins:0,total:0,owned:['knight'],skin:'knight',fxOwned:['basic'],fx:'basic',wpnOwned:['auto'],wpn:'auto',prog:{},cleared:[],practice:{},badges:[],dex:{},notes:{},right:0,best:0,ts:0});
+const newSave = () => ({coins:0,total:0,owned:['knight'],skin:'knight',fxOwned:[],fxSel:{},fx:'basic',wpnOwned:['auto'],wpn:'auto',prog:{},cleared:[],practice:{},badges:[],dex:{},notes:{},right:0,best:0,ts:0,songs:{},items:{},pets:[],pet:'',raids:[],daily:null});
 function normSave(s){
   const d=Object.assign(newSave(), s||{});
-  ['owned','fxOwned','wpnOwned','cleared','badges'].forEach(k=>{ if(!Array.isArray(d[k])) d[k]=newSave()[k] });
-  ['prog','practice','dex','notes'].forEach(k=>{ if(!d[k]||typeof d[k]!=='object') d[k]={} });
+  ['owned','fxOwned','wpnOwned','cleared','badges','pets','raids'].forEach(k=>{ if(!Array.isArray(d[k])) d[k]=newSave()[k] });
+  ['prog','practice','dex','notes','songs','items'].forEach(k=>{ if(!d[k]||typeof d[k]!=='object') d[k]={} });
   if(!d.wpnOwned.includes('auto')) d.wpnOwned.unshift('auto');
   if(!WEAPONS.some(x=>x.id===d.wpn)) d.wpn='auto';
   if(!d.owned.includes('knight')) d.owned.unshift('knight');
-  if(!d.fxOwned.includes('basic')) d.fxOwned.unshift('basic');
+  if(!d.fxSel || typeof d.fxSel!=='object') d.fxSel={};
+  // 舊版的通用擊打特效 → 換成每種武器對應主題的特效
+  d.fxOwned.slice().forEach(id=>{ if(FX.some(f=>f.id===id) && id!=='basic') WFX.forEach(x=>{ if(x.theme===id && x.price>0 && !d.fxOwned.includes(x.id)) d.fxOwned.push(x.id) }) });
+  d.fxOwned=d.fxOwned.filter(id=>WFX.some(x=>x.id===id));
   if(!SKINS.some(x=>x.id===d.skin)) d.skin='knight';
   if(!FX.some(x=>x.id===d.fx)) d.fx='basic';
   return d;
 }
-const player = {name:''};           // '' = 訪客
+const player = {name:'', test:false};   // name '' = 訪客；test = 老師測試模式
 let save = normSave(lsGet('nh-guest', null) || lsGet('nh-save-v2', null));
-const curFx = () => FX.find(f=>f.id===save.fx)||FX[0];
+const curFx = () => {
+  const fam=famOf(attackKind($('hero'))), sel=(save.fxSel||{})[fam];
+  const v=WFX.find(x=>x.id===sel && x.fam===fam && (x.price===0||save.fxOwned.includes(x.id))) || WFX.find(x=>x.fam===fam);
+  return FX.find(f=>f.id===(v?v.theme:'basic'))||FX[0];
+};
 let classStats = lsGet('nh-class', {});
 
 // ================= Google 試算表 =================
@@ -948,6 +1135,7 @@ function addLocalClass(notes){
 }
 function persistLocal(){
   save.ts = Date.now();
+  if(player.test){ lsSet('nh-test',save); return }
   if(!player.name){ lsSet('nh-guest',save); return }
   const cache=lsGet('nh-players',{}); cache[player.name]={save, ts:save.ts}; lsSet('nh-players',cache);
 }
@@ -967,8 +1155,9 @@ function progressText(sv=save){
 }
 function commit(record, notes){
   persistLocal();
+  if(player.test) return;   // 測試模式不寫進試算表
   if(notes) addLocalClass(notes);
-  if(player.name){ const sc=save.god?0:rankScore(); send({action:'save', name:player.name, save:Object.assign({}, save, {badgeNames:badgeNames(), rankScore:sc, tierName:save.god?'老師測試帳號':tierOf(sc).name, weak:weakNotes(), progress:progressText()}), record, notes}); }
+  if(player.name){ const sc=rankScore(); send({action:'save', name:player.name, save:Object.assign({}, save, {badgeNames:badgeNames(), rankScore:sc, tierName:tierOf(sc).name, weak:weakNotes(), progress:progressText()}), record, notes}); }
   else if(record) send({action:'record', record, notes});
 }
 
@@ -1043,6 +1232,9 @@ const SONGS = {
   castle:{tempo:136, lead:'square', lv:.045, bass:'sawtooth', bv:.06, drums:2,
     L:[74,0,74,77, 81,0,79,77, 76,0,76,79, 77,0,74,0, 74,0,74,77, 81,0,84,82, 81,79,77,76, 74,0,0,0],
     B:[38,38,50,38, 34,34,46,34, 36,36,48,36, 33,33,45,33]},
+  master:{tempo:148, lead:'square', lv:.045, bass:'sawtooth', bv:.06, drums:2,
+    L:[76,0,76,79, 81,0,79,76, 74,0,74,77, 79,77,76,74, 72,0,76,79, 84,83,81,79, 77,76,74,72, 71,0,0,0],
+    B:[40,40,52,40, 38,38,50,38, 36,36,48,36, 35,35,47,35]},
   calm:{tempo:92, lead:'triangle', lv:.06, bass:'sine', bv:.16, drums:0,
     L:[72,0,0,76, 79,0,0,76, 77,0,76,0, 74,0,0,0, 72,0,0,76, 79,0,81,79, 77,0,74,0, 72,0,0,0],
     B:[48,0,55,0, 53,0,60,0, 43,0,50,0, 48,0,55,0]},
@@ -1127,6 +1319,7 @@ function heroSVG(k){
     case 'diver':    front=`<circle cx="48" cy="38" r="28" fill="${a}" fill-opacity=".3" ${L}/><path d="M30 22 Q38 14 50 13" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="22" y="58" width="52" height="9" rx="4" fill="${b}" ${L}/><circle cx="21" cy="38" r="4" fill="${b}" ${L}/><circle cx="75" cy="38" r="4" fill="${b}" ${L}/>`; break;
     case 'snowking': front=`<path d="M30 22 L30 6 L36 14 L42 0 L48 12 L54 0 L60 14 L66 6 L66 22Z" fill="${b}" ${L}/><circle cx="48" cy="17" r="3" fill="#fff"/><rect x="26" y="55" width="44" height="9" rx="4" fill="${a}" ${L}/><path d="M60 60 L66 78 L58 76Z" fill="${a}" ${L}/>`; break;
     case 'starknight':back=`<path d="M32 56 L16 104 L80 104 L64 56Z" fill="#5a63c9" ${L}/>`; front=`<path d="M24 38 A24 24 0 0 1 72 38 Z" fill="${a}" ${L}/><path d="M48 10 l3 6 6 .8 -4.5 4.2 1.2 6 -5.7 -3 -5.7 3 1.2 -6 -4.5 -4.2 6 -.8Z" fill="${b}" ${L}/><path d="M28 34 H68" stroke="#5ce1ff" stroke-width="3"/>`; break;
+    case 'maestro': { let lv=''; for(let i=0;i<7;i++){ const t=(200+i*23)*Math.PI/180, x=48+27*Math.cos(t), y=38+27*Math.sin(t); lv+=`<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="7" ry="3.6" transform="rotate(${(200+i*23+90)%360} ${x.toFixed(1)} ${y.toFixed(1)})" fill="${a}" ${L}/>` } front=lv+`<path d="M48 0 l3 6 6 .8 -4.5 4.2 1.2 6 -5.7 -3 -5.7 3 1.2 -6 -4.5 -4.2 6 -.8Z" fill="${b}" ${L}/><path d="M36 60 L48 66 L60 60 L56 72 L48 68 L40 72Z" fill="${b}" ${L}/>`; break; }
     case 'bear':    back=`<circle cx="29" cy="18" r="10" fill="${a}" ${L}/><circle cx="67" cy="18" r="10" fill="${a}" ${L}/><circle cx="29" cy="18" r="5" fill="${b}"/><circle cx="67" cy="18" r="5" fill="${b}"/><circle cx="48" cy="40" r="28" fill="${a}" ${L}/>`; front=cap; break;
   }
   const face = k.head==='ninja'
@@ -1277,13 +1470,14 @@ function pill(p,x,y,text,fill,fs=20){
   el('rect',{x:x-w/2,y:y-fs*.9,width:w,height:fs*1.8,rx:fs*.9,fill,stroke:'#2b3550','stroke-width':2.5},p);
   el('text',{x,y:y+fs*.35,'text-anchor':'middle','font-size':fs,'font-weight':900,'font-family':FONT,fill:'#fff',stroke:'rgba(0,0,0,.35)','stroke-width':1.2,'paint-order':'stroke'},p).textContent=text;
 }
+const noHintNow = () => S.mode==='solo' && S.stage && S.stage.noHint && S.playing;
 function drawStaff(seq, states=[], active=-1){
   const s=$('staff'); s.innerHTML='';
   for(let i=0;i<5;i++) el('line',{x1:14,x2:346,y1:yOf(i*2),y2:yOf(i*2),stroke:'#2b3550','stroke-width':2.2});
   el('line',{x1:14,x2:14,y1:yOf(8),y2:yOf(0),stroke:'#2b3550','stroke-width':2.2});
   el('line',{x1:346,x2:346,y1:yOf(8),y2:yOf(0),stroke:'#2b3550','stroke-width':2.2});
   el('text',{x:22,y:yOf(2),'font-size':GAP*4,'font-family':'"Noto Music","Bravura","Segoe UI Symbol",serif',fill:'#2b3550'}).textContent='\u{1D11E}';
-  if(prefs.hint){
+  if((prefs.hint || S.tempHint) && !noHintNow()){
     el('line',{x1:74,x2:100,y1:yOf(-2),y2:yOf(-2),stroke:'#e8473d','stroke-width':2.2,'stroke-dasharray':'4 3'});
     el('ellipse',{cx:87,cy:yOf(-2),rx:7.5,ry:5.4,fill:'none',stroke:'#e8473d','stroke-width':2,'stroke-dasharray':'3 2'});
     el('text',{x:87,y:yOf(-2)+20,'text-anchor':'middle','font-size':13,'font-weight':900,'font-family':FONT,fill:'#c4321f'}).textContent='ㄉㄡ';
@@ -1332,6 +1526,7 @@ KEYS.forEach(k=>{
   $('keysA').appendChild(makeKey(k,(k,b)=>answerTeam('A',k,b),'kA-'));
   $('keysB').appendChild(makeKey(k,(k,b)=>answerTeam('B',k,b),'kB-'));
 });
+function setKeysFor(list){ const ok=new Set(list); KEYS.forEach(k=>['key-','kA-','kB-'].forEach(p=>$(p+k).disabled=!ok.has(k))) }
 function setKeys(){
   const ok=new Set(regionOf().pool);
   KEYS.forEach(k=>['key-','kA-','kB-'].forEach(p=>$(p+k).disabled=!ok.has(k)));
@@ -1370,6 +1565,11 @@ function setScene(ri){
     s+=`<path d="M680 200 L880 60 L1080 200Z" fill="#a9c7e0"/><path d="M836 92 L880 60 L924 92 L900 86 L880 100 L860 86Z" fill="#fff"/>`;
     for(let k=0;k<9;k++){ const x=k*120+r()*40; s+=`<path d="M${x} 196 L${x+20} 150 L${x+40} 196Z" fill="#3f7a5a"/><path d="M${x+6} 170 L${x+20} 150 L${x+34} 170Z" fill="#fff"/>` }
     wx='snow';
+  }else if(R.id==='master'){
+    for(let k=0;k<40;k++) s+=`<circle cx="${(r()*1000).toFixed(0)}" cy="${(r()*120).toFixed(0)}" r="${(r()*1.8+.6).toFixed(1)}" fill="#fff" opacity="${(r()*.6+.3).toFixed(2)}"/>`;
+    s+=`<path d="M0 60 Q250 10 500 50 T1000 40" fill="none" stroke="#5fd0c4" stroke-width="18" opacity=".18"/><path d="M0 80 Q300 30 600 70 T1000 60" fill="none" stroke="#b58cff" stroke-width="14" opacity=".16"/>`;
+    [[150,120,90],[520,90,120],[860,130,80]].forEach(([x,y,w])=>{ s+=`<path d="M${x-w} ${y} Q${x} ${y-24} ${x+w} ${y} L${x+w*.4} ${y+40} L${x} ${y+70} L${x-w*.5} ${y+36}Z" fill="#2a2450"/><path d="M${x-w*.4} ${y-6} L${x-w*.25} ${y-40} L${x-w*.1} ${y-6}Z M${x+w*.1} ${y-8} L${x+w*.3} ${y-52} L${x+w*.45} ${y-8}Z" fill="#5fd0c4" opacity=".75"/>` });
+    wx='star';
   }else{
     s=`<circle cx="160" cy="44" r="22" fill="#fff1c9" opacity=".9"/>`;
     const cx=640, base=200;
@@ -1383,7 +1583,7 @@ function setScene(ri){
   $('decor').innerHTML=`<svg viewBox="0 0 1000 200" preserveAspectRatio="xMidYMax slice">${s}</svg>`;
   const w=$('weather'); w.className='weather'+(wx?' '+wx:''); w.innerHTML='';
   if(wx && !reduce){
-    for(let k=0;k<22;k++){ const i=document.createElement('i'), sz=wx==='snow'?3+Math.random()*5:6+Math.random()*10;
+    for(let k=0;k<22;k++){ const i=document.createElement('i'), sz=wx==='snow'?3+Math.random()*5:wx==='star'?2+Math.random()*3:6+Math.random()*10;
       Object.assign(i.style,{left:Math.random()*100+'%',width:sz+'px',height:sz+'px',animationDuration:(4+Math.random()*5)+'s',animationDelay:(-Math.random()*8)+'s'});
       w.appendChild(i) }
   }
@@ -1421,9 +1621,25 @@ function effWeapon(){
   return DRAW_STYLE[curSkin().wpn] || {style:'melee'};
 }
 const teamSkin = t => Object.assign({}, SKINS[0], t==='A' ? {body:'#d9473f', b:'#ffd23f'} : {body:'#2f7fd6', b:'#ffffff', a:'#e4ebf2'});
+const AP_SHAPE={sparkle:'star',gold:'star',rainbow:'star',master:'star',fire:'flame',frost:'snow',bubble:'bubble',notes:'note',petal:'petal',electric:'shard',shadow:'dot'};
+const AP_ANIM={sparkle:'tw',gold:'tw',rainbow:'tw',master:'tw',fire:'rise',frost:'fall',bubble:'rise',notes:'rise',petal:'fall',electric:'fl',shadow:'rise'};
+const AP_POS=[[8,20],[78,12],[16,58],[84,52],[46,4],[60,70]];
+function auraParts(type, col){
+  const sh=AP_SHAPE[type]; if(!sh) return '';
+  const cols = type==='rainbow'||type==='master' ? RB : type==='shadow' ? ['#4b2fa0','#2b2240'] : [col, '#ffffff'];
+  return AP_POS.map(([x,y],i)=>`<span class="ap ${AP_ANIM[type]}" style="left:${x}%;top:${y}%;animation-delay:${(i*.33).toFixed(2)}s"><svg viewBox="0 0 20 20">${partSVG(sh, cols[i%cols.length])}</svg></span>`).join('')
+    + (type==='master'?`<span class="ap fl" style="left:30%;top:30%"><svg viewBox="0 0 20 20">${partSVG('shard','#5ce1ff')}</svg></span>`:'');
+}
+function applyAura(el, partsEl, skin){
+  [...el.classList].forEach(c=>{ if(c.startsWith('aura-')) el.classList.remove(c) });
+  if(skin && skin.aura){ el.classList.add('aura-'+skin.aura); el.style.setProperty('--aura', skin.ac||'#ffd23f'); if(partsEl) partsEl.innerHTML=auraParts(skin.aura, skin.ac) }
+  else if(partsEl) partsEl.innerHTML='';
+}
 function renderHero(){
-  if(S.mode==='team'){ $('heroBod').innerHTML=heroSVG(teamSkin('A')); $('hero2Bod').innerHTML=heroSVG(teamSkin('B')); return }
+  if(S.mode==='team'){ $('heroBod').innerHTML=heroSVG(teamSkin('A')); $('hero2Bod').innerHTML=heroSVG(teamSkin('B')); applyAura($('hero'),$('heroAura'),null); renderPet(); return }
   $('heroBod').innerHTML=heroSVG(heroFor(curSkin(), save.wpn));
+  applyAura($('hero'),$('heroAura'),curSkin());
+  renderPet();
 }
 const curMon = () => MONS.find(m=>m.id===S.monId)||MONS[0];
 function renderMon(enraged){
@@ -1431,11 +1647,27 @@ function renderMon(enraged){
   $('monBod').innerHTML=monSVG(enraged?Object.assign({},m,{c:'#7a1f3d'}):m);
   $('monster').classList.toggle('enraged',!!enraged);
 }
+const HEART='<svg viewBox="0 0 24 22"><path d="M12 21 C3 14 1 9 3.5 5 C6 1.5 10.5 2.5 12 6 C13.5 2.5 18 1.5 20.5 5 C23 9 21 14 12 21Z" fill="#e8473d" stroke="#2b3550" stroke-width="2" stroke-linejoin="round"/></svg>';
+function renderLives(breakOne){
+  const el=$('lives'), max=(S.mode==='solo'&&S.stage&&S.stage.lives)||0;
+  el.hidden=!max; if(!max) return;
+  el.innerHTML=Array.from({length:max},(_,i)=>`<span class="${i<S.lives?'':'lost'}${breakOne&&i===S.lives?' break':''}">${HEART}</span>`).join('');
+}
 function hud(){
   if(S.mode==='team'){
     const g=goal();
     ['A','B'].forEach(t=>{ const d=S.team[t]; $('t'+t+'fill').style.width=Math.min(100,d.power/g*100)+'%'; $('t'+t+'cb').textContent=d.combo>1?`${d.combo}連`:'' });
+  }else if(S.sub==='song' && S.song){
+    $('meter').classList.remove('boss','raid'); $('pwLabel').textContent=`樂曲 ${S.chunk}/${S.song.parts.length}`;
+    $('pwFill').style.width=(S.chunk/S.song.parts.length*100)+'%';
+    $('combo').innerHTML=`連擊 <b>${S.combo}</b>`;
+  }else if(S.sub==='raid'){
+    const r=RAID.state||{hp:1,max:1,name:'世界魔王'};
+    $('meter').classList.add('boss','raid'); $('pwLabel').textContent=`${r.name} ${r.hp}/${r.max}`;
+    $('pwFill').style.width=Math.max(0,r.hp/Math.max(1,r.max)*100)+'%';
+    $('combo').innerHTML=`我的傷害 <b>${S.raidMine||0}</b>`;
   }else if(S.stage){
+    $('meter').classList.remove('raid');
     const g=goal(), boss=S.stage.boss;
     $('meter').classList.toggle('boss',boss);
     $('pwLabel').textContent = boss ? (S.phase2?'魔王血條 2/2':'魔王血條 1/2') : '勇氣值';
@@ -1470,10 +1702,12 @@ async function runToast(){
 function checkCollect(){
   if(save.owned.length>=5) award('skin5');
   if(save.wpnOwned.length>=4) award('wpn3');
-  if(save.fxOwned.length>=3) award('fx3');
+  if(save.fxOwned.filter(id=>WFX.some(x=>x.id===id&&x.price>0)).length>=3) award('fx3');
   if(MONS.every(m=>save.dex[m.id])) award('dex');
   if(REGIONS.some((R,ri)=>STAGES.filter(s=>s.r===ri).every(s=>(save.prog[s.id]||0)>=3))) award('stars');
   if(LESSONS.every(l=>save.practice[l.id])) award('practice');
+  if(SONG_LIST.every(s=>save.songs[s.id])) award('song');
+  if(save.pets.length) award('pet');
 }
 
 // ================= 攻擊 =================
@@ -1724,6 +1958,7 @@ function pickOne(exclude){
   return pool[pool.length-1];
 }
 function makeSeq(){
+  if(S.sub==='song'){ const p=S.song.parts[S.chunk].map(n=>n[0]); S.last=p[p.length-1]; return p }
   const lens = S.mode==='team' ? [1] : (S.phase2 ? S.stage.seq2 : S.stage.seq);
   const n = lens[Math.floor(Math.random()*lens.length)];
   const seq=[]; let last=S.last;
@@ -1741,6 +1976,7 @@ function nextQ(){
   if(!S.playing) return;
   $('btnNext').hidden=true; $('msg').hidden=true; clearKeyMarks();
   S.locked={A:false,B:false}; $('tkA').classList.remove('locked'); $('tkB').classList.remove('locked');
+  S.timeBoost=1; S.tempHint=false;
   S.seq=makeSeq(); S.pos=0; S.states=[]; S.busy=false; S.qWrong=false; S.qStart=performance.now();
   $('seqhint').hidden = S.seq.length<2 && !S.phase2;
   $('seqhint').classList.toggle('rage', S.phase2);
@@ -1749,15 +1985,17 @@ function nextQ(){
   drawStaff(S.seq, S.states, S.seq.length>1?0:-1); startTimer();
 }
 function qTime(){
+  if(S.sub==='song') return Math.max(4, 3.6*(1+0.8*(S.seq.length-1))*timeMul()*(S.timeBoost||1));
   const base = S.mode==='team' ? regionOf().t : S.stage.time;
-  return Math.max(3, base*(1+0.7*(S.seq.length-1))*timeMul()*(S.phase2?0.75:1));
+  return Math.max(3, base*(1+0.7*(S.seq.length-1))*timeMul()*(S.phase2?0.75:1)*(S.timeBoost||1));
 }
 function startTimer(){
   cancelAnimationFrame(S.tId);
   const bar=$('timerFill'); $('timer').classList.toggle('off',!S.timerOn);
   if(!S.timerOn) return;
-  const lim=qTime()*1000, t0=performance.now(); let lastEmber=0;
+  const lim=qTime()*1000; let t0=performance.now(), lastNow=t0, lastEmber=0;
   const tick=now=>{
+    if(now<(S.freezeUntil||0)) t0+=now-lastNow; lastNow=now;
     const r=Math.max(0,1-(now-t0)/lim), heat=S.phase2?Math.min(1,1.3-r):1-r;
     bar.style.width=(r*100)+'%'; $('timer').style.setProperty('--heat',heat.toFixed(2));
     if(!reduce && now-lastEmber > (heat>.65?60:150)){ lastEmber=now; spawnEmber(r, heat) }
@@ -1797,18 +2035,23 @@ async function answer(k,btn){
     S.right+=len; S.combo++; S.best=Math.max(S.best,S.combo); save.best=Math.max(save.best,S.combo);
     if(S.combo>=5) award('c5'); if(S.combo>=10) award('c10'); if(S.combo>=20) award('c20');
     if(len===1 && dt<2000) award('fast'); if(len===3) award('seq3'); if(save.right>=100) award('q100');
-    const big = S.combo%3===0 || len>=3;
-    S.power += len + (S.combo%3===0?1:0);
+    const big = S.combo%3===0 || len>=3 || (S.powerBoost||1)>1;
+    if(S.sub==='song'){ S.chunk++; S.power=S.chunk }
+    else S.power += (len + (S.combo%3===0?1:0))*(S.powerBoost||1);
+    S.powerBoost=1;
+    if(S.sub==='raid'){ S.raidPending+=len; S.raidMine+=len }
+    dailyEvent('notes',len); dailyEvent('combo',S.combo); dailyEvent('weapon', attackKind($('hero')));
     say(big?(len>=3?`${['','','','三','四','五'][len]}音連發！`:`${S.combo} 連擊！會心一擊！`):(len>1?'全部答對！':`答對了！是 ${zyName(cur)}`),'good');
     const c=$('combo'); c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop');
     hud();
     await heroAttack(big);
+    if(S.sub==='song'){ await wait(120); await wait(playMelody(S.song.parts[S.chunk-1])*1000) }
     const coins=10*len+(big?5:0); addCoins(coins);
     const h=centerOf($('hero')); fxText(`+${coins}`, h.x, h.y-h.h*.7, 'gold');
     persistLocal();
     await wait(250);
     if(!S.playing) return;
-    if(S.power>=g){ await win(); return }
+    if(S.power>=g){ await (S.sub==='song'?songWin():win()); return }
     if(S.stage.boss && !S.phase2 && S.power>=g/2){ await bossEnrage() }
     if(S.hero+1<S.mon){ S.hero++; sStep(); $('heroBod').animate([{transform:'translateY(0)'},{transform:'translateY(-18%)'},{transform:'translateY(0)'}],{duration:380}); }
     else if(S.mon<LANE){ S.mon++; }
@@ -1824,8 +2067,16 @@ async function answer(k,btn){
     if(btn) btn.classList.add('wrong');
     $('key-'+cur).classList.add('show');
     say(k?`這是 ${zyName(cur)} 喔`:`時間到！這是 ${zyName(cur)}`,'bad');
-    await monsterAdvance(S.mon-1<=S.hero);
-    if(S.phase2 && S.mon-1>S.hero){ await wait(120); await monsterAdvance(false) }
+    if(S.shield){
+      S.shield=false; $('hero').classList.remove('shielded'); renderItems();
+      const h=centerOf($('hero')); fxText('護盾擋住了！', h.x, h.y-h.h*.7, 'gold'); sfx(()=>osc(1200,.2,'triangle',.15));
+      await wait(500);
+    }else{
+      if(S.stage.lives){ S.lives--; renderLives(true); sfx(()=>{ osc(330,.2,'square',.1); osc(220,.3,'square',.1,.15) }) }
+      await monsterAdvance(S.mon-1<=S.hero);
+      if(S.phase2 && S.mon-1>S.hero){ await wait(120); await monsterAdvance(false) }
+      if(S.stage.lives && S.lives<=0){ await stageFail(); return }
+    }
     S.seq.forEach((kk,i)=>setTimeout(()=>sNote(NOTES[kk].f), i*450));
     $('btnNext').hidden=false; $('btnNext').focus({preventScroll:true});
   }
@@ -1871,8 +2122,11 @@ function reveal(timeout){
 }
 
 // ================= 全頻廣播（彈幕） =================
-const DM = {lanes:[0,0,0,0], since:Date.now()-120000, mine:new Set(), timer:0};
+const DM = {lanes:[0,0,0,0], since:Date.now()-120000, mine:new Set(), timer:0, q:[]};
+const inBattle = () => S.playing && !anyOverlay();
+function flushDanmaku(){ if(inBattle()) return; const q=DM.q.splice(0); q.forEach(([n,t],i)=>setTimeout(()=>danmaku(n,t), i*700)) }
 function danmaku(name, text){
+  if(inBattle()){ DM.q.push([name,text]); if(DM.q.length>8) DM.q.shift(); return }
   const lane = DM.lanes.indexOf(Math.min(...DM.lanes)), now=performance.now();
   DM.lanes[lane]=now+2600;
   const d=document.createElement('div'); d.className='dm';
@@ -1895,7 +2149,6 @@ async function pollFeed(){
     (j.events||[]).forEach(e=>{
       DM.since=Math.max(DM.since, Number(e.ts)||0);
       if(DM.mine.has(e.name+'|'+e.ts)) return;
-      if(GOD_NAMES.includes(e.name)) return;
       danmaku(e.name, e.text);
     });
   }catch(e){}
@@ -1908,6 +2161,7 @@ const starsFor = (r,w) => { const acc=r/Math.max(1,r+w); return acc>=.9?3:acc>=.
 const stageLabel = st => `${REGIONS[st.r].name} ${st.r+1}-${st.n}`;
 function nextStageOf(st){ const i=STAGES.indexOf(st); return STAGES[i+1]||null }
 function showWin(o){
+  $('btnAgain').hidden=false; $('btnAgain').textContent='再玩一次';
   $('winStars').textContent=o.stars||''; $('winStars').hidden=!o.stars;
   $('winTitle').textContent=o.title;
   $('winStat').innerHTML=o.stat;
@@ -1931,26 +2185,40 @@ async function win(){
   addCoins(stars*20 + (st.boss?50:0));
   save.dex[m.id]=(save.dex[m.id]||0)+1;
   award('win1'); if(S.wrong===0) award('perfect');
+  dailyEvent('stage',1); if(st.boss) dailyEvent('boss',1);
   let reward='';
   if(st.boss && !save.cleared.includes(R.id)){
     save.cleared.push(R.id); award('region');
     const sk=SKINS.find(s=>s.id===R.reward.skin), W=R.reward.wpn&&WEAPONS.find(w=>w.id===R.reward.wpn);
     if(sk && !save.owned.includes(sk.id)) save.owned.push(sk.id);
     if(W && !save.wpnOwned.includes(W.id)) save.wpnOwned.push(W.id);
-    reward=`<div class="rpv">${heroSVG(heroFor(sk, W?W.id:'auto'))}</div><div><b>${R.name}通關獎勵！</b><small>新造型「${sk.name}」${W?`＋武器「${W.name}」`:''}，到商店就能換上</small></div>`;
+    const pet=PETS.find(p=>p.region===R.id); let petTxt='';
+    if(pet && !save.pets.includes(pet.id)){ save.pets.push(pet.id); if(!save.pet) save.pet=pet.id; petTxt=`，還收服了夥伴「${pet.name}」`; award('pet'); renderPet() }
+    reward=`<div class="rpv">${heroSVG(heroFor(sk, W?W.id:'auto'))}</div><div><b>${R.name}通關獎勵！</b><small>新造型「${sk.name}」${W?`＋武器「${W.name}」`:''}${petTxt}，到商店和收藏就能換上</small></div>`;
   }
   if(st.boss && R.id==='castle') award('boss');
+  if(st.boss && R.id==='master') award('master');
   checkCollect();
   const tierAfter=tierOf(rankScore());
   if(firstClear) broadcast(st.boss ? `打敗了${m.name}，通過${R.name}！` : `通過了 ${stageLabel(st)}！`);
   if(newMon) broadcast(`收集到新怪獸「${m.name}」`);
-  if(reward){ const sk=SKINS.find(s=>s.id===R.reward.skin), W=R.reward.wpn&&WEAPONS.find(w=>w.id===R.reward.wpn); broadcast(`獲得通關獎勵「${sk.name}」${W?`和「${W.name}」`:''}！`) }
+  if(reward){ const sk=SKINS.find(s=>s.id===R.reward.skin), W=R.reward.wpn&&WEAPONS.find(w=>w.id===R.reward.wpn), pt=PETS.find(p=>p.region===R.id); broadcast(`獲得通關獎勵「${sk.name}」${W?`和「${W.name}」`:''}${pt?`，收服夥伴「${pt.name}」`:''}！`) }
   if(tierAfter!==tierBefore) broadcast(`升上段位「${tierAfter.name}」！`);
   const starTxt='★'.repeat(stars)+'☆'.repeat(3-stars);
   commit({name:player.name||'訪客', mode:'冒險', level:stageLabel(st), right:S.right, wrong:S.wrong, best:S.best, stars:starTxt, coins:S.earned, missed:missedText()}, S.sess);
   await wait(700);
   showWin({stars:starTxt, title:`打敗${m.name}！${stageLabel(st)} 過關`, stat:`<span>答對 ${S.right} 個音</span><span>答錯 ${S.wrong}</span><span>最高連擊 ${S.best}</span>`, earn:S.earned, reward,
     tier: tierAfter!==tierBefore ? `段位升級：${tierAfter.name}！` : ''});
+}
+async function stageFail(){
+  S.playing=false; stopTimer();
+  const st=S.stage, m=curMon();
+  $('monBod').animate([{transform:'translateY(0)'},{transform:'translateY(-12%) scale(1.1)'},{transform:'translateY(0)'},{transform:'translateY(-12%) scale(1.1)'},{transform:'translateY(0)'}],{duration:900});
+  sfx(()=>[392,349.23,329.63,261.63].forEach((f,i)=>osc(f,.35,'triangle',.2,i*.22)));
+  commit({name:player.name||'訪客', mode:'達人（失敗）', level:stageLabel(st), right:S.right, wrong:S.wrong, best:S.best, stars:'', coins:S.earned, missed:missedText()}, S.sess);
+  await wait(1000);
+  showWin({title:`挑戰失敗！${m.name}太強了`, stat:`<span>${stageLabel(st)}</span><span>答對 ${S.right} 個音</span><span>愛心用完了</span>`});
+  $('btnNextLv').hidden=true; $('btnAgain').textContent='再挑戰一次';
 }
 async function teamWin(t){
   S.playing=false;
@@ -1969,7 +2237,8 @@ function stageUnlocked(st){
 }
 function resetRound(ri, monId){
   ctx(); bgmStart(); setSong(REGIONS[ri].song);
-  Object.assign(S,{region:ri,power:0,combo:0,best:0,right:0,wrong:0,hero:0,mon:LANE,seq:[],pos:0,states:[],last:null,busy:false,earned:0,sess:{},phase2:false,monId,playing:true});
+  Object.assign(S,{region:ri,power:0,combo:0,best:0,right:0,wrong:0,hero:0,mon:LANE,seq:[],pos:0,states:[],last:null,busy:false,earned:0,sess:{},phase2:false,monId,playing:true,lives:0,timeBoost:1,tempHint:false,shield:false,petUsed:false,powerBoost:1,freezeUntil:0});
+  $('hero').classList.remove('shielded');
   $('monBod').getAnimations().forEach(a=>a.cancel());
   renderMon(false); setScene(ri);
   closeAll();
@@ -1977,37 +2246,38 @@ function resetRound(ri, monId){
 }
 function startStage(id){
   const st=stageById(id); if(!st) return;
-  S.mode='solo'; S.stage=st; document.body.classList.remove('team'); $('hero2').hidden=true;
+  S.mode='solo'; S.sub='stage'; S.stage=st; document.body.classList.remove('team'); $('hero2').hidden=true;
   const R=REGIONS[st.r];
   const monId = st.boss ? R.boss : R.mons[Math.floor(Math.random()*R.mons.length)];
   resetRound(st.r, monId);
   $('lvChip').textContent=stageLabel(st)+(st.boss?' 魔王':'');
-  renderHero(); setKeys(); place(); hud(); nextQ(); updateGodBtn();
+  S.lives=st.lives||0;
+  renderHero(); setKeys(); place(); hud(); renderLives(); renderItems(); nextQ(); updateGodBtn();
 }
 function startTeam(ri){
-  S.mode='team'; S.stage=null; document.body.classList.add('team'); $('hero2').hidden=false;
+  S.mode='team'; S.sub='team'; S.stage=null; document.body.classList.add('team'); $('hero2').hidden=false;
   S.team={A:{power:0,combo:0,right:0,wrong:0},B:{power:0,combo:0,right:0,wrong:0}};
   resetRound(ri, REGIONS[ri].boss);
   $('lvChip').textContent=`分組・${REGIONS[ri].name}`;
   ['A','B'].forEach(t=>{ $('t'+t+'name').textContent=teamName(t); $('tk'+t+'name').textContent=teamName(t) });
   renderHero(); setKeys(); place(); hud(); nextQ();
 }
-function again(){ S.mode==='team' ? startTeam(S.region) : startStage(S.stage.id) }
+function again(){ if(S.mode==='team') startTeam(S.region); else if(S.sub==='song') startSong(S.song.id); else if(S.sub==='raid') startRaid(); else startStage(S.stage.id) }
 function nextLevel(){ const nx=nextStageOf(S.stage); if(nx) startStage(nx.id) }
 function updateGodBtn(){ $('btnGodWin').hidden=!(save.god && S.playing && S.mode==='solo') }
-function stopPlay(){ if(S.mode==='solo' && S.playing && S.stage) commit(); S.playing=false; stopTimer() }
+function stopPlay(){ if(S.mode==='solo' && S.playing && S.stage) commit(); if(S.sub==='raid' && S.playing && S.raidPending>0){ Cloud.post({action:'raidHit', name:player.name||'訪客', dmg:S.raidPending, id:S.raidId}).catch(()=>{}); S.raidPending=0 } S.playing=false; stopTimer(); clearInterval(RAID.timer); if(musBus&&ac) musBus.gain.setTargetAtTime(S.music?.55:0, ac.currentTime, .2) }
 
 // ================= 畫面切換 =================
-const OVS=['ovLogin','ovHome','ovMap','ovPractice','ovLesson','ovTeam','ovWin','ovShop','ovDex','ovRank','ovPin','ovTeacher'];
+const OVS=['ovLogin','ovHome','ovMap','ovPractice','ovLesson','ovTeam','ovWin','ovShop','ovDex','ovRank','ovPin','ovTeacher','ovSongs','ovDaily'];
 function closeAll(){ OVS.forEach(id=>$(id).hidden=true); $('more').hidden=true }
-function show(id){ cancelAnimationFrame(S.tId); closeAll(); $(id).hidden=false; $(id).scrollTop=0 }
+function show(id){ cancelAnimationFrame(S.tId); closeAll(); $(id).hidden=false; $(id).scrollTop=0; setTimeout(flushDanmaku, 400) }
 function resumeIfPlaying(){ closeAll(); if(S.playing && !S.busy) startTimer() }
 let backTo='home';
 function goBack(){ if(backTo==='game' && S.playing) resumeIfPlaying(); else home() }
 
 function medalHTML(t){ return `<span class="medal" style="background:radial-gradient(circle at 35% 30%,#fff,${t.c} 65%)">${t.m}</span>` }
 function rankCardHTML(){
-  if(save.god) return `<span class="medal">師</span><div class="rc"><b>${escapeHTML(player.name)}・老師測試帳號</b><small>關卡全開、不列入排行榜和廣播</small></div>`;
+  if(player.test) return `<span class="medal">測</span><div class="rc"><b>測試模式・全部解鎖</b><small>只存在這台裝置，不會進試算表、排行榜和廣播</small></div>`;
   const sc=rankScore(), t=tierOf(sc), i=TIERS.indexOf(t), nx=TIERS[i+1];
   const pct = nx ? Math.round((sc-t.min)/(nx.min-t.min)*100) : 100;
   return `${medalHTML(t)}<div class="rc"><b>${escapeHTML(player.name||'訪客')}・${t.name}</b><small>段位積分 ${sc}${nx?`，再 ${nx.min-sc} 分升到「${nx.name}」`:'，已經是最高段位！'}</small><div class="rbar"><i style="width:${pct}%"></i></div></div>`;
@@ -2018,29 +2288,56 @@ function home(){
   $('hAdvSub').textContent=`已過 ${progressText()}`;
   const pd=LESSONS.filter(l=>save.practice[l.id]).length;
   $('hPracSub').textContent= pd ? `完成 ${pd}/6 課` : '先熟悉五線譜';
+  const dn=dailyBadge(); $('hDailySub').innerHTML = dn ? `有獎勵可以領<span class="dot">${dn}</span>` : '每天 3 個任務';
+  raidBanner();
   show('ovHome');
+  fetchRaid().then(()=>{ if(!$('ovHome').hidden) raidBanner() });
+  homeLocks(); fetchConfig();
+}
+
+// ---------- 全班設定（存在 Google 試算表，所有裝置同步） ----------
+const CONFIG = {lockAdventure:false, lockShop:false};
+async function fetchConfig(){
+  if(!Cloud.ready()) return;
+  try{ const j=await Cloud.get({action:'config'}); if(j.config) Object.assign(CONFIG, j.config) }catch(e){}
+  homeLocks();
+}
+const advLocked = () => !save.god && (CONFIG.lockAdventure || (!Cloud.ready() && T.lockAdventure));
+const shopLocked = () => !save.god && (CONFIG.lockShop || T.shopLock);
+function homeLocks(){
+  const el=$('hAdv'); if(!el) return;
+  el.classList.toggle('locked', advLocked());
+  if(advLocked()) $('hAdvSub').textContent='老師還沒開放，先去練習吧';
+}
+async function setConfig(key, value){
+  const m=$('cfgMsg');
+  if(!Cloud.ready()){ if(key==='lockShop') T.shopLock=value; else T.lockAdventure=value; saveT(); m.textContent='還沒連接試算表，只對這台電腦有效。'; return }
+  m.textContent='同步中…';
+  try{ const j=await Cloud.post({action:'setConfig', pin:T.pin, key, value}); if(j.config) Object.assign(CONFIG,j.config); m.textContent='已同步到全班裝置（小朋友回到主畫面就會生效）。' }
+  catch(e){ m.textContent='同步失敗：'+(e.message||'連不到試算表')+'。請確認 Apps Script 已更新並部署新版本。' }
 }
 
 // ---------- 冒險地圖 ----------
 function openMap(){
+  if(advLocked()){ toastMsg('老師還沒開放冒險地圖，先去練習吧！'); return }
   stopPlay(); ctx(); bgmStart(); setSong('calm');
   const box=$('regions'); box.innerHTML='';
   const firstOpen = STAGES.find(st=>stageUnlocked(st) && !save.prog[st.id]);
   REGIONS.forEach((R,ri)=>{
     const sts=STAGES.filter(s=>s.r===ri), open=stageUnlocked(sts[0]);
-    const d=document.createElement('div'); d.className='region'+(open?'':' locked');
+    const d=document.createElement('div'); d.className='region'+(open?'':' locked')+(R.master?' master':'');
     d.style.setProperty('--r1',R.c1); d.style.setProperty('--r2',R.c2);
     const got=save.cleared.includes(R.id), sk=SKINS.find(s=>s.id===R.reward.skin), W=R.reward.wpn&&WEAPONS.find(w=>w.id===R.reward.wpn);
-    d.innerHTML=`<div class="rh2"><h3>${ri+1}. ${R.name}</h3><span class="rd">${R.desc}</span>${open?'':'<span class="lockmsg">打敗上一區的魔王才能進入</span>'}</div>
+    d.innerHTML=`<div class="rh2"><h3>${R.master?'★ ':ri+1+'. '}${R.name}</h3><span class="rd">${R.desc}</span>${R.master?'<span class="rule">只有 3 顆愛心・不能開提示線</span>':''}${open?'':`<span class="lockmsg">${R.master?'打敗魔王城堡的大魔王才能挑戰':'打敗上一區的魔王才能進入'}</span>`}</div>
       <div class="path"></div>
-      <div class="rewardrow"><span class="rpv">${heroSVG(heroFor(sk,W?W.id:'auto'))}</span><span>通關獎勵：${sk.name}${W?`＋${W.name}`:''}</span>${got?'<span class="got">已獲得</span>':''}</div>`;
-    const path=d.querySelector('.path');
+      <div class="rewardrow"><span class="rpv">${heroSVG(heroFor(sk,W?W.id:'auto'))}</span><span>通關獎勵：${sk.name}${W?`＋${W.name}`:''}${R.master?'＋徽章「音符達人」':''}</span>${got?'<span class="got">已獲得</span>':''}</div>`;
+    const path=d.querySelector('.path'); if(sts.length>5){ path.style.gridTemplateColumns='repeat(4,minmax(0,1fr))'; path.style.rowGap='14px' }
     sts.forEach(st=>{
       const b=document.createElement('button'), stars=save.prog[st.id]||0, ok=stageUnlocked(st);
       b.className='node'+(st.boss?' boss':'')+(stars?' done':'')+(st===firstOpen?' cur':'');
       b.disabled=!ok;
       b.setAttribute('aria-label',`${stageLabel(st)}${st.boss?' 魔王關':''}${stars?`，${stars} 顆星`:''}`);
-      b.innerHTML = st.boss ? `<span class="bn">魔王</span><span class="ns">${'★'.repeat(stars)}</span>` : `${st.n}<span class="ns">${stars?'★'.repeat(stars):(st.seq.some(n=>n>1)?'多音':'')}</span>`;
+      b.innerHTML = st.boss ? `<span class="bn">魔王</span><span class="ns">${'★'.repeat(stars)}</span>` : `${st.n}<span class="ns">${stars?'★'.repeat(stars):(st.lives?'♥'.repeat(st.lives):st.seq.some(n=>n>1)?'多音':'')}</span>`;
       if(ok) b.addEventListener('click',()=>startStage(st.id));
       path.appendChild(b);
     });
@@ -2077,7 +2374,7 @@ async function openRank(){
   }
 }
 function renderBoard(rows){
-  rows=rows.filter(r=>!GOD_NAMES.includes(r.name)).sort((a,b)=>b.score-a.score).slice(0,50);
+  rows=rows.filter(r=>r.name!==TEST_NAME).sort((a,b)=>b.score-a.score).slice(0,50);
   $('board').innerHTML = rows.length ? rows.map((r,i)=>{ const t=tierOf(r.score); return `<div class="brow${r.name===player.name?' me':''}"><span class="no">${i+1}</span>${medalHTML(t)}<span class="nm">${escapeHTML(r.name)}<small>${t.name}${r.prog?'・'+escapeHTML(r.prog):''}</small></span><span class="sc">${r.score}</span></div>` }).join('') : '<div class="sub">還沒有人上榜，快去冒險吧！</div>';
 }
 function escapeHTML(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])) }
@@ -2106,10 +2403,10 @@ async function login(name){
     catch(e){ $('loginMsg').textContent='連不到試算表，先用這台電腦的存檔'; await wait(1000) }
   }
   const pickCloud = cloud && (!local || (cloud.ts||0)>=(local.ts||0));
-  player.name=name; save=normSave(pickCloud?cloud:local);
-  if(GOD_NAMES.includes(name)) makeGod();
+  player.name=name; player.test=false; save=normSave(pickCloud?cloud:local); save.god=false;
+  grantPets();
   $('btnLogin').disabled=false;
-  commit(); renderHero(); hud(); refreshClass(); flush();
+  commit(); renderHero(); hud(); refreshClass(); flush(); fetchConfig();
   home();
 }
 function makeGod(){
@@ -2117,9 +2414,17 @@ function makeGod(){
   save.coins=Math.max(save.coins,100000);
   SKINS.forEach(x=>{ if(!save.owned.includes(x.id)) save.owned.push(x.id) });
   WEAPONS.forEach(x=>{ if(!save.wpnOwned.includes(x.id)) save.wpnOwned.push(x.id) });
-  FX.forEach(x=>{ if(!save.fxOwned.includes(x.id)) save.fxOwned.push(x.id) });
+  WFX.forEach(x=>{ if(x.price>0 && !save.fxOwned.includes(x.id)) save.fxOwned.push(x.id) });
+  PETS.forEach(x=>{ if(!save.pets.includes(x.id)) save.pets.push(x.id) }); if(!save.pet) save.pet=PETS[0].id;
+  ITEMS.forEach(x=>{ save.items[x.id]=Math.max(save.items[x.id]||0, 99) });
 }
-function guest(){ player.name=''; save=normSave(lsGet('nh-guest',null)); ctx(); bgmStart(); renderHero(); hud(); home() }
+function startTestMode(){
+  player.name=TEST_NAME; player.test=true;
+  save=normSave(lsGet('nh-test',null)); makeGod(); persistLocal();
+  ctx(); bgmStart(); renderHero(); hud(); home();
+  toastMsg('已進入測試模式：全部解鎖');
+}
+function guest(){ player.test=false; player.name=''; save=normSave(lsGet('nh-guest',null)); save.god=false; ctx(); bgmStart(); renderHero(); hud(); home() }
 
 // ---------- 商店 ----------
 let pendingBuy=null, shopTab='skin';
@@ -2128,10 +2433,10 @@ function toastMsg(text){
   d.animate([{opacity:0},{opacity:1,offset:.1},{opacity:1,offset:.85},{opacity:0}],{duration:2000}).onfinish=()=>d.remove();
 }
 function openShop(from){
-  if(T.shopLock){ toastMsg('老師把商店鎖住了'); return }
+  if(shopLocked()){ toastMsg('老師把商店鎖住了'); return }
   backTo=from; ctx(); bgmStart(); pendingBuy=null; show('ovShop'); buildShop();
 }
-function setTab(t){ shopTab=t; pendingBuy=null; ['Skin','Wpn','Fx'].forEach(x=>$('tab'+x).setAttribute('aria-selected',t===x.toLowerCase())); buildShop() }
+function setTab(t){ shopTab=t; pendingBuy=null; ['Skin','Wpn','Fx','Item'].forEach(x=>$('tab'+x).setAttribute('aria-selected',t===x.toLowerCase())); buildShop() }
 function previewFx(fx,pv){
   const r=pv.getBoundingClientRect(), x=r.width/2, y=r.height*.45;
   sFx(fx.snd,false); fxExtra(pv,x,y,fx);
@@ -2144,12 +2449,55 @@ function buildShop(){
   $('shopCoin').textContent=save.coins;
   const box=$('skins'); box.innerHTML='';
   const tab=shopTab;
-  const list = tab==='fx'?FX : tab==='wpn'?WEAPONS : SKINS;
-  const owned = tab==='fx'?save.fxOwned : tab==='wpn'?save.wpnOwned : save.owned;
-  const curId = tab==='fx'?save.fx : tab==='wpn'?save.wpn : save.skin;
+  if(tab==='item'){
+    ITEMS.forEach(it=>{
+      const d=document.createElement('div'); d.className='sk';
+      const btn = pendingBuy===it.id ? `<button class="confirm" data-act="buy">確定兌換？</button>` : `<button data-act="ask" ${save.coins<it.price?'disabled':''}><span class="coin"></span>${it.price}</button>`;
+      d.innerHTML=`<div class="pv"><span style="width:56px;height:56px;display:block">${itemSVG(it)}</span></div><div class="nm">${it.name}</div><div class="tag">${it.tag}・有 ${save.items[it.id]||0} 個</div>${btn}`;
+      d.querySelector('button').addEventListener('click',e=>{
+        const act=e.currentTarget.dataset.act;
+        if(act==='ask'){ pendingBuy=it.id; buildShop() }
+        else { if(save.coins>=it.price){ save.coins-=it.price; save.items[it.id]=(save.items[it.id]||0)+1; sCoin(); hud(); commit(); renderItems() } pendingBuy=null; buildShop() }
+      });
+      box.appendChild(d);
+    });
+    return;
+  }
+  if(tab==='fx'){
+    const curFam=famOf(attackKind($('hero')));
+    const fams=[curFam, ...Object.keys(WFX_FAM).filter(f=>f!==curFam)];
+    fams.forEach(fam=>{
+      const hd=document.createElement('div'); hd.className='shopsec'; hd.innerHTML=`${WFX_FAM[fam][0]}的特效${fam===curFam?'<small>目前使用的武器</small>':''}`; box.appendChild(hd);
+      const selId=(save.fxSel[fam] && WFX.some(x=>x.id===save.fxSel[fam])) ? save.fxSel[fam] : `${fam}-${WFX_FAM[fam][1][0][0]}`;
+      WFX.filter(x=>x.fam===fam).forEach(it=>{
+        const th=FX.find(f=>f.id===it.theme)||FX[0], own=it.price===0||save.fxOwned.includes(it.id), cur=selId===it.id;
+        const dv=document.createElement('div'); dv.className='sk'+(cur?' on':'');
+        let btn;
+        if(cur) btn=`<button class="cur" disabled>使用中</button>`;
+        else if(own) btn=`<button class="own" data-act="wear">使用</button>`;
+        else if(pendingBuy===it.id) btn=`<button class="confirm" data-act="buy">確定兌換？</button>`;
+        else btn=`<button data-act="ask" ${save.coins<it.price?'disabled':''}><span class="coin"></span>${it.price}</button>`;
+        dv.innerHTML=`<div class="pv fxpv" role="button" tabindex="0" aria-label="試看 ${it.name}">${slashSVG(th,false,'mini')}<span class="try">點我看看</span></div><div class="nm">${it.name}</div><div class="tag">${it.tag}</div>${btn}`;
+        const p=dv.querySelector('.fxpv'); const go=()=>{ ctx(); previewFx(th,p) }; p.addEventListener('click',go); p.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go() } });
+        const bt=dv.querySelector('button[data-act]');
+        if(bt) bt.addEventListener('click',()=>{
+          const act=bt.dataset.act;
+          if(act==='ask'){ pendingBuy=it.id; buildShop() }
+          else if(act==='buy'){ if(save.coins>=it.price){ save.coins-=it.price; save.fxOwned.push(it.id); save.fxSel[fam]=it.id; sFx(th.snd); sCoin(); sFan(); broadcast(`取得新擊打特效「${it.name}」`); checkCollect(); hud(); commit() } pendingBuy=null; buildShop() }
+          else { ctx(); save.fxSel[fam]=it.id; sFx(th.snd); commit(); pendingBuy=null; buildShop() }
+        });
+        box.appendChild(dv);
+      });
+    });
+    return;
+  }
+  const list = tab==='wpn'?WEAPONS : SKINS;
+  const owned = tab==='wpn'?save.wpnOwned : save.owned;
+  const curId = tab==='wpn'?save.wpn : save.skin;
   list.forEach(it=>{
     const own=owned.includes(it.id), cur=curId===it.id;
     const d=document.createElement('div'); d.className='sk'+(cur?' on':'');
+    if(tab==='skin' && it.aura && !it.reward) it.tag=it.tag.replace(/・會發光$/,'')+'・會發光';
     let btn;
     if(cur) btn=`<button class="cur" disabled>使用中</button>`;
     else if(own) btn=`<button class="own" data-act="wear">${tab==='skin'?'穿上':'使用'}</button>`;
@@ -2159,7 +2507,7 @@ function buildShop(){
     let pv, tag=it.tag;
     if(tab==='fx') pv=`<div class="pv fxpv" role="button" tabindex="0" aria-label="試看 ${it.name}">${slashSVG(it,false,'mini')}<span class="try">點我看看</span></div>`;
     else if(tab==='wpn'){ pv=`<div class="pv">${heroSVG(heroFor(curSkin(), it.id))}</div>`; const st=it.style||(DRAW_STYLE[curSkin().wpn]||{style:'melee'}).style; tag=`${it.tag}・${STYLE_NAME[st]}` }
-    else pv=`<div class="pv">${heroSVG(it)}</div>`;
+    else pv=`<div class="pv${it.aura?' aura-'+it.aura:''}" style="--aura:${it.ac||'#ffd23f'}"><div class="aurap">${it.aura?auraParts(it.aura,it.ac):''}</div>${heroSVG(it)}</div>`;
     d.innerHTML=`${pv}<div class="nm">${it.name}</div><div class="tag">${tag}</div>${btn}`;
     if(tab==='fx'){ const p=d.querySelector('.fxpv'); const go=()=>{ ctx(); previewFx(it,p) }; p.addEventListener('click',go); p.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go() } }); }
     const b=d.querySelector('button[data-act]');
@@ -2177,9 +2525,18 @@ function buildShop(){
 // ---------- 收藏 ----------
 let dexTab='mon';
 function openDex(from){ backTo=from; show('ovDex'); buildDex() }
-function setDexTab(t){ dexTab=t; $('tabMon').setAttribute('aria-selected',t==='mon'); $('tabBadge').setAttribute('aria-selected',t==='badge'); buildDex() }
+function setDexTab(t){ dexTab=t; $('tabMon').setAttribute('aria-selected',t==='mon'); $('tabBadge').setAttribute('aria-selected',t==='badge'); $('tabPet').setAttribute('aria-selected',t==='pet'); buildDex() }
 function buildDex(){
   const box=$('dexGrid'); box.innerHTML='';
+  if(dexTab==='pet'){
+    PETS.forEach(p=>{
+      const has=save.pets.includes(p.id), d=document.createElement('div'); d.className='cell'+(has?'':' unknown');
+      d.innerHTML=`<div class="pic petpic">${petSVG(p)}</div><b>${has?p.name:'？？？'}</b><small>${has?p.desc:`打敗${REGIONS.find(R=>R.id===p.region).name}魔王後收服`}</small>${has?`<button ${save.pet===p.id?'disabled':''}>${save.pet===p.id?'同行中':'帶它出發'}</button>`:''}`;
+      const bt=d.querySelector('button'); if(bt && save.pet!==p.id) bt.addEventListener('click',()=>{ save.pet=p.id; commit(); renderPet(); sStep(); buildDex() });
+      box.appendChild(d);
+    });
+    return;
+  }
   if(dexTab==='mon'){
     MONS.forEach(m=>{
       const n=save.dex[m.id]||0, d=document.createElement('div'); d.className='cell'+(n?'':' unknown');
@@ -2376,7 +2733,7 @@ function p5move(d){
 }
 function lessonDone(){
   const first=!save.practice[L.id];
-  save.practice[L.id]=true; checkCollect();
+  save.practice[L.id]=true; dailyEvent('practice',1); checkCollect();
   if(first) addCoins(20);
   commit();
   drawP({tags:[{s:4,x:186,text:'完成！',c:'#2f9e5b'}]});
@@ -2392,7 +2749,10 @@ function openPin(from){ teacherFrom=from; show('ovPin'); $('pinInput').value='';
 function closeTeacher(){ closeAll(); if(teacherFrom==='game' && S.playing) resumeIfPlaying(); else if(teacherFrom==='login') loginScreen(); else home() }
 function openTeacher(){
   show('ovTeacher');
-  $('tMul').value=String(T.timeMul); $('tUnlock').checked=!!T.unlockAll; $('tShopLock').checked=!!T.shopLock; $('tVoice').checked=!!prefs.voice;
+  $('raidRegion').innerHTML=REGIONS.map((R,i)=>`<option value="${i}">${i+1}. ${R.name}</option>`).join('');
+  showRaidStatus(); fetchRaid().then(showRaidStatus);
+  $('tMul').value=String(T.timeMul); $('tUnlock').checked=!!T.unlockAll; $('tShopLock').checked=!!(CONFIG.lockShop||T.shopLock); $('tLockAdv').checked=!!(CONFIG.lockAdventure||T.lockAdventure);
+  fetchConfig().then(()=>{ $('tShopLock').checked=!!(CONFIG.lockShop||(!Cloud.ready()&&T.shopLock)); $('tLockAdv').checked=!!(CONFIG.lockAdventure||(!Cloud.ready()&&T.lockAdventure)) }); $('tVoice').checked=!!prefs.voice;
   $('tUrl').value=SHEET_URL||T.url; $('tUrl').readOnly=!!SHEET_URL; $('tPin').value=T.pin;
   if(SHEET_URL) $('tpTestMsg').textContent='試算表網址已經寫在遊戲檔案裡。按「測試連線」檢查是否正常。';
   $('tpLog').innerHTML=CHANGELOG.map(c=>`<div class="ent"><h5>版本 ${c.v}<small>${c.date}</small>${c.v===VERSION?'<span class="now">目前版本</span>':''}</h5><ul>${(c.add||[]).map(x=>`<li>新增：${x}</li>`).join('')}${(c.fix||[]).map(x=>`<li class="fix">修復：${x}</li>`).join('')}</ul></div>`).join('');
@@ -2406,7 +2766,8 @@ function fillTeacher(){
 function bindT(id,fn){ $(id).addEventListener('change',()=>{ fn($(id)); saveT() }) }
 bindT('tMul',e=>T.timeMul=Number(e.value)||1);
 bindT('tUnlock',e=>T.unlockAll=e.checked);
-bindT('tShopLock',e=>T.shopLock=e.checked);
+$('tShopLock').addEventListener('change',e=>setConfig('lockShop', e.target.checked));
+$('tLockAdv').addEventListener('change',e=>setConfig('lockAdventure', e.target.checked));
 $('tVoice').addEventListener('change',e=>{ prefs.voice=e.target.checked; savePrefs() });
 bindT('tUrl',e=>{ T.url=e.value.trim(); setDot('') });
 bindT('tPin',e=>T.pin=e.value.trim()||'1234');
@@ -2439,11 +2800,265 @@ $('tpTest').addEventListener('click',async()=>{
   catch(e){ m.textContent='連不上：'+(e.message||'請確認部署時「誰可以存取」選了「所有人」') }
 });
 
+
+// ================= 版本 5：歌曲、世界魔王、道具、每日任務、夥伴 =================
+
+// ---------- 歌曲關卡（傳統兒歌與古典旋律，C 大調、ㄉㄡ～高音ㄉㄡ） ----------
+const L2K={C:'do',D:'re',E:'mi',F:'fa',G:'sol',A:'la',B:'si',H:'hdo'};
+function mel(str){ return str.trim().split(/\s+/).map(t=>{ const m=t.match(/^([A-H])([\d.]*)$/); return [L2K[m[1]], m[2]?Number(m[2]):1] }) }
+const SONG_LIST = [
+  {id:'mary',   name:'瑪莉有隻小綿羊', req:1, notes:mel('E D C D E E E2 D D D2 E G G2 E D C D E E E E D D E D C4'), chunks:[4,3,3,3,4,4,5]},
+  {id:'butter', name:'蝴蝶',           req:1, notes:mel('G E E2 F D D2 C D E F G G G2 G E E2 F D D2 C E G G C4'), chunks:[3,3,4,3,3,3,5]},
+  {id:'ode',    name:'歡樂頌',         req:1, notes:mel('E E F G G F E D C C D E E1.5 D.5 D2 E E F G G F E D C C D E D1.5 C.5 C2'), chunks:[4,4,4,3,4,4,4,3]},
+  {id:'star',   name:'小星星',         req:2, notes:mel('C C G G A A G2 F F E E D D C2 G G F F E E D2 G G F F E E D2 C C G G A A G2 F F E E D D C2'), chunks:[4,3,4,3,4,3,4,3,4,3,4,3]},
+  {id:'tiger',  name:'兩隻老虎',       req:2, notes:mel('C D E C C D E C E F G2 E F G2 G.5 A.5 G.5 F.5 E C G.5 A.5 G.5 F.5 E C'), chunks:[4,4,3,3,3,3,3,3]},
+];
+SONG_LIST.forEach(s=>{ let i=0; s.parts=s.chunks.map(n=>{ const p=s.notes.slice(i,i+n); i+=n; return p }) });
+const songUnlocked = s => T.unlockAll || save.god || stageUnlocked(STAGES.find(st=>st.r===s.req && st.n===1));
+const TIMBRE = {sword:'triangle',hammer:'square',spear:'sawtooth',spoon:'triangle',lolli:'sine',cane:'sine',wand:'sine',boomerang:'triangle',yoyo:'square',flute:'sine',drum:'triangle',blaster:'sawtooth',bubble:'sine',rainbow:'triangle',dragon:'sawtooth'};
+function playMelody(notes, beat=.42, kind){
+  const type=TIMBRE[kind||attackKind($('hero'))]||'triangle', v=type==='sawtooth'||type==='square'?.09:.22;
+  let t=0;
+  sfx(()=>{ duck(notes.reduce((a,n)=>a+n[1],0)*beat+.6); notes.forEach(([k,d])=>{ osc(NOTES[k].f, Math.max(.18,d*beat*.95), type, v, t); t+=d*beat }) });
+  return notes.reduce((a,n)=>a+n[1],0)*beat;
+}
+function openSongs(){
+  stopPlay(); ctx(); bgmStart(); setSong('calm');
+  const box=$('songList'); box.innerHTML='';
+  SONG_LIST.forEach(s=>{
+    const ok=songUnlocked(s), st=save.songs[s.id]||0, used=[...new Set(s.notes.map(n=>n[0]))];
+    const b=document.createElement('button'); b.className='lv'; b.disabled=!ok;
+    b.innerHTML=`<span class="n">${s.parts.length} 段・${s.notes.length} 個音</span><span class="t">${s.name}</span><span class="dots">${KEYS.filter(k=>used.includes(k)).map(k=>`<span style="background:var(--c-${k})">${NOTES[k].high?'高':NOTES[k].letter}</span>`).join('')}</span><span class="stars">${ok?(st?'★'.repeat(st)+'☆'.repeat(3-st):''):`到達${REGIONS[s.req].name}解鎖`}</span>`;
+    if(ok) b.addEventListener('click',()=>startSong(s.id));
+    box.appendChild(b);
+  });
+  show('ovSongs');
+}
+function startSong(id){
+  const sg=SONG_LIST.find(s=>s.id===id);
+  S.mode='solo'; S.sub='song'; S.song=sg; S.chunk=0;
+  S.stage={id:'song-'+id, r:0, n:0, seq:[1], seq2:[1], time:3.6, goal:sg.parts.length, boss:false};
+  document.body.classList.remove('team'); $('hero2').hidden=true;
+  resetRound(0, ['slimeG','slimeP','hornP','fishB','snowW'][SONG_LIST.indexOf(sg)%5]);
+  S.chunk=0; S.song=sg; S.sub='song';
+  BGM.danger=0; if(musBus) musBus.gain.setTargetAtTime(0, ac.currentTime, .1);
+  $('lvChip').textContent=`歌曲・${sg.name}`;
+  renderHero(); setKeysFor(KEYS); place(); hud(); renderItems(); nextQ(); updateGodBtn();
+}
+async function songWin(){
+  S.playing=false;
+  const sg=S.song, stars=starsFor(S.right,S.wrong), first=!save.songs[sg.id];
+  await monsterDefeat();
+  say(`完整演奏：${sg.name}`,'good');
+  // 一段一段亮起來，完整彈一次
+  let at=0; const beat=.42;
+  sg.parts.forEach(p=>{ const dur=p.reduce((a,n)=>a+n[1],0)*beat; setTimeout(()=>drawStaff(p.map(n=>n[0]), p.map(n=>labelState(n[0])), -1), at*1000); at+=dur });
+  playMelody(sg.notes, beat);
+  await wait(at*1000+500);
+  if(musBus) musBus.gain.setTargetAtTime(S.music?.55:0, ac.currentTime, .3);
+  save.songs[sg.id]=Math.max(save.songs[sg.id]||0, stars);
+  addCoins(first?100:stars*15);
+  if(first) broadcast(`完成歌曲關卡「${sg.name}」！`);
+  dailyEvent('song',1);
+  checkCollect();
+  const starTxt='★'.repeat(stars)+'☆'.repeat(3-stars);
+  commit({name:player.name||'訪客', mode:'歌曲', level:sg.name, right:S.right, wrong:S.wrong, best:S.best, stars:starTxt, coins:S.earned, missed:missedText()}, S.sess);
+  showWin({stars:starTxt, title:`完成「${sg.name}」！`, stat:`<span>答對 ${S.right} 個音</span><span>答錯 ${S.wrong}</span>`, earn:S.earned});
+  $('btnNextLv').hidden=true; $('btnWinMap').textContent='歌曲選單';
+}
+
+// ---------- 世界魔王（全班合作） ----------
+const RAID = {state:null, timer:0, homeTimer:0};
+async function fetchRaid(){
+  if(!Cloud.ready()) return null;
+  try{ const j=await Cloud.get({action:'raid'}); RAID.state=j.raid||null }catch(e){}
+  return RAID.state;
+}
+function raidBanner(){
+  const r=RAID.state, el=$('raidBanner');
+  if(!r || !r.active || save.god&&false){ el.hidden=true; return }
+  el.hidden=false;
+  el.innerHTML=`<div class="rbt"><b>${escapeHTML(r.name)}出現了！</b><small>全班一起打，剩下 ${r.hp}/${r.max} 血</small><div class="rbar"><i style="width:${Math.max(0,r.hp/r.max*100)}%"></i></div></div><span class="big">加入戰鬥</span>`;
+}
+function startRaid(){
+  const r=RAID.state; if(!r||!r.active) return;
+  const ri=Math.min(REGIONS.length-1, Math.max(0, r.region|0));
+  S.mode='solo'; S.sub='raid'; S.raidId=r.id; S.raidPending=0; S.raidMine=0;
+  S.stage={id:'raid', r:ri, n:0, seq:ri>=2?[1,2]:[1], seq2:[2,3], time:REGIONS[ri].t, goal:1e9, boss:false};
+  document.body.classList.remove('team'); $('hero2').hidden=true;
+  resetRound(ri, REGIONS[ri].boss);
+  S.sub='raid'; S.raidId=r.id; S.raidPending=0; S.raidMine=0;
+  $('monster').style.setProperty('--s','1.5');
+  $('lvChip').textContent=`世界魔王・${r.name}`;
+  renderHero(); setKeys(); place(); hud(); renderItems(); nextQ(); updateGodBtn();
+  clearInterval(RAID.timer); RAID.timer=setInterval(raidTick, 8000);
+}
+async function raidTick(){
+  if(S.sub!=='raid' || !S.playing) { clearInterval(RAID.timer); return }
+  try{
+    let j;
+    if(S.raidPending>0){ const dmg=S.raidPending; S.raidPending=0; j=await Cloud.post({action:'raidHit', name:player.name||'訪客', dmg, id:S.raidId}).catch(e=>{ S.raidPending+=dmg; throw e }) }
+    else j=await Cloud.get({action:'raid'});
+    if(j.raid) RAID.state=j.raid;
+    hud();
+    if(RAID.state && RAID.state.id===S.raidId && !RAID.state.active) raidOver();
+  }catch(e){}
+}
+async function raidOver(){
+  if(S.sub!=='raid' || !S.playing) return;
+  S.playing=false; clearInterval(RAID.timer); stopTimer();
+  const r=RAID.state;
+  if(S.raidPending>0){ try{ await Cloud.post({action:'raidHit', name:player.name||'訪客', dmg:S.raidPending, id:S.raidId}) }catch(e){} S.raidPending=0 }
+  await monsterDefeat(); sFan();
+  let earn=0;
+  if(r.status==='已打倒' && !save.raids.includes(r.id) && S.raidMine>0){ save.raids.push(r.id); earn=50+S.raidMine*2; addCoins(earn); award('raid') }
+  commit({name:player.name||'訪客', mode:'世界魔王', level:r.name, right:S.right, wrong:S.wrong, best:S.best, stars:'', coins:S.earned, missed:missedText()}, S.sess);
+  const top=(r.top||[]).map((t,i)=>`${i+1}. ${escapeHTML(t.name)}（${t.dmg}）`).join('　');
+  showWin({title: r.status==='已打倒' ? `全班一起打倒了${escapeHTML(r.name)}！` : `${escapeHTML(r.name)}離開了`,
+    stat:`<span>你造成 ${S.raidMine} 點傷害</span>${r.last?`<span>最後一擊：${escapeHTML(r.last)}</span>`:''}${top?`<span>貢獻榜：${top}</span>`:''}`, earn: earn||null});
+  $('btnNextLv').hidden=true; $('btnAgain').hidden=true; $('btnWinMap').textContent='回主畫面';
+}
+async function teacherRaid(action){
+  const m=$('raidMsg');
+  if(!Cloud.ready()){ m.textContent='世界魔王需要連上 Google 試算表。'; return }
+  m.textContent='處理中…';
+  try{
+    const body = action==='start' ? {action:'raidStart', pin:T.pin, name:$('raidName').value.trim()||'世界魔王', region:Number($('raidRegion').value)||0, hp:Math.max(10,Number($('raidHp').value)||300)} : {action:'raidStop', pin:T.pin};
+    const j=await Cloud.post(body); RAID.state=j.raid||RAID.state;
+    m.textContent = action==='start' ? '世界魔王已出現！小朋友回到主畫面就會看到。' : '已結束世界魔王。';
+  }catch(e){ m.textContent='失敗：'+(e.message||'連不到試算表')+'。請確認 Apps Script 已更新到最新版並部署新版本。' }
+  showRaidStatus();
+}
+function showRaidStatus(){
+  const r=RAID.state;
+  $('raidStatus').textContent = !r||!r.id ? '目前沒有世界魔王。' : r.active ? `進行中：${r.name}，剩下 ${r.hp}/${r.max} 血。` : `上一場：${r.name}（${r.status}${r.last?`，最後一擊 ${r.last}`:''}）`;
+}
+
+// ---------- 道具 ----------
+const ITEMS = [
+  {id:'hourglass', name:'時間沙漏', tag:'這一題時間加倍', price:30, icon:'<path d="M5 2 H15 M5 18 H15 M6 2 Q6 8 10 10 Q14 8 14 2 M6 18 Q6 12 10 10 Q14 12 14 18" fill="none" stroke="#2b3550" stroke-width="1.8" stroke-linecap="round"/><path d="M7.5 16.5 Q10 13 12.5 16.5Z M8 4 H12 Q11 7 10 7.5 Q9 7 8 4Z" fill="#f5b82e"/>'},
+  {id:'hint',      name:'提示卡',   tag:'這一題顯示提示線', price:20, icon:'<rect x="3" y="2" width="14" height="16" rx="2" fill="#fff4cf" stroke="#2b3550" stroke-width="1.6"/><path d="M6 7 H14 M6 10 H14 M6 13 H11" stroke="#c98608" stroke-width="1.6" stroke-linecap="round"/>'},
+  {id:'shield',    name:'護盾',     tag:'答錯一次怪獸不前進', price:40, icon:'<path d="M10 1.5 L17 4 V9 Q17 15 10 18.5 Q3 15 3 9 V4Z" fill="#8fd0ff" stroke="#2b3550" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 4 V16" stroke="#fff" stroke-width="1.6"/>'},
+];
+const itemSVG = it => `<svg viewBox="0 0 20 20">${it.icon}</svg>`;
+function renderItems(){
+  const box=$('items'); if(!box) return;
+  const pet=PETS.find(p=>p.id===save.pet);
+  box.innerHTML = ITEMS.map(it=>`<button class="ibtn" data-item="${it.id}" ${(save.items[it.id]||0)<1?'disabled':''} aria-label="${it.name}，剩 ${save.items[it.id]||0} 個">${itemSVG(it)}<b>${save.items[it.id]||0}</b></button>`).join('')
+    + (pet?`<button class="ibtn petbtn" id="btnPetSkill" ${S.petUsed?'disabled':''} aria-label="${pet.name}：${pet.desc}">${petSVG(pet)}<b>${S.petUsed?'用過':'技能'}</b></button>`:'');
+  box.querySelectorAll('[data-item]').forEach(b=>b.addEventListener('click',()=>useItem(b.dataset.item)));
+  const pb=$('btnPetSkill'); if(pb) pb.addEventListener('click',usePet);
+}
+function canUseNow(){ return S.mode==='solo' && S.playing && !S.busy && S.seq.length }
+function useItem(id){
+  if(!canUseNow() || (save.items[id]||0)<1) return;
+  if(id==='shield' && S.shield) return;
+  if(id==='hint' && noHintNow()){ toastMsg('達人之島不能用提示卡'); return }
+  save.items[id]--;
+  const h=centerOf($('hero'));
+  if(id==='hourglass'){ S.timeBoost=2; startTimer(); fxText('時間加倍！', h.x, h.y-h.h*.7, 'gold') }
+  if(id==='hint'){ S.tempHint=true; drawStaff(S.seq, S.states, S.seq.length>1?S.pos:-1); fxText('提示線！', h.x, h.y-h.h*.7, 'gold') }
+  if(id==='shield'){ S.shield=true; $('hero').classList.add('shielded'); fxText('護盾！', h.x, h.y-h.h*.7, 'gold') }
+  sfx(()=>{ osc(880,.12,'triangle',.15); osc(1320,.2,'triangle',.12,.08) });
+  persistLocal(); renderItems();
+}
+
+// ---------- 夥伴寵物 ----------
+const PETS = [
+  {id:'pslime',  name:'史萊姆寶寶', region:'meadow', c:'#5fbf5a', type:'slime',  skill:'auto',   desc:'幫你答對一個音'},
+  {id:'phorn',   name:'角角寶寶',   region:'forest', c:'#9b62c9', type:'horn',   skill:'push',   desc:'把怪獸推回兩步'},
+  {id:'pfish',   name:'泡泡魚寶寶', region:'sea',    c:'#2fa3d6', type:'fish',   skill:'time',   desc:'這一題時間加倍'},
+  {id:'psnow',   name:'雪球寶寶',   region:'snow',   c:'#e8f2fb', type:'snow',   skill:'freeze', desc:'時間凍結 5 秒'},
+  {id:'pdragon', name:'小火龍',     region:'castle', c:'#ff8a5c', type:'dragon', skill:'power',  desc:'下一擊威力加倍'},
+];
+function petSVG(p){
+  const L='stroke="#2b3550" stroke-width="2.5" stroke-linejoin="round"', c=p.c;
+  let back='', front='';
+  if(p.type==='horn') back=`<path d="M17 16 L13 2 L25 12Z M43 16 L47 2 L35 12Z" fill="#f2c335" ${L}/>`;
+  if(p.type==='fish') back=`<path d="M6 30 Q-4 22 0 40 Q4 36 8 38Z M54 30 Q64 22 60 40 Q56 36 52 38Z" fill="#8fd8ff" ${L}/>`;
+  if(p.type==='dragon') back=`<path d="M10 22 Q-2 8 4 4 Q12 10 16 18Z M50 22 Q62 8 56 4 Q48 10 44 18Z" fill="#ffb02e" ${L}/>`;
+  if(p.type==='snow') front=`<path d="M12 22 Q20 8 30 8 Q40 8 48 22 Q40 18 30 20 Q20 18 12 22Z" fill="#fff" ${L}/><rect x="14" y="40" width="32" height="6" rx="3" fill="#e8473d" ${L}/>`;
+  if(p.type==='dragon') front=`<ellipse cx="30" cy="40" rx="10" ry="6" fill="#ffe0a6"/><path d="M24 12 l2 -6 l3 5 M36 12 l-2 -6 l-3 5" fill="#ffd23f" ${L}/>`;
+  return `<svg viewBox="-4 -2 68 58">${back}<path d="M6 50 Q2 20 18 12 Q30 6 42 12 Q58 20 54 50 Q46 46 40 50 Q34 46 30 50 Q26 46 20 50 Q14 46 6 50Z" fill="${c}" ${L}/>${front}
+    <circle cx="22" cy="28" r="6" fill="#fff" ${L}/><circle cx="38" cy="28" r="6" fill="#fff" ${L}/><circle cx="23" cy="29" r="3" fill="#2b3550"/><circle cx="39" cy="29" r="3" fill="#2b3550"/><circle cx="24" cy="27.5" r="1" fill="#fff"/><circle cx="40" cy="27.5" r="1" fill="#fff"/>
+    <circle cx="15" cy="36" r="3" fill="#ff8f8f" opacity=".6"/><circle cx="45" cy="36" r="3" fill="#ff8f8f" opacity=".6"/><path d="M26 37 Q30 41 34 37" fill="none" stroke="#2b3550" stroke-width="2" stroke-linecap="round"/></svg>`;
+}
+function renderPet(){
+  const el=$('pet'), p=S.mode==='team'?null:PETS.find(x=>x.id===save.pet);
+  el.hidden=!p; if(p) el.innerHTML=petSVG(p);
+}
+function grantPets(){ REGIONS.forEach(R=>{ const p=PETS.find(x=>x.region===R.id); if(p && save.cleared.includes(R.id) && !save.pets.includes(p.id)){ save.pets.push(p.id); if(!save.pet) save.pet=p.id } }) }
+async function usePet(){
+  const p=PETS.find(x=>x.id===save.pet);
+  if(!p || S.petUsed || !canUseNow()) return;
+  S.petUsed=true; renderItems();
+  const pe=centerOf($('hero')), el=$('pet');
+  el.animate([{transform:'translateY(0) scale(1)'},{transform:'translateY(-30px) scale(1.3)'},{transform:'translateY(0) scale(1)'}],{duration:500});
+  fxText(`${p.name}：${p.desc}！`, pe.x+40, pe.y-pe.h*.8, 'gold');
+  sfx(()=>[660,880,1100].forEach((f,i)=>osc(f,.15,'triangle',.15,i*.07)));
+  await wait(350);
+  if(p.skill==='auto'){ const k=S.seq[S.pos]; answer(k, $('key-'+k)) }
+  else if(p.skill==='push'){ S.mon=Math.min(LANE,S.mon+2); place(); sStomp(); dust(centerOf($('monster')).x, centerOf($('monster')).bottom-6, 1) }
+  else if(p.skill==='time'){ S.timeBoost=2; startTimer() }
+  else if(p.skill==='freeze'){ S.freezeUntil=performance.now()+5000; $('timer').classList.add('frozen'); setTimeout(()=>$('timer').classList.remove('frozen'),5000) }
+  else if(p.skill==='power'){ S.powerBoost=2 }
+}
+
+// ---------- 每日任務 ----------
+const DAILY_POOL = [
+  {id:'notes30', text:'答對 30 個音',        type:'notes',    n:30},
+  {id:'notes60', text:'答對 60 個音',        type:'notes',    n:60},
+  {id:'stage2',  text:'過 2 關冒險',         type:'stage',    n:2},
+  {id:'combo10', text:'達成 10 連擊',        type:'combo',    n:10},
+  {id:'boss1',   text:'打敗 1 隻地區魔王',   type:'boss',     n:1},
+  {id:'prac1',   text:'完成 1 課練習',       type:'practice', n:1},
+  {id:'song1',   text:'完成 1 首歌曲關卡',   type:'song',     n:1},
+  {id:'wpn2',    text:'用 2 種不同武器打怪', type:'weapons',  n:2},
+];
+const today = () => { const d=new Date(); return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}` };
+function dailyTasks(){
+  const pool=DAILY_POOL.filter(t=> !(t.type==='weapons' && save.wpnOwned.length<2) && !(t.type==='song' && !SONG_LIST.some(songUnlocked)) && !(t.type==='boss' && !STAGES.some(s=>s.boss && stageUnlocked(s))));
+  let h=0; for(const ch of today()) h=(h*31+ch.charCodeAt(0))%100000;
+  const out=[]; const p=pool.slice();
+  while(out.length<3 && p.length){ h=(h*16807+7)%2147483647; out.push(p.splice(h%p.length,1)[0]) }
+  return out;
+}
+function ensureDaily(){ if(!save.daily || save.daily.date!==today()) save.daily={date:today(), p:{}, w:[], claimed:[], told:[], bonus:false} }
+function dailyEvent(type, v){
+  if(!save) return; ensureDaily();
+  const D=save.daily;
+  if(type==='weapon'){ if(!D.w.includes(v)) D.w.push(v); D.p.weapons=D.w.length }
+  else if(type==='combo') D.p.combo=Math.max(D.p.combo||0, v);
+  else D.p[type]=(D.p[type]||0)+v;
+  dailyTasks().forEach(t=>{
+    if((D.p[t.type]||0)>=t.n && !D.told.includes(t.id)){ D.told.push(t.id); toastMsg(`每日任務完成：${t.text}！到主畫面領獎勵`) }
+  });
+}
+function openDaily(){
+  ensureDaily(); const D=save.daily, tasks=dailyTasks();
+  $('dailyList').innerHTML=tasks.map(t=>{ const v=Math.min(t.n, D.p[t.type]||0), done=v>=t.n, got=D.claimed.includes(t.id);
+    return `<div class="dq${got?' got':''}"><div class="dqt"><b>${t.text}</b><small>${v}/${t.n}</small><div class="rbar"><i style="width:${v/t.n*100}%"></i></div></div><button class="big${done&&!got?'':' alt'}" data-daily="${t.id}" ${done&&!got?'':'disabled'}>${got?'已領取':done?'領 50 金幣':'進行中'}</button></div>` }).join('')
+    + `<div class="sub">${D.bonus?'今天的任務全部完成了，明天再來！':'三個任務都領完，再多送 50 金幣'}</div>`;
+  $('dailyList').querySelectorAll('[data-daily]').forEach(b=>b.addEventListener('click',()=>{
+    const id=b.dataset.daily; if(D.claimed.includes(id)) return;
+    D.claimed.push(id); addCoins(50); sFan();
+    if(!D.bonus && tasks.every(t=>D.claimed.includes(t.id))){ D.bonus=true; addCoins(50); toastMsg('每日任務全部完成！再送 50 金幣') }
+    commit(); openDaily();
+  }));
+  show('ovDaily');
+}
+function dailyBadge(){ ensureDaily(); const D=save.daily; return dailyTasks().filter(t=>(D.p[t.type]||0)>=t.n && !D.claimed.includes(t.id)).length }
+
 // ================= 按鈕 =================
 const on=(id,fn)=>$(id).addEventListener('click',fn);
 on('btnNext',nextQ);
+on('hSong',openSongs); on('btnSongsBack',home); on('hDaily',openDaily); on('btnDailyBack',home);
+on('raidBanner',startRaid);
+on('tabItem',()=>setTab('item')); on('tabPet',()=>setDexTab('pet'));
+on('raidStart',()=>teacherRaid('start')); on('raidStop',()=>teacherRaid('stop'));
+RAID.homeTimer=setInterval(()=>{ if(!$('ovHome').hidden) fetchRaid().then(raidBanner) }, 15000);
 on('btnAgain',again); on('btnNextLv',nextLevel);
-on('btnWinMap',()=>S.mode==='team'?home():openMap());
+on('btnWinMap',()=>{ if(S.mode==='team'||S.sub==='raid') home(); else if(S.sub==='song') openSongs(); else openMap() });
 on('btnMap',openMap); on('btnHome',home); on('btnMapBack',home);
 on('hAdv',openMap); on('hPrac',openPractice); on('hTeam',teamSetup); on('hRank',openRank);
 on('hShop',()=>openShop('home')); on('hDex',()=>openDex('home'));
@@ -2458,13 +3073,14 @@ on('who',loginScreen); on('btnSwitch',loginScreen);
 $('loginForm').addEventListener('submit',e=>{ e.preventDefault(); login($('nameInput').value) });
 on('btnGuest',guest);
 on('btnGodWin',async()=>{ $('more').hidden=true; if(!save.god||!S.playing||S.busy) return; S.busy=true; stopTimer(); S.power=goal(); await heroAttack(true); await win() });
+on('tpTestMode',()=>{ closeAll(); startTestMode() });
 on('btnTeacher',()=>openPin(S.playing?'game':'home')); on('btnTeacher2',()=>openPin('login')); on('btnTeacher3',()=>openPin('home'));
 $('pinForm').addEventListener('submit',e=>{ e.preventDefault(); if($('pinInput').value===String(T.pin)) openTeacher(); else $('pinMsg').textContent='密碼不對' });
 on('btnPinClose',closeTeacher);
 on('btnTeacherClose',()=>{ closeTeacher(); hud() });
 $('btnMore').addEventListener('click',e=>{ e.stopPropagation(); const h=!$('more').hidden; $('more').hidden=h; $('btnMore').setAttribute('aria-expanded',!h) });
 document.addEventListener('click',e=>{ if(!$('more').hidden && !e.target.closest('.menuwrap')){ $('more').hidden=true; $('btnMore').setAttribute('aria-expanded','false') } });
-on('btnHint',()=>{ prefs.hint=!prefs.hint; savePrefs(); $('btnHint').setAttribute('aria-pressed',prefs.hint); $('btnHint').classList.toggle('on',prefs.hint); drawStaff(S.seq, S.states, S.seq.length>1&&!S.busy?S.pos:-1) });
+on('btnHint',()=>{ if(noHintNow()){ toastMsg('達人之島不能開提示線'); return } prefs.hint=!prefs.hint; savePrefs(); $('btnHint').setAttribute('aria-pressed',prefs.hint); $('btnHint').classList.toggle('on',prefs.hint); drawStaff(S.seq, S.states, S.seq.length>1&&!S.busy?S.pos:-1) });
 on('btnTimer',()=>{ S.timerOn=!S.timerOn; $('btnTimer').setAttribute('aria-pressed',S.timerOn); if(!S.busy&&S.playing) startTimer(); else $('timer').classList.toggle('off',!S.timerOn) });
 on('btnSound',()=>{ S.sfx=!S.sfx; $('btnSound').setAttribute('aria-pressed',S.sfx) });
 on('btnMusic',()=>{ S.music=!S.music; $('btnMusic').setAttribute('aria-pressed',S.music); ctx(); bgmStart(); if(musBus) musBus.gain.setTargetAtTime(S.music?.55:0, ac.currentTime, .05) });
