@@ -195,6 +195,7 @@ body.team .hudteam{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 #hero2 .bod svg{transform:scaleX(-1)}
 @media (max-width:640px){ body.team .teamkeys{grid-template-columns:1fr} }
 
+.ver{font-family:var(--f-num);font-weight:800;font-size:.85rem;background:var(--ink);color:var(--paper);border-radius:999px;padding:1px 10px}
 /* login */
 .field{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:6px 0 12px}
 .field input{font:inherit;font-weight:900;font-size:1.4rem;padding:10px 14px;border:3px solid var(--line);border-radius:14px;width:min(100%,280px);box-sizing:border-box;background:#fff;color:var(--ink);user-select:text}
@@ -248,6 +249,7 @@ body.team .hudteam{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 <div class="app" id="app">
   <div class="top">
     <h1>音符勇者</h1>
+    <span class="ver" id="ver"></span>
     <span class="chip" id="lvChip">第 1 關</span>
     <button class="who" id="who" title="換玩家"><span class="st" id="cloudDot"></span><span id="whoName">訪客</span></button>
     <span class="coins" id="coins"><span class="coin"></span><span id="coinNum">0</span></span>
@@ -313,6 +315,7 @@ body.team .hudteam{display:grid;grid-template-columns:1fr 1fr;gap:14px}
     <div class="names" id="recent"></div>
     <div class="row"><button class="big alt" id="btnGuest">先用訪客玩</button><button class="big alt" id="btnTeacher2">老師面板</button></div>
     <div class="sub" id="loginCloud"></div>
+    <div class="sub" id="verLogin"></div>
   </div>
 </div>
 
@@ -447,6 +450,9 @@ body.team .hudteam{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 const $ = id => document.getElementById(id);
 
 // 想把試算表網址寫死在檔案裡，就貼在這裡；也可以在「設定 → 老師面板」貼上。
+// 版本號：每次更新加 1，畫面上會顯示，方便確認上傳的是最新版
+const VERSION = 1, VERSION_DATE = '2026-10-07';
+
 const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyMzNB3ElbCxvcaJ5JnMq0HNWryWZTnFJbkifYSALIoZB7htYBx81u6Sb0D7yvEzIC4/exec';
 
 // ================= data =================
@@ -1542,6 +1548,8 @@ window.addEventListener('pagehide',()=>{ persistLocal() });
 window.addEventListener('online',flush);
 
 // ================= boot =================
+$('ver').textContent=`版本 ${VERSION}`; $('ver').title=`更新日期 ${VERSION_DATE}`;
+$('verLogin').textContent=`版本 ${VERSION}（${VERSION_DATE}）`;
 $('btnHint').setAttribute('aria-pressed',prefs.hint); $('btnHint').classList.toggle('on',prefs.hint);
 S.monId='slimeG'; setScene(0); renderMon(false); renderHero(); setKeys(); place(); hud(); drawStaff('mi');
 setDot(''); flush();
