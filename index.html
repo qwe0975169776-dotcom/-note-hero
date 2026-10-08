@@ -1018,9 +1018,10 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 const $ = id => document.getElementById(id);
 
 // 版本號：每次更新加 1，畫面上會顯示，方便確認上傳的是最新版
-const VERSION = 17, VERSION_DATE = '2026-10-08';
+const VERSION = 18, VERSION_DATE = '2026-10-08';
 // 更新日誌：每次更新在最上面加一筆（顯示在老師面板）
 const CHANGELOG = [
+  {v:18, date:'2026-10-08', add:['角色換成像素風：26 套造型、武器和 18 隻怪獸都變成點陣圖，動作改成像素遊戲那樣一格一格播放（走路、攻擊、受傷、勝利、眨眼都有）'], fix:[]},
   {v:17, date:'2026-10-08', add:['商店「武器」可以點預覽：勇者會用這把武器打旁邊的小史萊姆，看得到攻擊動作和擊打特效（特效用目前選的那一款）'], fix:[]},
   {v:16, date:'2026-10-08', add:['勇者和怪獸全部換成楓之谷風格的大頭 Q 版：有陰影、亮面和大眼睛','關節動畫：勇者會呼吸、眨眼、走路擺手、蓄力揮劍（遠距武器是舉起來發射）、受傷往後仰、過關跳起來歡呼，表情會跟著變','怪獸會 Q 彈呼吸、眨眼、跳著前進、說話時嘴巴會動、被打時眼睛變成 × ×、魔王生氣時冒青筋'], fix:[]},
   {v:15, date:'2026-10-08', add:['老師面板新增「更新伺服器程式」：Apps Script 會自己從 GitHub 抓最新的 Code.gs 並部署，不用再手動貼上','在老師面板改老師密碼，會同步改到試算表的程式'], fix:['老師密碼和試算表 ID 不再寫在程式碼裡（改存在 Apps Script 的指令碼屬性）']},
@@ -1718,7 +1719,7 @@ function weaponRig(k){
 const KNIGHT_HELM = id => `<path d="M-40 -100 Q-40 -140 2 -140 Q44 -140 42 -100 Q36 -106 30 -108 L28 -116 Q2 -122 -26 -114 L-30 -104 Q-36 -104 -40 -100Z" fill="url(#${id}h)" ${RS}/><path d="M-30 -112 Q2 -124 30 -112" fill="none" stroke="#8796ab" stroke-width="3"/><path d="M-2 -138 L-2 -116" stroke="#8796ab" stroke-width="3"/><path d="M-10 -126 Q-22 -136 -18 -124" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".9"/>`;
 const NO_HAIR = new Set(['astro','robot','diver','ninja','hood','santa','bear','dino','tiara']);
 let rgUid=0;
-function heroSVG(k){
+function heroVec(k){
   const id='rg'+(++rgUid);
   const d=headDeco(k), skin=k.skin||'#ffd9b8', body=k.body||'#3f7fd1', a=k.a||'#e4ebf2', b=k.b||'#e8473d';
   const bodyDk=shade(body,-.28), bodyLt=shade(body,.25), legC=shade(body,-.45), skinDk=shade(skin,-.12);
@@ -1772,7 +1773,7 @@ function heroSVG(k){
   </g></svg>`;
 }
 
-function monSVG(m, enraged){
+function monVec(m, enraged){
   const c=m.c||'#5fbf5a', dk=shade(c,-.3), lt=shade(c,.45), id='rg'+(++rgUid), L=RS;
   const boss=!!m.boss, angry=!!(enraged||m._enraged);
   const blob='M-46 0 Q-55 -34 -26 -62 Q-8 -78 10 -70 Q18 -84 27 -80 Q24 -71 31 -64 Q56 -40 46 0 Q0 7 -46 0Z';
@@ -1812,18 +1813,45 @@ function rgKf(t, fr){
   return fr[fr.length-1][1];
 }
 const RG_DUR={hero:{idle:0, walk:420, attack:640, cast:600, hurt:520, victory:1400, sad:1200}, mon:{idle:0, hop:620, talk:1300, hurt:420, defeat:900, rage:800}};
+function rgParts(svg){
+  const q=s=>svg.querySelector(s);
+  return {root:q('.rg-root'), body:q('.rg-body'), head:q('.rg-head'), armF:q('.rg-armF'), armB:q('.rg-armB'), legF:q('.rg-legF'), legB:q('.rg-legB'), wpn:q('.rg-wpn'), plume:q('.rg-plume'), pet:q('.rg-pet'),
+    eyesN:q('.rg-eyesN'), eyesHappy:q('.rg-eyesHappy'), eyesHurt:q('.rg-eyesHurt'), eyesX:q('.rg-eyesX'), brows:q('.rg-brows'), vein:q('.rg-vein'),
+    mouthN:q('.rg-mouthN'), mouthO:q('.rg-mouthO'), mouthHurt:q('.rg-mouthHurt'), mouthAngry:q('.rg-mouthAngry'),
+    eyes:[q('.rg-eyeL'),q('.rg-eyeR')].filter(Boolean)};
+}
+function rgApplyHero(P, h, blink){
+  rgSet(P.root, `translate(0 ${h.y}) scale(${h.sx} ${h.sy})`);
+  rgSet(P.body, `rotate(${h.lean} 0 -36) translate(0 ${h.bodyY})`);
+  rgSet(P.head, `rotate(${h.headRot} 0 -64)`);
+  rgSet(P.armF, `rotate(${-h.armF} 14 -58)`); rgSet(P.armB, `rotate(${-h.armB} -14 -58)`);
+  rgSet(P.legF, `rotate(${-h.legF} 9 -38)`); rgSet(P.legB, `rotate(${-h.legB} -9 -38)`);
+  rgSet(P.wpn, `translate(15 -35) rotate(${h.wpn})`);
+  if(P.plume) rgSet(P.plume, `rotate(${h.plume} -2 -138)`);
+  if(P.pet) rgSet(P.pet, (P.pet.dataset.base||(P.pet.dataset.base=P.pet.getAttribute('transform')||''))+` translate(0 ${h.pet/1.3})`);
+  const f=h.face;
+  rgVis(P.eyesN, f==='n'||f==='brow'||f==='shout'); rgVis(P.eyesHappy, f==='happy'); rgVis(P.eyesHurt, f==='hurt');
+  rgVis(P.brows, f==='brow'||f==='shout');
+  rgVis(P.mouthN, f==='n'||f==='brow'); rgVis(P.mouthO, f==='shout'||f==='happy'); rgVis(P.mouthHurt, f==='hurt');
+  P.eyes.forEach(e=>e.setAttribute('transform', blink?'translate(0 -92) scale(1 .12) translate(0 92)':''));
+}
+function rgApplyMon(P, m, angryBase, browBase, blink){
+  rgSet(P.root, `scale(${m.sx} ${m.sy})`);
+  const angry=angryBase||m.face==='angry';
+  rgVis(P.eyesN, m.face!=='x'); rgVis(P.eyesX, m.face==='x');
+  rgVis(P.brows, browBase||m.face==='angry'); rgVis(P.vein, angry);
+  rgVis(P.mouthN, m.mouth==='n' && !angry); rgVis(P.mouthO, m.mouth==='o'); rgVis(P.mouthAngry, m.mouth!=='o' && (angry||m.mouth==='angry'));
+  P.eyes.forEach(e=>e.setAttribute('transform', blink?'translate(0 -32) scale(1 .12) translate(0 32)':''));
+}
 function rgBind(bod, kind){
   const svg=bod && bod.querySelector('svg.rg'); if(!svg) return null;
   let a=RG.actors.get(bod);
   if(!a || a.svg!==svg){
-    const q=s=>svg.querySelector(s);
-    a={bod, svg, kind, state:a?a.state:'idle', t0:a?a.t0:0, dur:a?a.dur:0, blinkAt:performance.now()+1200+Math.random()*1500,
-       p:{root:q('.rg-root'), body:q('.rg-body'), head:q('.rg-head'), armF:q('.rg-armF'), armB:q('.rg-armB'), legF:q('.rg-legF'), legB:q('.rg-legB'), wpn:q('.rg-wpn'), plume:q('.rg-plume'), pet:q('.rg-pet'),
-          eyesN:q('.rg-eyesN'), eyesHappy:q('.rg-eyesHappy'), eyesHurt:q('.rg-eyesHurt'), eyesX:q('.rg-eyesX'), brows:q('.rg-brows'), vein:q('.rg-vein'),
-          mouthN:q('.rg-mouthN'), mouthO:q('.rg-mouthO'), mouthHurt:q('.rg-mouthHurt'), mouthAngry:q('.rg-mouthAngry'),
-          eyes:[q('.rg-eyeL'),q('.rg-eyeR')].filter(Boolean)}};
+    a={bod, svg, kind, state:a?a.state:'idle', t0:a?a.t0:0, dur:a?a.dur:0, blinkAt:performance.now()+1200+Math.random()*1500, p:rgParts(svg)};
     a.angryBase = a.p.mouthAngry && a.p.mouthAngry.getAttribute('visibility')==='visible';
     a.browBase = a.p.brows && a.p.brows.getAttribute('visibility')==='visible';
+    const pi=svg.querySelector('image.pxi');
+    if(pi){ a.px=pi; a.pxKey=pi.dataset.px; pxEnsureFull(a.pxKey) }
     RG.actors.set(bod,a);
   }
   rgStart(); return a;
@@ -1895,6 +1923,7 @@ function rgFrame(now){
     if(!bod.isConnected || !a.svg.isConnected){ RG.actors.delete(bod); return }
     alive=true;
     if(a.dur && now-a.t0>=a.dur){ if(a.state!=='defeat'){ a.state='idle'; a.dur=0 } }
+    if(a.px){ pxTick(a, now); return }
     const P=a.p;
     if(a.kind==='hero'){
       const h=rgHeroPose(a, now);
@@ -1925,6 +1954,132 @@ function rgFrame(now){
 }
 function rgStart(){ if(!RG.raf) RG.raf=requestAnimationFrame(rgFrame) }
 function rigAll(){ ['heroBod','hero2Bod','monBod'].forEach(id=>{ const el=$(id); if(el) rgBind(el, id==='monBod'?'mon':'hero') }) }
+
+// ================= 版本 18：像素風（把向量角色即時轉成像素圖，動作一格一格播放） =================
+const PX_SCALE=.28;                                   // 每個 SVG 單位幾個像素
+const HERO_VB=[-67,-176,134,180], MON_VB=[-60,-108,120,114];      // 原本的顯示範圍（版面大小不變）
+const PXF_HERO=[-80,-226,172,232], PXF_MON=[-72,-126,144,134];    // 像素圖的範圍（留空間給跳躍、舉手）
+const PX_OL=[43,34,56];
+const PXREG=new Map(); let pxN=0;
+const PXCACHE=new Map();                              // 同一個造型只轉一次
+function pxWrap(vec, kind){
+  const id='px'+(++pxN); PXREG.set(id,{vec,kind});
+  const f=kind==='mon'?PXF_MON:PXF_HERO;
+  return vec.replace(/<svg([^>]*)>/, `<svg$1><g class="pxvec">`).replace(/<\/svg>\s*$/, `</g><image class="pxi" data-px="${id}" x="${f[0]}" y="${f[1]}" width="${f[2]}" height="${f[3]}" preserveAspectRatio="none" image-rendering="optimizeSpeed" style="image-rendering:pixelated"/></svg>`);
+}
+function heroSVG(k){ return pxWrap(heroVec(k),'hero') }
+function monSVG(m, enraged){ return pxWrap(monVec(m, enraged),'mon') }
+
+// 把一個（已擺好姿勢的）SVG 元素轉成像素圖，回傳放大 4 倍、邊緣銳利的圖片網址
+let pxImgOK=true;
+async function pxRaster(svgEl, f){
+  const W=Math.round(f[2]*PX_SCALE), H=Math.round(f[3]*PX_SCALE), S=4;
+  const el=svgEl.cloneNode(true);
+  el.setAttribute('xmlns','http://www.w3.org/2000/svg'); el.setAttribute('viewBox',f.join(' ')); el.setAttribute('width',W*S); el.setAttribute('height',H*S); el.removeAttribute('class');
+  el.querySelectorAll('image.pxi').forEach(n=>n.remove());
+  const g=el.querySelector('.pxvec'); if(g) g.removeAttribute('visibility');
+  const url=URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(el)],{type:'image/svg+xml'}));
+  const img=new Image();
+  try{ await new Promise((ok,no)=>{ img.onload=ok; img.onerror=no; img.src=url }) } finally { setTimeout(()=>URL.revokeObjectURL(url),0) }
+  const big=document.createElement('canvas'); big.width=W*S; big.height=H*S; const bx=big.getContext('2d'); bx.drawImage(img,0,0);
+  const bd=bx.getImageData(0,0,W*S,H*S).data;
+  const c=document.createElement('canvas'); c.width=W; c.height=H; const cx=c.getContext('2d'); const out=cx.createImageData(W,H), o=out.data;
+  for(let py=0;py<H;py++) for(let px=0;px<W;px++){
+    const votes=new Map(); let opaque=0;
+    for(let dy=0;dy<S;dy++) for(let dx=0;dx<S;dx++){ const i=((py*S+dy)*W*S+(px*S+dx))*4; if(bd[i+3]<128) continue; opaque++;
+      const key=(bd[i]>>4)*256+(bd[i+1]>>4)*16+(bd[i+2]>>4); let v=votes.get(key); if(!v){ v={n:0,r:0,g:0,b:0}; votes.set(key,v) } v.n++; v.r+=bd[i]; v.g+=bd[i+1]; v.b+=bd[i+2] }
+    const j=(py*W+px)*4;
+    if(opaque<7) continue;
+    let best=null; votes.forEach(v=>{ if(!best||v.n>best.n) best=v });
+    o[j]=best.r/best.n; o[j+1]=best.g/best.n; o[j+2]=best.b/best.n; o[j+3]=255;
+  }
+  const a=new Uint8Array(W*H); for(let i=0;i<W*H;i++) a[i]=o[i*4+3]?1:0;
+  for(let py=0;py<H;py++) for(let px=0;px<W;px++){ const i=py*W+px; if(a[i]) continue;
+    if((px>0&&a[i-1])||(px<W-1&&a[i+1])||(py>0&&a[i-W])||(py<H-1&&a[i+W])){ const j=i*4; o[j]=PX_OL[0]; o[j+1]=PX_OL[1]; o[j+2]=PX_OL[2]; o[j+3]=255 } }
+  cx.putImageData(out,0,0);
+  const up=document.createElement('canvas'); up.width=W*S; up.height=H*S; const ux=up.getContext('2d'); ux.imageSmoothingEnabled=false; ux.drawImage(c,0,0,W*S,H*S);
+  return up.toDataURL('image/png');
+}
+// 每種動作要轉哪幾格
+const PX_PLAN={
+  hero:{idle:[[0,0],[0,817]], walk:[[.12],[.37],[.62],[.87]], attack:[[.12],[.3],[.45],[.56],[.72],[.9]], cast:[[.15],[.32],[.48],[.72],[.9]], hurt:[[.15],[.55]], victory:[[.1],[.22],[.36],[.52],[.64],[.78],[.92]], sad:[[.8]]},
+  mon:{idle:[[0,0],[0,600]], hop:[[.1],[.4],[.85]], talk:[[0,0,1],[0,0,0]], hurt:[[.15],[.45]], defeat:[[.3],[.6]], rage:[[.2],[.45]]}
+};
+function pxPoseAt(kind, state, t, now){
+  const dur=RG_DUR[kind][state]||1000, fake={state, t0:0, dur:state==='idle'?0:dur};
+  return kind==='mon' ? rgMonPose(fake, now!=null?now:t*dur) : rgHeroPose(fake, now!=null?now:t*dur);
+}
+function pxEntry(key){
+  const spec=PXREG.get(key); if(!spec) return null;
+  const ck=spec.kind+'|'+spec.vec.replace(/rg\d+/g,'rg');
+  let e=PXCACHE.get(ck);
+  if(!e){ e={spec, frames:{}, blink:null, full:false, building:null, idleP:null}; PXCACHE.set(ck,e) }
+  return e;
+}
+function pxSvgOf(spec){
+  const tpl=document.createElement('div'); tpl.innerHTML=spec.vec.replace(/<svg([^>]*)>/, '<svg$1><g class="pxvec">').replace(/<\/svg>\s*$/,'</g></svg>');
+  const svg=tpl.querySelector('svg');
+  // 像素化時眼睛的小反光會變成怪形狀：勇者拿掉反光，怪獸只留眼白和瞳孔
+  svg.querySelectorAll('.rg-eyeL > :not(.rg-iris):not(.pupil), .rg-eyeR > :not(.rg-iris):not(.pupil)').forEach(n=>{ if(n.tagName==='circle' || (n.tagName==='ellipse' && !/rx="7"/.test(n.outerHTML))) n.remove() });
+  return svg;
+}
+async function pxFrame(e, state, spec2){
+  const svg=pxSvgOf(e.spec), P=rgParts(svg), kind=e.spec.kind, f=kind==='mon'?PXF_MON:PXF_HERO;
+  const [t, now, talkOpen]=spec2;
+  if(kind==='mon'){
+    const m=pxPoseAt('mon', state, t, now);
+    if(state==='talk') m.mouth=talkOpen?'o':'n';
+    const angryBase=P.mouthAngry && P.mouthAngry.getAttribute('visibility')==='visible', browBase=P.brows && P.brows.getAttribute('visibility')==='visible';
+    rgApplyMon(P, m, angryBase, browBase, false);
+  }else rgApplyHero(P, pxPoseAt('hero', state, t, now), false);
+  return pxRaster(svg, f);
+}
+async function pxBlink(e){
+  const svg=pxSvgOf(e.spec), P=rgParts(svg), kind=e.spec.kind, f=kind==='mon'?PXF_MON:PXF_HERO;
+  if(kind==='mon'){ const ab=P.mouthAngry&&P.mouthAngry.getAttribute('visibility')==='visible', bb=P.brows&&P.brows.getAttribute('visibility')==='visible'; rgApplyMon(P, pxPoseAt('mon','idle',0,0), ab, bb, true) }
+  else rgApplyHero(P, pxPoseAt('hero','idle',0,0), true);
+  return pxRaster(svg, f);
+}
+function pxIdle(e){
+  if(!e.idleP) e.idleP=(async()=>{ const plan=PX_PLAN[e.spec.kind].idle; e.frames.idle=[]; for(const sp of plan) e.frames.idle.push(await pxFrame(e,'idle',sp)); return e.frames.idle[0] })().catch(err=>{ pxImgOK=false; throw err });
+  return e.idleP;
+}
+function pxEnsureFull(key){
+  const e=pxEntry(key); if(!e) return;
+  if(e.building) return e.building;
+  e.building=(async()=>{
+    await pxIdle(e);
+    e.blink=await pxBlink(e);
+    const plan=PX_PLAN[e.spec.kind];
+    for(const st of Object.keys(plan)){ if(st==='idle') continue; const arr=[]; for(const sp of plan[st]) arr.push(await pxFrame(e, st, sp)); e.frames[st]=arr; await new Promise(r=>setTimeout(r,0)) }
+    e.full=true;
+  })().catch(()=>{});
+  return e.building;
+}
+// 放到畫面上的像素圖：先轉第一格（站著），向量圖當作載入前的替身
+function pxHydrate(img){
+  if(img.dataset.state) return; img.dataset.state='wait';
+  const e=pxEntry(img.dataset.px); if(!e) return;
+  pxIdle(e).then(url=>{ img.setAttribute('href',url); img.dataset.state='ok'; const v=img.parentNode && img.parentNode.querySelector('.pxvec'); if(v) v.setAttribute('visibility','hidden') }).catch(()=>{ img.dataset.state='fail' });
+}
+function pxHydrateIn(root){ (root.querySelectorAll ? root.querySelectorAll('image.pxi:not([data-state])') : []).forEach(pxHydrate) }
+new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>{ if(n.nodeType===1){ if(n.matches && n.matches('image.pxi')) pxHydrate(n); else pxHydrateIn(n) } }))).observe(document.documentElement,{childList:true,subtree:true});
+// 動畫：依照動作和時間挑一格
+function pxTick(a, now){
+  const e=pxEntry(a.pxKey); if(!e || a.px.dataset.state!=='ok') return;
+  let list=e.frames[a.state], url;
+  if(!list || !list.length){ list=e.frames.idle }
+  if(!list || !list.length) return;
+  if(a.state==='idle' || !e.frames[a.state]){
+    if(now>a.blinkAt){ a.blinkAt=now+2200+Math.random()*2600; a.blinkEnd=now+140 }
+    url = (e.blink && now<(a.blinkEnd||0)) ? e.blink : list[Math.floor(now/(reduce?100000:480))%list.length];
+  }else if(a.state==='talk'){
+    url=list[Math.floor((now-a.t0)/130)%list.length];
+  }else{
+    const t=a.dur?Math.min(.999,(now-a.t0)/a.dur):0; url=list[Math.min(list.length-1, Math.floor(t*list.length))];
+  }
+  if(url && a.pxLast!==url){ a.px.setAttribute('href',url); a.pxLast=url }
+}
 
 // ================= 五線譜（遊戲） =================
 const SVGNS='http://www.w3.org/2000/svg', LINE0=132, GAP=16;
