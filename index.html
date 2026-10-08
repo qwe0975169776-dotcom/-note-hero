@@ -665,6 +665,17 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 /* v16 分組對抗橫式：兩組按鈕不超出畫面 */
 @media (orientation:landscape) and (max-height:560px){ body.team .teamkeys{gap:8px} .tk .kg{grid-template-columns:repeat(8,minmax(0,1fr))!important} .tk .key{min-width:0;padding:3px 0} .tk .key .s{font-size:.82em;letter-spacing:-.05em} .tk h3{margin:0 0 2px} }
 .tk{min-width:0}
+
+/* v17 武器預覽 */
+.sk .pv.wpv{width:100%;max-width:150px;display:flex;align-items:flex-end;justify-content:space-between;padding:4px 6px 14px;box-sizing:border-box;cursor:pointer;overflow:hidden}
+.sk .pv.wpv .wh{width:58%;flex:none}
+.sk .pv.wpv .wm{width:32%;flex:none;margin-bottom:2px}
+.sk .pv.wpv .wh svg,.sk .pv.wpv .wm svg{width:100%;height:auto;display:block;overflow:visible}
+.sk .pv.wpv .try{position:absolute;bottom:2px;left:0;right:0;font-size:.68rem;font-weight:900;color:var(--ink-soft);text-align:center}
+.sk .pv.wpv .fx-slash svg{width:100%}
+.sk .pv.wpv{padding-top:12px}
+.sk .pv.wpv .wh{width:52%}
+.sk .pv.wpv .proj svg,.sk .pv.wpv .fx-extra svg{width:100%!important;height:100%!important}
 </style>
 </head>
 <body>
@@ -1007,9 +1018,10 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 const $ = id => document.getElementById(id);
 
 // 版本號：每次更新加 1，畫面上會顯示，方便確認上傳的是最新版
-const VERSION = 16, VERSION_DATE = '2026-10-08';
+const VERSION = 17, VERSION_DATE = '2026-10-08';
 // 更新日誌：每次更新在最上面加一筆（顯示在老師面板）
 const CHANGELOG = [
+  {v:17, date:'2026-10-08', add:['商店「武器」可以點預覽：勇者會用這把武器打旁邊的小史萊姆，看得到攻擊動作和擊打特效（特效用目前選的那一款）'], fix:[]},
   {v:16, date:'2026-10-08', add:['勇者和怪獸全部換成楓之谷風格的大頭 Q 版：有陰影、亮面和大眼睛','關節動畫：勇者會呼吸、眨眼、走路擺手、蓄力揮劍（遠距武器是舉起來發射）、受傷往後仰、過關跳起來歡呼，表情會跟著變','怪獸會 Q 彈呼吸、眨眼、跳著前進、說話時嘴巴會動、被打時眼睛變成 × ×、魔王生氣時冒青筋'], fix:[]},
   {v:15, date:'2026-10-08', add:['老師面板新增「更新伺服器程式」：Apps Script 會自己從 GitHub 抓最新的 Code.gs 並部署，不用再手動貼上','在老師面板改老師密碼，會同步改到試算表的程式'], fix:['老師密碼和試算表 ID 不再寫在程式碼裡（改存在 Apps Script 的指令碼屬性）']},
   {v:14, date:'2026-10-08', add:['過關、失敗畫面加上「商店」按鈕，買完按返回會回到結算畫面'], fix:[]},
@@ -1817,7 +1829,7 @@ function rgBind(bod, kind){
   rgStart(); return a;
 }
 function rigPlay(bod, state){
-  const kind = bod && bod.id==='monBod' ? 'mon' : 'hero';
+  const kind = bod && (bod.id==='monBod' || (bod.dataset && bod.dataset.rg==='mon')) ? 'mon' : 'hero';
   const a=rgBind(bod, kind); if(!a) return;
   a.state=state; a.t0=performance.now(); a.dur=RG_DUR[kind][state]||0; a.hit=false;
 }
@@ -2931,6 +2943,53 @@ function previewFx(fx,pv){
   d.animate([{transform:'translate(-50%,-50%) scale(.3) rotate(-30deg)',opacity:1},{transform:'translate(-50%,-50%) scale(1.1)',opacity:1,offset:.45},{transform:'translate(-50%,-50%) scale(1.25) rotate(15deg)',opacity:0}],{duration:360}).onfinish=()=>d.remove();
   fxBurst(pv,x,y,12,fx,55,[9,16]);
 }
+const DRAGON_SVG=`<svg viewBox="0 0 60 50"><path d="M18 22 Q4 2 26 10 Q20 16 22 24Z" fill="#9be07b" stroke="#2b3550" stroke-width="2.5"/><path d="M34 22 Q54 0 44 20Z" fill="#9be07b" stroke="#2b3550" stroke-width="2.5"/><ellipse cx="28" cy="30" rx="16" ry="11" fill="#7be07b" stroke="#2b3550" stroke-width="3"/><circle cx="44" cy="22" r="9" fill="#7be07b" stroke="#2b3550" stroke-width="3"/><circle cx="47" cy="20" r="2" fill="#2b3550"/><path d="M12 32 Q2 34 6 42" fill="none" stroke="#7be07b" stroke-width="5" stroke-linecap="round"/><path d="M40 13 l2 -6 l3 5" fill="#ffd23f" stroke="#2b3550" stroke-width="1.5"/></svg>`;
+// 武器預覽：勇者用這把武器打旁邊的小史萊姆
+function previewWeapon(W, pv){
+  if(pv._busy) return; pv._busy=true; setTimeout(()=>pv._busy=false, 900);
+  const hb=pv.querySelector('.wh'), mb=pv.querySelector('.wm');
+  const kind = W.id==='auto' ? curSkin().wpn : W.draw;
+  const st = W.id==='auto' ? (DRAW_STYLE[curSkin().wpn]||{style:'melee'}) : W;
+  const style=st.style||'melee';
+  const fam=famOf(kind), sel=(save.fxSel||{})[fam];
+  const v=WFX.find(x=>x.id===sel && x.fam===fam && (x.price===0||save.fxOwned.includes(x.id))) || WFX.find(x=>x.fam===fam);
+  const fx=FX.find(f=>f.id===(v?v.theme:'basic'))||FX[0];
+  rigPlay(hb, style==='melee'?'attack':'cast');
+  const r=pv.getBoundingClientRect(), hr=hb.getBoundingClientRect(), mr=mb.getBoundingClientRect();
+  const from={x:hr.right-r.left-hr.width*.15, y:hr.top-r.top+hr.height*.55}, to={x:mr.left-r.left+mr.width*.45, y:mr.top-r.top+mr.height*.6};
+  const hit=()=>{ rigPlay(mb,'hurt'); sFx(fx.snd,false); sHit(false); fxBurst(pv, to.x, to.y, 10, fx, 40, [8,14]); fxExtra(pv, to.x, to.y, fx);
+    mb.animate([{transform:'translateX(0)',filter:'brightness(2)'},{transform:'translateX(8px)',filter:'brightness(1)'},{transform:'translateX(0)'}],{duration:320}) };
+  const add=(cls,html,css)=>{ const e=document.createElement('div'); e.className=cls; if(html) e.innerHTML=html; Object.assign(e.style,css); pv.appendChild(e); return e };
+  if(style==='melee'){
+    hb.animate([{transform:'translateX(0)'},{transform:'translateX(-4px)',offset:.3},{transform:`translateX(${(to.x-from.x)*.55}px)`,offset:.55},{transform:`translateX(${(to.x-from.x)*.55}px)`,offset:.7},{transform:'translateX(0)'}],{duration:640,easing:'ease-in-out'});
+    setTimeout(()=>{ const s=add('fx fx-slash', slashSVG(fx,false), {width:'64px', left:to.x+'px', top:to.y+'px'});
+      s.animate([{transform:'translate(-50%,-50%) scale(.3) rotate(-30deg)',opacity:1},{transform:'translate(-50%,-50%) scale(1.1)',opacity:1,offset:.45},{transform:'translate(-50%,-50%) scale(1.25) rotate(15deg)',opacity:0}],{duration:360}).onfinish=()=>s.remove(); hit() }, 340);
+  }else if(style==='proj'){
+    setTimeout(()=>{
+      const n = st.proj==='note'||st.proj==='bubble' ? 3 : 1, back = st.proj==='boomerang'||st.proj==='yoyo';
+      for(let i=0;i<n;i++){
+        const p=add('proj', projSVG(st.proj), {left:from.x+'px', top:from.y+'px', width:'22px', height:'22px', margin:'-11px 0 0 -11px'});
+        const dx=to.x-from.x, dy=to.y-from.y+(i-1)*6, spin=back||st.proj==='star'?540:0;
+        const k=[{transform:'translate(0,0) scale(.6)',opacity:1},{transform:`translate(${dx*.5}px,${dy*.5-18}px) rotate(${spin/2}deg)`,opacity:1,offset:back?.25:.5},{transform:`translate(${dx}px,${dy}px) rotate(${spin}deg)`,opacity:1,offset:back?.5:1}];
+        if(back) k.push({transform:'translate(0,0) scale(.6)',opacity:0,offset:1});
+        p.animate(k,{duration:back?700:340,delay:i*80,easing:'ease-in-out',fill:'backwards'}).onfinish=()=>p.remove();
+      }
+      setTimeout(hit, 340);
+    }, 260);
+  }else if(style==='beam'){
+    setTimeout(()=>{ const len=to.x-from.x, grad = st.beam==='rainbow' ? `linear-gradient(180deg,${RB.join(',')})` : `linear-gradient(180deg,${st.beam[0]},${st.beam[1]} 50%,${st.beam[0]})`;
+      const e=add('beam','',{left:from.x+'px', top:(from.y-5)+'px', width:len+'px', height:'10px', background:grad, boxShadow:`0 0 10px ${st.beam==='rainbow'?'#fff':st.beam[0]}`});
+      e.animate([{transform:'scaleX(0)',opacity:1},{transform:'scaleX(1)',opacity:1,offset:.25},{transform:'scaleX(1) scaleY(1.4)',opacity:.9,offset:.5},{transform:'scaleX(1) scaleY(.2)',opacity:0}],{duration:520}).onfinish=()=>e.remove(); setTimeout(hit,130) }, 270);
+  }else if(style==='wave'){
+    setTimeout(()=>{ for(let i=0;i<3;i++){ const e=add('ring','',{left:(from.x-8)+'px', top:(from.y-8)+'px', width:'16px', height:'16px', borderWidth:'3px', borderColor:i%2?'#ff7a3d':'#ffd23f'});
+      e.animate([{transform:'translate(0,0) scale(.5)',opacity:1},{transform:`translate(${to.x-from.x}px,${to.y-from.y}px) scale(2.6)`,opacity:.9,offset:.8},{transform:`translate(${to.x-from.x}px,${to.y-from.y}px) scale(3.2)`,opacity:0}],{duration:460,delay:i*100,fill:'backwards',easing:'ease-out'}).onfinish=()=>e.remove() }
+      setTimeout(hit,380) }, 260);
+  }else{
+    setTimeout(()=>{ const e=add('proj', DRAGON_SVG, {left:from.x+'px', top:(from.y-20)+'px', width:'36px', height:'36px', margin:'-18px 0 0 -18px'});
+      e.animate([{transform:'translate(0,0) scale(.3)',opacity:0},{transform:`translate(${(to.x-from.x)*.5}px,-16px) scale(1)`,opacity:1,offset:.4},{transform:`translate(${to.x-from.x-10}px,${to.y-from.y+10}px) scale(1.1)`,opacity:1,offset:.6},{transform:'translate(0,-30px) scale(.5)',opacity:0}],{duration:900,easing:'ease-in-out'}).onfinish=()=>e.remove();
+      setTimeout(hit,520) }, 200);
+  }
+}
 const STYLE_NAME={melee:'近身攻擊',proj:'遠距發射',beam:'光線攻擊',wave:'音波攻擊',summon:'召喚攻擊'};
 function buildShop(){
   $('shopCoin').textContent=save.coins;
@@ -2993,9 +3052,10 @@ function buildShop(){
     else btn=`<button data-act="ask" ${save.coins<it.price?'disabled':''}><span class="coin"></span>${it.price}</button>`;
     let pv, tag=it.tag;
     if(tab==='fx') pv=`<div class="pv fxpv" role="button" tabindex="0" aria-label="試看 ${it.name}">${slashSVG(it,false,'mini')}<span class="try">點我看看</span></div>`;
-    else if(tab==='wpn'){ pv=`<div class="pv">${heroSVG(heroFor(curSkin(), it.id))}</div>`; const st=it.style||(DRAW_STYLE[curSkin().wpn]||{style:'melee'}).style; tag=`${it.tag}・${STYLE_NAME[st]}` }
+    else if(tab==='wpn'){ pv=`<div class="pv wpv" role="button" tabindex="0" aria-label="試看 ${it.name} 的攻擊"><div class="wh">${heroSVG(heroFor(curSkin(), it.id))}</div><div class="wm" data-rg="mon">${monSVG(MONS[0])}</div><span class="try">點我看看</span></div>`; const st=it.style||(DRAW_STYLE[curSkin().wpn]||{style:'melee'}).style; tag=`${it.tag}・${STYLE_NAME[st]}` }
     else pv=`<div class="pv${it.aura?' aura-'+it.aura:''}" style="--aura:${it.ac||'#ffd23f'}"><div class="aurap">${it.aura?auraParts(it.aura,it.ac):''}</div>${heroSVG(it)}</div>`;
     d.innerHTML=`${pv}<div class="nm">${it.name}</div><div class="tag">${tag}</div>${btn}`;
+    if(tab==='wpn'){ const p=d.querySelector('.wpv'); const go=()=>{ ctx(); previewWeapon(it,p) }; p.addEventListener('click',go); p.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go() } }); }
     if(tab==='fx'){ const p=d.querySelector('.fxpv'); const go=()=>{ ctx(); previewFx(it,p) }; p.addEventListener('click',go); p.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go() } }); }
     const b=d.querySelector('button[data-act]');
     if(b) b.addEventListener('click',()=>{
