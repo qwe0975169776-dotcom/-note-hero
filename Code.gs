@@ -85,7 +85,7 @@ function testSave() {
   rebuildBoard_();
 }
 
-const CODE_VERSION = 9;   // 檢查用：網址回傳的版本號
+const CODE_VERSION = 10;   // 檢查用：網址回傳的版本號
 
 // ---------- 網頁應用程式入口 ----------
 function out_(o) {
@@ -122,6 +122,7 @@ function doPost(e) {
   const lock = LockService.getScriptLock();
   lock.waitLock(20000);
   try {
+    saveSetup_();
     const d = JSON.parse(e.postData.contents);
     if (d.action === 'save') {
       const res = saveUser_(d.name, d.save) || {};
