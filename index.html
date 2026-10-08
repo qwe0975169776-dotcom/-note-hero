@@ -956,6 +956,7 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
       <section>
         <h4>Google 試算表連線</h4>
         <div class="r"><input type="url" id="tUrl" placeholder="貼上 Apps Script 網頁應用程式網址（…/exec）"><button class="sbtn alt" id="tpTest">測試連線</button></div>
+        <div class="r"><button class="sbtn" id="tpSelfUpd">更新伺服器程式</button><span class="hint" id="tpSelfMsg">遊戲更新時如果需要新的伺服器程式，按這裡就會自動從 GitHub 更新並部署。</span></div>
         <div class="hint" id="tpTestMsg">沒有連線時，資料會先存在這台電腦，連上後自動補傳。</div>
       </section>
       <section>
@@ -964,7 +965,7 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
       </section>
       <section>
         <h4>老師密碼</h4>
-        <div class="r"><input type="text" id="tPin" maxlength="12"><span class="hint">要和 Apps Script 裡的 TEACHER_PIN 一樣，全班歸零才會成功。</span></div>
+        <div class="r"><input type="text" id="tPin" maxlength="12"><span class="hint" id="tPinMsg">改這裡會同步改到試算表的程式（連線時）。</span></div>
       </section>
     </div>
   </div>
@@ -1003,9 +1004,10 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 const $ = id => document.getElementById(id);
 
 // 版本號：每次更新加 1，畫面上會顯示，方便確認上傳的是最新版
-const VERSION = 14, VERSION_DATE = '2026-10-08';
+const VERSION = 15, VERSION_DATE = '2026-10-08';
 // 更新日誌：每次更新在最上面加一筆（顯示在老師面板）
 const CHANGELOG = [
+  {v:15, date:'2026-10-08', add:['老師面板新增「更新伺服器程式」：Apps Script 會自己從 GitHub 抓最新的 Code.gs 並部署，不用再手動貼上','在老師面板改老師密碼，會同步改到試算表的程式'], fix:['老師密碼和試算表 ID 不再寫在程式碼裡（改存在 Apps Script 的指令碼屬性）']},
   {v:14, date:'2026-10-08', add:['過關、失敗畫面加上「商店」按鈕，買完按返回會回到結算畫面'], fix:[]},
   {v:13, date:'2026-10-08', add:['前 5 區的魔王關加入愛心（預設 5 顆），答錯扣一顆，扣光就挑戰失敗，可以在修改器「關卡難度」調整'], fix:['歌曲關卡和世界魔王不會誤用上一關的愛心']},
   {v:12, date:'2026-10-08', add:['怪獸會說話：出場、被打、生氣、答錯時、被打敗時會冒出對話框','主畫面的「全班成就牆」：全班一起累積答對的音數，達到目標每個人都能領獎（第 3 階是全班限定造型「合唱團長」），目標可以在修改器調整','作曲小教室：在五線譜上放 8 個音編成旋律，可以播放、存 3 首作品','試算表新增「學習報告」分頁：每位小朋友的正確率、最近 7 天進步、最常錯的音、最常搞混的音和建議練習','練習模式新增「聽音挑戰」3 課；老師面板可以打開「關卡加入聽音題」','老師面板新增「只顯示用得到的按鈕」：只顯示這一區會出的音，按鈕變大（全班同步）'], fix:[]},
@@ -3015,7 +3017,26 @@ $('tBigKeys').addEventListener('change',e=>{ setConfig('bigKeys', e.target.check
 $('tEarQ').addEventListener('change',e=>{ setConfig('earQ', e.target.checked); if(!Cloud.ready()) T.earQ=e.target.checked });
 $('tVoice').addEventListener('change',e=>{ prefs.voice=e.target.checked; savePrefs() });
 bindT('tUrl',e=>{ T.url=e.value.trim(); setDot('') });
-bindT('tPin',e=>T.pin=e.value.trim()||'1234');
+$('tPin').addEventListener('change',async()=>{
+  const old=T.pin, nw=$('tPin').value.trim()||'1234', m=$('tPinMsg');
+  if(nw===old) return;
+  if(!Cloud.ready()){ T.pin=nw; saveT(); m.textContent='已改（還沒連接試算表，只存在這台裝置）。'; return }
+  m.textContent='同步中…';
+  try{ await Cloud.post({action:'setPin', pin:old, newPin:nw}); T.pin=nw; saveT(); m.textContent='已改好，試算表的程式也同步了。其他老師的裝置要輸入新密碼。' }
+  catch(e){ $('tPin').value=old; m.textContent='沒有改成功：'+(e.message||'連不到試算表')+'（伺服器程式要第 9 版以上）'; }
+});
+$('tpSelfUpd').addEventListener('click',async()=>{
+  const m=$('tpSelfMsg'), b=$('tpSelfUpd');
+  if(!Cloud.ready()){ m.textContent='還沒連接試算表。'; return }
+  const dep=(Cloud.url().match(/\/macros\/s\/([^/]+)\/exec/)||[])[1]||'';
+  b.disabled=true; m.textContent='更新中，大約要 10～30 秒…';
+  try{
+    const j=await Cloud.post({action:'selfUpdate', pin:T.pin, deploymentId:dep});
+    m.textContent=(j.msg||'完成')+(j.updated?'。新的程式已部署，網址不變。':'');
+    if(j.updated) setTimeout(async()=>{ try{ const p=await Cloud.get({action:'ping'}); m.textContent+=`（目前伺服器：第 ${p.version} 版）` }catch(e){} }, 4000);
+  }catch(e){ m.textContent='沒有更新：'+(e.message||'連不到試算表'); }
+  b.disabled=false;
+});
 $('tpGive50').addEventListener('click',()=>{ save.coins+=50; sCoin(); commit(); fillTeacher(); hud() });
 $('tpGive100').addEventListener('click',()=>{ save.coins+=100; sCoin(); commit(); fillTeacher(); hud() });
 $('tpZero').addEventListener('click',()=>{ save.coins=0; commit(); fillTeacher(); hud() });
