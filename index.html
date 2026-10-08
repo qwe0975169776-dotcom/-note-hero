@@ -599,6 +599,69 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
   .items{flex:1 1 100%}
   .items:empty{display:none}
 }
+
+/* v11 練習加強 */
+.psec{grid-column:1/-1;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;text-align:left;margin-top:8px;border-top:2px dashed #d8d2bf;padding-top:10px}
+.psec b{font-size:1.1rem}
+.psec small{font-size:.82rem;color:var(--ink-soft);font-weight:700}
+.lesson-card.weakcard{grid-column:1/-1;border-color:var(--danger);background:#fff4f2}
+.lesson-card.weakcard b{font-size:1.25rem}
+.pairs{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.pairbtn{position:relative;display:flex;gap:6px;justify-content:center;align-items:center;border:3px solid var(--line);border-radius:16px;background:#fff;padding:10px 8px;box-shadow:0 4px 0 var(--line)}
+.pairbtn>span{color:#fff;font-weight:900;border:2px solid var(--line);border-radius:10px;padding:3px 8px;-webkit-text-stroke:.6px rgba(0,0,0,.3);font-size:1.05rem;white-space:nowrap}
+.pairbtn small{position:absolute;top:-10px;right:-6px;background:var(--danger);color:#fff;border:2px solid var(--line);border-radius:999px;padding:0 7px;font-size:.72rem;font-weight:900}
+.pairbtn small.ok{background:var(--good)}
+.pairbtn.hot{border-color:var(--danger)}
+.lans.many{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%;max-width:560px;margin:0 auto}
+.lans.many .big{min-width:0;font-size:1.2rem;padding:10px 4px}
+/* 關卡答錯的說明可以換行 */
+.msg{white-space:normal;max-width:94%;width:max-content;text-align:center;border-radius:16px;line-height:1.35}
+@media (max-width:640px){ .msg{font-size:1rem} }
+.lhead h3{min-width:min(11em,62%)}
+
+/* v12 怪獸對話框 */
+.mbubble{position:absolute;z-index:5;max-width:62%;background:#fff;color:var(--ink);border:3px solid var(--line);border-radius:16px;padding:5px 11px;font-weight:900;font-size:clamp(.8rem,2.6vw,1rem);line-height:1.3;pointer-events:none;box-shadow:0 3px 0 rgba(0,0,0,.18);transform-origin:var(--tail,80%) 100%}
+.mbubble::after{content:'';position:absolute;bottom:-11px;left:calc(var(--tail,80%) - 8px);border:8px solid transparent;border-top:10px solid var(--line);border-bottom:0}
+/* v12 全班成就牆 */
+.classwall{border:3px solid var(--line);border-radius:18px;background:linear-gradient(135deg,#fff8de,#ffe9f1);padding:10px 12px;margin:8px 0 12px;text-align:left;display:flex;flex-direction:column;gap:6px}
+.classwall:empty{display:none}
+.cwhead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.cwhead b{font-size:1.05rem}
+.cwhead span{font-weight:700;font-size:.9rem;color:var(--ink-soft)}
+.cwhead em{font-style:normal;font-family:var(--f-num);font-weight:800;color:var(--c-do);font-size:1.2rem}
+.cwbar{position:relative;height:24px;border:2.5px solid var(--line);border-radius:999px;background:#fff;overflow:hidden}
+.cwbar i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#ffd23f,#ff8fbf)}
+.cwbar span{position:relative;display:block;text-align:center;font-size:.78rem;font-weight:900;line-height:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 8px}
+.cwsteps{display:flex;gap:5px;flex-wrap:wrap}
+.cwsteps span{font-size:.72rem;font-weight:800;border:2px solid #d8d2bf;border-radius:999px;padding:1px 8px 1px 2px;background:#fff;color:var(--ink-soft);display:inline-flex;gap:4px;align-items:center}
+.cwsteps span b{width:17px;height:17px;border-radius:50%;background:#d8d2bf;color:#fff;display:grid;place-items:center;font-size:.7rem}
+.cwsteps span.ok{border-color:var(--good);color:var(--good)}
+.cwsteps span.ok b{background:var(--good)}
+/* v12 作曲小教室 */
+.hbtn.comp{background:#f3ecff}
+.panel.compose{display:flex;flex-direction:column;gap:10px}
+.cpinfo{font-weight:800;color:var(--ink-soft);min-height:1.4em}
+#cstaff{max-height:46vh}
+.cptools{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.cptools .big{padding:8px 14px;font-size:1rem}
+#cpLabels[aria-pressed="false"]{opacity:.6}
+.cppal .big{font-size:1.15rem}
+.cpslots{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+.cpslot{border:2.5px solid var(--line);border-radius:14px;background:#fff;padding:8px;text-align:left;display:flex;flex-direction:column;gap:4px}
+.cpslot.on{border-color:var(--gold);background:#fffbea}
+.cpslot small{font-weight:700;color:var(--ink-soft);font-size:.8rem;min-height:1.2em}
+.cpslot div{display:flex;gap:6px}
+.cpslot .sbtn{border:2px solid var(--line);border-radius:10px;padding:4px 10px;font-weight:900;background:var(--gold);font-size:.85rem}
+.cpslot .sbtn.alt{background:#fff}
+/* v12 大按鈕模式 */
+#keys.few,#keysA.few,#keysB.few{grid-template-columns:repeat(var(--n,4),1fr)!important}
+#keys.few .key{min-height:clamp(64px,13vh,110px)}
+#keys.few .key .s{font-size:1.6em}
+.key[hidden]{display:none!important}
+.toast{white-space:normal;max-width:min(92vw,560px);width:max-content;box-sizing:border-box;text-align:left}
+@media (orientation:landscape) and (max-height:560px){ #keys.few .key{min-height:52px} }
+.big.winshop{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.big.winshop .coin{flex:none}
 </style>
 </head>
 <body>
@@ -687,6 +750,7 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 <div class="overlay" id="ovHome" hidden>
   <div class="panel">
     <div class="rankcard" id="homeRank"></div>
+    <div class="classwall" id="classWall"></div>
     <button class="raidban" id="raidBanner" hidden></button>
     <div class="homegrid">
       <button class="hbtn adv" id="hAdv"><b>冒險地圖</b><small id="hAdvSub">5 個地區・25 關</small></button>
@@ -697,6 +761,7 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
       <button class="hbtn" id="hRank"><b>排行榜</b><small>看看全班段位</small></button>
       <button class="hbtn" id="hShop"><b>商店</b><small>造型・武器・特效</small></button>
       <button class="hbtn" id="hDex"><b>收藏</b><small>圖鑑・徽章</small></button>
+      <button class="hbtn comp" id="hCompose"><b>作曲小教室</b><small>自己編一段旋律</small></button>
     </div>
     <div class="row"><button class="big alt" id="btnSwitch">換玩家</button><button class="big alt" id="btnTeacher3">老師面板</button></div>
   </div>
@@ -714,7 +779,7 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 <div class="overlay" id="ovPractice" hidden>
   <div class="panel wide">
     <div class="shophead"><h2>練習模式</h2><button class="big alt" id="btnPracBack">返回</button></div>
-    <p>不限時、沒有怪獸，慢慢來。建議從第 1 課開始。</p>
+    <p>不限時、沒有怪獸，慢慢來。常點錯音的話，先做最上面的「我的弱點特訓」。</p>
     <div class="lessons" id="lessons"></div>
   </div>
 </div>
@@ -780,6 +845,7 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
       <button class="big alt" id="btnAgain">再玩一次</button>
       <button class="big" id="btnNextLv">下一關 ▶</button>
       <button class="big alt" id="btnWinMap">冒險地圖</button>
+      <button class="big alt winshop" id="btnWinShop">商店</button>
     </div>
   </div>
 </div>
@@ -853,6 +919,8 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
         <div class="r"><label for="tLockAdv">關閉冒險地圖</label><input type="checkbox" id="tLockAdv"> 先讓小朋友做練習，之後再打開（全班同步）</div>
         <div class="r"><label for="tShopLock">鎖住商店</label><input type="checkbox" id="tShopLock"> 上課時不讓小朋友進商店（全班同步）</div>
         <div class="hint" id="cfgMsg"></div>
+        <div class="r"><label for="tBigKeys">大按鈕模式</label><input type="checkbox" id="tBigKeys"> 只顯示這一區會出的音，按鈕變大（全班同步）</div>
+        <div class="r"><label for="tEarQ">聽音題</label><input type="checkbox" id="tEarQ"> 關卡裡偶爾出現「聽音題」：只播聲音，聽出是哪個音（全班同步）</div>
         <div class="r"><label for="tVoice">練習語音</label><input type="checkbox" id="tVoice"> 練習模式用語音唸題目</div>
       </section>
       <section>
@@ -915,15 +983,33 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
     <div class="tp ed" id="edBody"></div>
   </div>
 </div>
+<div class="overlay" id="ovCompose" hidden>
+  <div class="panel wide compose">
+    <div class="shophead"><h2>作曲小教室</h2><button class="big alt" id="btnCpBack">回主畫面</button></div>
+    <div class="cpinfo" id="cpInfo"></div>
+    <div class="cpstaffwrap"><svg class="pstaff" id="cstaff" viewBox="0 30 420 282" aria-label="作曲五線譜"></svg></div>
+    <div class="cptools">
+      <button class="big" id="cpPlay">播放</button><button class="big alt" id="cpStop">停止</button>
+      <button class="big alt" id="cpDel">退一格</button><button class="big alt" id="cpClear">全部清除</button>
+      <button class="big alt" id="cpIdea">給我靈感</button><button class="big alt" id="cpLabels" aria-pressed="true">顯示音名</button>
+    </div>
+    <div class="lans many cppal" id="cpPal"></div>
+    <div class="cpslots" id="cpSlots"></div>
+  </div>
+</div>
 
 <script>
 (function(){
 const $ = id => document.getElementById(id);
 
 // 版本號：每次更新加 1，畫面上會顯示，方便確認上傳的是最新版
-const VERSION = 10, VERSION_DATE = '2026-10-07';
+const VERSION = 14, VERSION_DATE = '2026-10-08';
 // 更新日誌：每次更新在最上面加一筆（顯示在老師面板）
 const CHANGELOG = [
+  {v:14, date:'2026-10-08', add:['過關、失敗畫面加上「商店」按鈕，買完按返回會回到結算畫面'], fix:[]},
+  {v:13, date:'2026-10-08', add:['前 5 區的魔王關加入愛心（預設 5 顆），答錯扣一顆，扣光就挑戰失敗，可以在修改器「關卡難度」調整'], fix:['歌曲關卡和世界魔王不會誤用上一關的愛心']},
+  {v:12, date:'2026-10-08', add:['怪獸會說話：出場、被打、生氣、答錯時、被打敗時會冒出對話框','主畫面的「全班成就牆」：全班一起累積答對的音數，達到目標每個人都能領獎（第 3 階是全班限定造型「合唱團長」），目標可以在修改器調整','作曲小教室：在五線譜上放 8 個音編成旋律，可以播放、存 3 首作品','試算表新增「學習報告」分頁：每位小朋友的正確率、最近 7 天進步、最常錯的音、最常搞混的音和建議練習','練習模式新增「聽音挑戰」3 課；老師面板可以打開「關卡加入聽音題」','老師面板新增「只顯示用得到的按鈕」：只顯示這一區會出的音，按鈕變大（全班同步）'], fix:[]},
+  {v:11, date:'2026-10-08', add:['練習模式新增「我的弱點特訓」：自動找出這位小朋友最常錯、最常搞混的音來練，答錯會教怎麼數','練習模式新增「一個音一個音學」8 課：每課認識一個音住在哪裡和記憶口訣，再跟學過的音混著考','練習模式新增「長得很像的音比一比」：相鄰、容易搞混的兩個音一起分辨，常搞混的會排在最前面','關卡裡答錯時有小教學：五線譜上會標出這個音的位置，並從ㄉㄡ、ㄇㄧ、ㄙㄛ、ㄒㄧ 這幾個好認的音往上數一格'], fix:[]},
   {v:10, date:'2026-10-07', add:['遊戲中的廣播、徽章和提示訊息改成在戰場上方的小跑馬燈，不會再擋住五線譜和按鈕'], fix:['手機直式和橫式：一進關卡就能看到五線譜和全部音符按鈕，不用往下拉（戰場和人物會依螢幕大小自動縮放）']},
   {v:9, date:'2026-10-07', add:['遊戲修改器（老師面板）：可以改商店價格和上下架、每一關的答題秒數／一次幾個音／過關格數／愛心、各種金幣獎勵，以及每位玩家的金幣、關卡、送東西、刪除帳號','修改器的數值存在試算表「修改器」分頁，也可以直接在試算表裡改；Users 分頁的「目前積分」直接改也會生效','試算表新增「修改紀錄」分頁，記錄每次從修改器做的調整'], fix:[]},
   {v:8, date:'2026-10-07', fix:['修正造型發光粒子在商店被放大、跑出卡片外的問題']},
@@ -1168,6 +1254,13 @@ SKINS.forEach(s=>{ const a=AURA[s.id]; if(a){ s.aura=a[0]; s.ac=a[1]; if(a[2]!=n
 
 
 
+// ---------- v12：全班成就牆的限定造型與徽章 ----------
+SKINS.push({id:'choir', name:'合唱團長', tag:'全班成就牆限定', price:0, reward:'class', head:'wizard', a:'#ffd23f', b:'#ff8fbf', body:'#6b4fd8', skin:'#ffd9b8', wpn:'wand', w:'#ffd23f', aura:'notes', ac:'#ffd23f'});
+BADGES.push({id:'classwall', m:'班', name:'全班同心', desc:'全班一起達成成就牆最高目標'});
+
+// ---------- v13：一般地區的魔王關也有愛心 ----------
+STAGES.forEach(st=>{ if(st.boss && !st.lives) st.lives=5 });
+
 // ================= storage helpers =================
 function lsGet(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d }catch(e){ return d } }
 function lsSet(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)) }catch(e){} }
@@ -1276,7 +1369,7 @@ function commit(record, notes){
   persistLocal();
   if(player.test) return;   // 測試模式不寫進試算表
   if(notes) addLocalClass(notes);
-  if(player.name){ const sc=rankScore(); send({action:'save', name:player.name, save:Object.assign({}, save, {badgeNames:badgeNames(), rankScore:sc, tierName:tierOf(sc).name, weak:weakNotes(), progress:progressText()}), record, notes}); }
+  if(player.name){ const sc=rankScore(); send({action:'save', name:player.name, save:Object.assign({}, save, {badgeNames:badgeNames(), rankScore:sc, tierName:tierOf(sc).name, weak:weakNotes(), progress:progressText(), report:learnReport()}), record, notes}); }
   else if(record) send({action:'record', record, notes});
 }
 
@@ -1645,10 +1738,11 @@ KEYS.forEach(k=>{
   $('keysA').appendChild(makeKey(k,(k,b)=>answerTeam('A',k,b),'kA-'));
   $('keysB').appendChild(makeKey(k,(k,b)=>answerTeam('B',k,b),'kB-'));
 });
-function setKeysFor(list){ const ok=new Set(list); KEYS.forEach(k=>['key-','kA-','kB-'].forEach(p=>$(p+k).disabled=!ok.has(k))) }
+function setKeysFor(list){ const ok=new Set(list); KEYS.forEach(k=>['key-','kA-','kB-'].forEach(p=>$(p+k).disabled=!ok.has(k))); S.keyList=list; fitKeys(list) }
 function setKeys(){
   const ok=new Set(regionOf().pool);
   KEYS.forEach(k=>['key-','kA-','kB-'].forEach(p=>$(p+k).disabled=!ok.has(k)));
+  S.keyList=regionOf().pool; fitKeys(S.keyList);
 }
 function clearKeyMarks(){ document.querySelectorAll('.key').forEach(b=>b.classList.remove('show','wrong')) }
 function anyOverlay(){ return [...document.querySelectorAll('.overlay')].some(o=>!o.hidden) }
@@ -1767,8 +1861,9 @@ function renderMon(enraged){
   $('monster').classList.toggle('enraged',!!enraged);
 }
 const HEART='<svg viewBox="0 0 24 22"><path d="M12 21 C3 14 1 9 3.5 5 C6 1.5 10.5 2.5 12 6 C13.5 2.5 18 1.5 20.5 5 C23 9 21 14 12 21Z" fill="#e8473d" stroke="#2b3550" stroke-width="2" stroke-linejoin="round"/></svg>';
+const stageLives = () => (S.mode==='solo' && S.sub==='stage' && S.stage && S.stage.lives) || 0;
 function renderLives(breakOne){
-  const el=$('lives'), max=(S.mode==='solo'&&S.stage&&S.stage.lives)||0;
+  const el=$('lives'), max=stageLives();
   el.hidden=!max; if(!max) return;
   el.innerHTML=Array.from({length:max},(_,i)=>`<span class="${i<S.lives?'':'lost'}${breakOne&&i===S.lives?' break':''}">${HEART}</span>`).join('');
 }
@@ -2042,6 +2137,7 @@ async function monsterGrowlAt(t){
   heroEl.querySelector('.bod').animate([{transform:'translateX(0)',filter:'none'},{transform:`translateX(${dir*14}px)`,filter:'brightness(1.4) sepia(1) hue-rotate(-40deg) saturate(4)',offset:.3},{transform:'translateX(0)',filter:'none'}],{duration:450});
 }
 async function monsterDefeat(){
+  monSay('lose');
   const mb=$('monBod'), m=centerOf($('monster'));
   for(let i=0;i<3;i++){ mb.animate([{filter:'brightness(3)'},{filter:'none'}],{duration:120}); sHit(true); shake(10,150); await wait(160); }
   sBoom(); flash(.85,300); shake(24,600);
@@ -2059,7 +2155,7 @@ async function bossEnrage(){
   $('flash').style.background='#ff3b2e'; flash(.55,500); setTimeout(()=>$('flash').style.background='#fff',520);
   shake(26,800);
   $('monBod').animate([{transform:'scale(1)'},{transform:'scale(1.35)',offset:.4},{transform:'scale(1)'}],{duration:800});
-  renderMon(true); place(); hud();
+  renderMon(true); place(); hud(); monSay('rage');
   burst(m.x,m.y,20,['#ff4d2e','#ffcf3f','#7a1f3d'],120,[8,16]);
   await wait(900);
 }
@@ -2098,16 +2194,19 @@ function nextQ(){
   S.locked={A:false,B:false}; $('tkA').classList.remove('locked'); $('tkB').classList.remove('locked');
   S.timeBoost=1; S.tempHint=false;
   S.seq=makeSeq(); S.pos=0; S.states=[]; S.busy=false; S.qWrong=false; S.qStart=performance.now();
+  S.ear = cfgOn('earQ') && S.mode==='solo' && S.sub==='stage' && S.seq.length===1 && !S.phase2 && !(S.stage&&S.stage.noHint) && Math.random()<.2;
   $('seqhint').hidden = S.seq.length<2 && !S.phase2;
   $('seqhint').classList.toggle('rage', S.phase2);
   $('seqhint').textContent = (S.phase2?'魔王狂暴！':'') + (S.seq.length>1?`依序答 ${S.seq.length} 個音`:'');
   $('timer').classList.toggle('rage', S.phase2);
-  drawStaff(S.seq, S.states, S.seq.length>1?0:-1); startTimer();
+  if(S.ear){ earStaffDraw(); setTimeout(earGamePlay,300); $('seqhint').hidden=false; $('seqhint').textContent='聽音題！聽聲音找答案' }
+  else drawStaff(S.seq, S.states, S.seq.length>1?0:-1);
+  startTimer();
 }
 function qTime(){
   if(S.sub==='song') return Math.max(4, 3.6*(1+0.8*(S.seq.length-1))*timeMul()*(S.timeBoost||1));
   const base = S.mode==='team' ? regionOf().t : S.stage.time;
-  return Math.max(3, base*(1+0.7*(S.seq.length-1))*timeMul()*(S.phase2?0.75:1)*(S.timeBoost||1));
+  return Math.max(3, base*(1+0.7*(S.seq.length-1))*timeMul()*(S.phase2?0.75:1)*(S.timeBoost||1)*(S.ear?1.8:1));
 }
 function startTimer(){
   cancelAnimationFrame(S.tId);
@@ -2165,6 +2264,7 @@ async function answer(k,btn){
     const c=$('combo'); c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop');
     hud();
     await heroAttack(big);
+    if(S.sub!=='song') monSay('hit', big?.6:.3);
     if(S.sub==='song'){ await wait(120); await wait(playMelody(S.song.parts[S.chunk-1])*1000) }
     const coins=RW.note*len+(big?RW.crit:0); addCoins(coins);
     const h=centerOf($('hero')); fxText(`+${coins}`, h.x, h.y-h.h*.7, 'gold');
@@ -2183,19 +2283,21 @@ async function answer(k,btn){
     recordNote(cur,true);
     S.wrong++; S.combo=0; hud();
     S.seq.forEach((kk,i)=>{ if(!S.states[i]) S.states[i]=labelState(kk) });
-    drawStaff(S.seq, S.states, -1);
+    drawStaff(S.seq, S.states, -1); teachDraw(cur);
+    if(k) addConfuse(cur,k);
     if(btn) btn.classList.add('wrong');
     $('key-'+cur).classList.add('show');
-    say(k?`這是 ${zyName(cur)} 喔`:`時間到！這是 ${zyName(cur)}`,'bad');
+    say(teachText(cur,k),'bad');
     if(S.shield){
       S.shield=false; $('hero').classList.remove('shielded'); renderItems();
       const h=centerOf($('hero')); fxText('護盾擋住了！', h.x, h.y-h.h*.7, 'gold'); sfx(()=>osc(1200,.2,'triangle',.15));
       await wait(500);
     }else{
-      if(S.stage.lives){ S.lives--; renderLives(true); sfx(()=>{ osc(330,.2,'square',.1); osc(220,.3,'square',.1,.15) }) }
+      if(stageLives()){ S.lives--; renderLives(true); sfx(()=>{ osc(330,.2,'square',.1); osc(220,.3,'square',.1,.15) }) }
       await monsterAdvance(S.mon-1<=S.hero);
+      monSay('taunt', .55);
       if(S.phase2 && S.mon-1>S.hero){ await wait(120); await monsterAdvance(false) }
-      if(S.stage.lives && S.lives<=0){ await stageFail(); return }
+      if(stageLives() && S.lives<=0){ await stageFail(); return }
     }
     S.seq.forEach((kk,i)=>setTimeout(()=>sNote(NOTES[kk].f), i*450));
     $('btnNext').hidden=false; $('btnNext').focus({preventScroll:true});
@@ -2215,6 +2317,7 @@ async function answerTeam(t,k,btn){
     say(big?`${teamName(t)} ${d.combo} 連擊！`:`${teamName(t)} 答對了！`,'good');
     hud();
     await heroAttack(big, t==='A'?$('hero'):$('hero2'), t==='A'?1:-1);
+    monSay('hit', .3);
     place();
     await wait(500);
     if(d.power>=g){ await teamWin(t); return }
@@ -2309,7 +2412,7 @@ function showWin(o){
   const nx = S.mode==='solo' ? nextStageOf(S.stage) : null;
   $('btnNextLv').hidden = !(nx && stageUnlocked(nx));
   $('btnWinMap').textContent = S.mode==='team' ? '回主畫面' : '冒險地圖';
-  show('ovWin'); ($('btnNextLv').hidden?$('btnAgain'):$('btnNextLv')).focus({preventScroll:true});
+  winShopBtn(); show('ovWin'); ($('btnNextLv').hidden?$('btnAgain'):$('btnNextLv')).focus({preventScroll:true});
 }
 async function win(){
   S.playing=false;
@@ -2349,10 +2452,10 @@ async function stageFail(){
   S.playing=false; stopTimer();
   const st=S.stage, m=curMon();
   $('monBod').animate([{transform:'translateY(0)'},{transform:'translateY(-12%) scale(1.1)'},{transform:'translateY(0)'},{transform:'translateY(-12%) scale(1.1)'},{transform:'translateY(0)'}],{duration:900});
-  sfx(()=>[392,349.23,329.63,261.63].forEach((f,i)=>osc(f,.35,'triangle',.2,i*.22)));
-  commit({name:player.name||'訪客', mode:'達人（失敗）', level:stageLabel(st), right:S.right, wrong:S.wrong, best:S.best, stars:'', coins:S.earned, missed:missedText()}, S.sess);
+  sfx(()=>[392,349.23,329.63,261.63].forEach((f,i)=>osc(f,.35,'triangle',.2,i*.22))); monSay('win');
+  commit({name:player.name||'訪客', mode:st.r===5?'達人（失敗）':'魔王（失敗）', level:stageLabel(st), right:S.right, wrong:S.wrong, best:S.best, stars:'', coins:S.earned, missed:missedText()}, S.sess);
   await wait(1000);
-  showWin({title:`挑戰失敗！${m.name}太強了`, stat:`<span>${stageLabel(st)}</span><span>答對 ${S.right} 個音</span><span>愛心用完了</span>`});
+  showWin({title:st.r===5?`挑戰失敗！${m.name}太強了`:`差一點點！${m.name}這次贏了`, stat:`<span>${stageLabel(st)}</span><span>答對 ${S.right} 個音</span><span>愛心用完了</span>`});
   $('btnNextLv').hidden=true; $('btnAgain').textContent='再挑戰一次';
 }
 async function teamWin(t){
@@ -2372,12 +2475,13 @@ function stageUnlocked(st){
 }
 function resetRound(ri, monId){
   ctx(); bgmStart(); setSong(REGIONS[ri].song);
-  Object.assign(S,{region:ri,power:0,combo:0,best:0,right:0,wrong:0,hero:0,mon:LANE,seq:[],pos:0,states:[],last:null,busy:false,earned:0,sess:{},phase2:false,monId,playing:true,lives:0,timeBoost:1,tempHint:false,shield:false,petUsed:false,powerBoost:1,freezeUntil:0});
+  Object.assign(S,{region:ri,power:0,combo:0,best:0,right:0,wrong:0,hero:0,mon:LANE,seq:[],pos:0,states:[],last:null,busy:false,earned:0,sess:{},phase2:false,monId,playing:true,lives:0,timeBoost:1,tempHint:false,shield:false,petUsed:false,powerBoost:1,freezeUntil:0,ear:false});
   $('hero').classList.remove('shielded');
   $('monBod').getAnimations().forEach(a=>a.cancel());
   renderMon(false); setScene(ri);
-  closeAll(); clearDanmaku();
+  closeAll(); clearDanmaku(); monHide(); renderLives();
   window.scrollTo(0,0);
+  setTimeout(()=>{ if(S.playing) monSay(S.sub==='stage'&&S.stage&&S.stage.boss?'bossAppear':'appear') }, 800);
 }
 function startStage(id){
   const st=stageById(id); if(!st) return;
@@ -2403,12 +2507,13 @@ function updateGodBtn(){ $('btnGodWin').hidden=!(save.god && S.playing && S.mode
 function stopPlay(){ if(S.mode==='solo' && S.playing && S.stage) commit(); if(S.sub==='raid' && S.playing && S.raidPending>0){ Cloud.post({action:'raidHit', name:player.name||'訪客', dmg:S.raidPending, id:S.raidId}).catch(()=>{}); S.raidPending=0 } S.playing=false; stopTimer(); clearInterval(RAID.timer); if(musBus&&ac) musBus.gain.setTargetAtTime(S.music?.55:0, ac.currentTime, .2) }
 
 // ================= 畫面切換 =================
-const OVS=['ovLogin','ovHome','ovMap','ovPractice','ovLesson','ovTeam','ovWin','ovShop','ovDex','ovRank','ovPin','ovTeacher','ovSongs','ovDaily','ovEditor'];
+const OVS=['ovLogin','ovHome','ovMap','ovPractice','ovLesson','ovTeam','ovWin','ovShop','ovDex','ovRank','ovPin','ovTeacher','ovSongs','ovDaily','ovEditor','ovCompose'];
 function closeAll(){ OVS.forEach(id=>$(id).hidden=true); $('more').hidden=true }
 function show(id){ cancelAnimationFrame(S.tId); closeAll(); $(id).hidden=false; $(id).scrollTop=0; setTimeout(flushDanmaku, 400) }
 function resumeIfPlaying(){ closeAll(); if(S.playing && !S.busy) startTimer() }
 let backTo='home';
-function goBack(){ if(backTo==='game' && S.playing) resumeIfPlaying(); else home() }
+function goBack(){ if(backTo==='game' && S.playing) resumeIfPlaying(); else if(backTo==='win'){ winShopBtn(); show('ovWin') } else home() }
+function winShopBtn(){ const b=$('btnWinShop'); b.hidden = S.mode==='team' || shopLocked(); b.innerHTML=`<span class="coin"></span>${save.coins} ・ 商店` }
 
 function medalHTML(t){ return `<span class="medal" style="background:radial-gradient(circle at 35% 30%,#fff,${t.c} 65%)">${t.m}</span>` }
 function rankCardHTML(){
@@ -2424,14 +2529,15 @@ function home(){
   const pd=LESSONS.filter(l=>save.practice[l.id]).length;
   $('hPracSub').textContent= pd ? `完成 ${pd}/6 課` : '先熟悉五線譜';
   const dn=dailyBadge(); $('hDailySub').innerHTML = dn ? `有獎勵可以領<span class="dot">${dn}</span>` : '每天 3 個任務';
-  raidBanner();
+  raidBanner(); renderWall(); claimWall();
   show('ovHome');
+  refreshClass().then(()=>{ renderWall(); claimWall() });
   fetchRaid().then(()=>{ if(!$('ovHome').hidden) raidBanner() });
   homeLocks(); fetchConfig();
 }
 
 // ---------- 全班設定（存在 Google 試算表，所有裝置同步） ----------
-const CONFIG = {lockAdventure:false, lockShop:false};
+const CONFIG = {lockAdventure:false, lockShop:false, bigKeys:false, earQ:false};
 async function fetchConfig(){
   if(!Cloud.ready()) return;
   try{ const j=await Cloud.get({action:'config'}); if(j.config) Object.assign(CONFIG, j.config); if(j.tune) setTune(j.tune) }catch(e){}
@@ -2446,7 +2552,8 @@ function homeLocks(){
 }
 async function setConfig(key, value){
   const m=$('cfgMsg');
-  if(!Cloud.ready()){ if(key==='lockShop') T.shopLock=value; else T.lockAdventure=value; saveT(); m.textContent='還沒連接試算表，只對這台電腦有效。'; return }
+  if(!Cloud.ready()){ if(key==='lockShop') T.shopLock=value; else T[key]=value; saveT(); m.textContent='還沒連接試算表，只對這台電腦有效。'; return }
+  CONFIG[key]=value;
   m.textContent='同步中…';
   try{ const j=await Cloud.post({action:'setConfig', pin:T.pin, key, value}); if(j.config) Object.assign(CONFIG,j.config); m.textContent='已同步到全班裝置（小朋友回到主畫面就會生效）。' }
   catch(e){ m.textContent='同步失敗：'+(e.message||'連不到試算表')+'。請確認 Apps Script 已更新並部署新版本。' }
@@ -2637,7 +2744,7 @@ function buildShop(){
     let btn;
     if(cur) btn=`<button class="cur" disabled>使用中</button>`;
     else if(own) btn=`<button class="own" data-act="wear">${tab==='skin'?'穿上':'使用'}</button>`;
-    else if(it.reward) btn=`<button disabled>${REGIONS.find(R=>R.id===it.reward).name}通關獲得</button>`;
+    else if(it.reward) btn=`<button disabled>${it.reward==='class'?'全班成就牆獲得':REGIONS.find(R=>R.id===it.reward).name+'通關獲得'}</button>`;
     else if(pendingBuy===it.id) btn=`<button class="confirm" data-act="buy">確定兌換？</button>`;
     else btn=`<button data-act="ask" ${save.coins<it.price?'disabled':''}><span class="coin"></span>${it.price}</button>`;
     let pv, tag=it.tag;
@@ -2720,6 +2827,7 @@ function drawP(opt={}){
     }
     if(n.label){ const w=n.label.length*17+16; pel('rect',{x:n.x+24,y:y-14,width:w,height:28,rx:14,fill:n.lc||c,stroke:'#2b3550','stroke-width':2}); pel('text',{x:n.x+24+w/2,y:y+7,'text-anchor':'middle','font-size':17,'font-weight':900,'font-family':FONT,fill:'#fff'}).textContent=n.label }
   });
+  (opt.picks||[]).forEach((p,i)=>{ const z=pel('rect',{x:p.x-36,y:30,width:72,height:272,fill:'transparent',class:'zone'}); z.addEventListener('pointerdown',e=>{ e.preventDefault(); lessonPick(i) }) });
   if(opt.zones){
     opt.zones.forEach(st=>{ const z=pel('rect',{x:60,y:py(st)-PG/4,width:300,height:PG/2,fill:'transparent',class:'zone'}); z.addEventListener('pointerdown',e=>{ e.preventDefault(); lessonTap(st) }) });
   }
@@ -2734,18 +2842,13 @@ function ansButtons(list){
 function openPractice(){
   stopPlay(); try{ speechSynthesis.cancel() }catch(e){}
   ctx(); bgmStart(); setSong('calm');
-  const box=$('lessons'); box.innerHTML='';
-  LESSONS.forEach((l,i)=>{
-    const b=document.createElement('button'), done=save.practice[l.id];
-    b.className='lesson-card'+(done?' done':'');
-    b.innerHTML=`<span class="no">${i+1}</span><span class="lt"><b>${l.title}</b><small>${l.desc}</small></span>${done?'<span class="stamp">完成</span>':''}`;
-    b.addEventListener('click',()=>startLesson(l.id));
-    box.appendChild(b);
-  });
+  practiceMenu();
   show('ovPractice');
 }
 let lessonRun=0;
 function startLesson(id){
+  if(isNewLesson(id)) return startLesson2(id);
+  $('lAns').classList.remove('many');
   const les=LESSONS.find(l=>l.id===id), run=++lessonRun;
   Object.assign(L,{id, q:0, total:id==='p5'?4:6, busy:true, last:null, data:null});
   $('lTitle').textContent=`第 ${LESSONS.indexOf(les)+1} 課・${les.title}`;
@@ -2768,6 +2871,7 @@ async function demoP1(run){
 const friendsHint = () => ({notes:[{s:-2,x:110,ghost:true,c:'#e8473d',label:'ㄉㄡ',lc:'#e8473d'},{s:0,x:230,ghost:true,c:'#c98608',label:'ㄇㄧ',lc:'#c98608'}]});
 function rnd(arr,avoid){ let v; do{ v=arr[Math.floor(Math.random()*arr.length)] }while(arr.length>1 && v===avoid); return v }
 function lessonQ(){
+  if(isNewLesson(L.id)) return lessonQ2();
   if($('ovLesson').hidden) return;
   L.busy=false; feed(''); lessonDots();
   if(L.q>=L.total){ lessonDone(); return }
@@ -2819,6 +2923,7 @@ function lessonBad(text, sayText){
 }
 function lessonTap(st){
   if(L.busy) return;
+  if(/^e\d/.test(L.id)){ earTap(st); return }
   if(L.id==='p1'){
     const t=L.data.s;
     if(st===t){ drawP({bands:[{s:t,c:'#4fb35a',o:.6}],tags:[{s:t,x:300,text:posName(t),c:'#2f9e5b'}]}); lessonGood('答對了！', stepFreq(t)) }
@@ -2875,8 +2980,9 @@ function lessonDone(){
   drawP({tags:[{s:4,x:186,text:'完成！',c:'#2f9e5b'}]});
   setPrompt(first?`完成了！獲得 ${RW.lesson} 金幣`:'完成了！', first?`完成了！獲得${RW.lesson}個金幣`:'完成了！');
   sFan(); feed('');
-  const i=LESSONS.findIndex(l=>l.id===L.id), nx=LESSONS[i+1];
-  ansButtons([...(nx?[{text:`下一課：${nx.title}`,on:()=>startLesson(nx.id)}]:[{text:'去冒險！',on:openMap}]),{text:'練習選單',cls:'alt',on:openPractice}]);
+  const seq=[...LESSONS, ...NOTE_LESSONS], i=seq.findIndex(l=>l.id===L.id), nx=i>=0?seq[i+1]:null, again=L.id==='weak'||L.id.startsWith('c-')||/^e\d/.test(L.id);
+  $('lAns').classList.remove('many');
+  ansButtons([...(nx?[{text:`下一課：${nx.title}`,on:()=>startLesson(nx.id)}]:again?[{text:'再練一次',on:()=>startLesson(L.id)}]:[{text:'去冒險！',on:openMap}]),{text:'練習選單',cls:'alt',on:openPractice}]);
 }
 
 // ---------- 老師 ----------
@@ -2888,7 +2994,8 @@ function openTeacher(){
   $('raidRegion').innerHTML=REGIONS.map((R,i)=>`<option value="${i}">${i+1}. ${R.name}</option>`).join('');
   showRaidStatus(); fetchRaid().then(showRaidStatus);
   $('tMul').value=String(T.timeMul); $('tUnlock').checked=!!T.unlockAll; $('tShopLock').checked=!!(CONFIG.lockShop||T.shopLock); $('tLockAdv').checked=!!(CONFIG.lockAdventure||T.lockAdventure);
-  fetchConfig().then(()=>{ $('tShopLock').checked=!!(CONFIG.lockShop||(!Cloud.ready()&&T.shopLock)); $('tLockAdv').checked=!!(CONFIG.lockAdventure||(!Cloud.ready()&&T.lockAdventure)) }); $('tVoice').checked=!!prefs.voice;
+  $('tBigKeys').checked=cfgOn('bigKeys'); $('tEarQ').checked=cfgOn('earQ');
+  fetchConfig().then(()=>{ $('tShopLock').checked=!!(CONFIG.lockShop||(!Cloud.ready()&&T.shopLock)); $('tLockAdv').checked=!!(CONFIG.lockAdventure||(!Cloud.ready()&&T.lockAdventure)); $('tBigKeys').checked=cfgOn('bigKeys'); $('tEarQ').checked=cfgOn('earQ') }); $('tVoice').checked=!!prefs.voice;
   $('tUrl').value=SHEET_URL||T.url; $('tUrl').readOnly=!!SHEET_URL; $('tPin').value=T.pin;
   if(SHEET_URL) $('tpTestMsg').textContent='試算表網址已經寫在遊戲檔案裡。按「測試連線」檢查是否正常。';
   $('tpLog').innerHTML=CHANGELOG.map(c=>`<div class="ent"><h5>版本 ${c.v}<small>${c.date}</small>${c.v===VERSION?'<span class="now">目前版本</span>':''}</h5><ul>${(c.add||[]).map(x=>`<li>新增：${x}</li>`).join('')}${(c.fix||[]).map(x=>`<li class="fix">修復：${x}</li>`).join('')}</ul></div>`).join('');
@@ -2904,6 +3011,8 @@ bindT('tMul',e=>T.timeMul=Number(e.value)||1);
 bindT('tUnlock',e=>T.unlockAll=e.checked);
 $('tShopLock').addEventListener('change',e=>setConfig('lockShop', e.target.checked));
 $('tLockAdv').addEventListener('change',e=>setConfig('lockAdventure', e.target.checked));
+$('tBigKeys').addEventListener('change',e=>{ setConfig('bigKeys', e.target.checked); if(!Cloud.ready()) T.bigKeys=e.target.checked; fitKeys(S.keyList||KEYS) });
+$('tEarQ').addEventListener('change',e=>{ setConfig('earQ', e.target.checked); if(!Cloud.ready()) T.earQ=e.target.checked });
 $('tVoice').addEventListener('change',e=>{ prefs.voice=e.target.checked; savePrefs() });
 bindT('tUrl',e=>{ T.url=e.value.trim(); setDot('') });
 bindT('tPin',e=>T.pin=e.value.trim()||'1234');
@@ -3193,7 +3302,7 @@ on('raidBanner',startRaid);
 on('tabItem',()=>setTab('item')); on('tabPet',()=>setDexTab('pet'));
 on('raidStart',()=>teacherRaid('start')); on('raidStop',()=>teacherRaid('stop'));
 RAID.homeTimer=setInterval(()=>{ if(!$('ovHome').hidden) fetchRaid().then(raidBanner) }, 15000);
-on('btnAgain',again); on('btnNextLv',nextLevel);
+on('btnAgain',again); on('btnNextLv',nextLevel); on('btnWinShop',()=>openShop('win'));
 on('btnWinMap',()=>{ if(S.mode==='team'||S.sub==='raid') home(); else if(S.sub==='song') openSongs(); else openMap() });
 on('btnMap',openMap); on('btnHome',home); on('btnMapBack',home);
 on('hAdv',openMap); on('hPrac',openPractice); on('hTeam',teamSetup); on('hRank',openRank);
@@ -3467,6 +3576,480 @@ on('btnEdClose',()=>{ edDraft={}; openTeacher() });
 on('edSave',edSave);
 on('edReset',edResetPage);
 ['shop','stage','reward','user'].forEach(t=>on('edTab_'+t,()=>edSetTab(t)));
+
+
+// ================= 版本 11：練習加強（弱點特訓、一個音一個音學、比一比、關卡答錯小教學） =================
+const NOTE_POS = {do:'下加一線', re:'第一線下面', mi:'第一線', fa:'第一間', sol:'第二線', la:'第二間', si:'第三線', hdo:'第三間'};
+const NOTE_TIP = {
+  do:'戴著一條短短的加線，像戴了一頂帽子',
+  re:'掛在第一線的下面，沒有線穿過',
+  mi:'五線譜最下面那條線，穿過它的肚子',
+  fa:'住在第一線和第二線的中間',
+  sol:'高音譜號捲捲的圈圈，就是繞著第二線',
+  la:'夾在第二線和第三線的中間',
+  si:'五條線正中間的那一條',
+  hdo:'住在第三間，是比較高的ㄉㄡ',
+};
+const LANDMARK = ['do','mi','sol','si'];          // 好認的「地標音」，其他音從地標往上數一格
+const landmarkOf = k => { const s=NOTES[k].step; let b='do'; LANDMARK.forEach(m=>{ if(NOTES[m].step<=s) b=m }); return b };
+const isLineNote = k => NOTES[k].step%2===0;
+const NOTE_LESSONS = KEYS.map((k,i)=>({id:'n'+(i+1), k, title:`認識 ${zyName(k)}`, desc:`住在${NOTE_POS[k]}`}));
+const PAIRS = [['do','re'],['re','mi'],['mi','fa'],['fa','sol'],['sol','la'],['la','si'],['si','hdo'],['mi','sol'],['sol','si'],['fa','la'],['la','hdo']];
+const isNewLesson = id => /^(n\d|e\d|c-|weak$)/.test(id||'');
+function lessonMeta(id){
+  if(id==='weak') return {id, title:'我的弱點特訓'};
+  if(id.startsWith('c-')){ const p=id.slice(2).split('-'); return {id, pair:p, title:`比一比：${zyName(p[0])} 和 ${zyName(p[1])}`} }
+  return NOTE_LESSONS.find(l=>l.id===id);
+}
+const confuseOf = (a,b) => ((save.confuse||{})[`${a}>${b}`]||0) + ((save.confuse||{})[`${b}>${a}`]||0);
+function addConfuse(target, picked){ if(!picked || picked===target) return; save.confuse=save.confuse||{}; const key=`${target}>${picked}`; save.confuse[key]=(save.confuse[key]||0)+1 }
+function weakList(){
+  const rows=KEYS.map(k=>{ const v=save.notes[k]||{asked:0,wrong:0}; return {k, r:v.asked?v.wrong/v.asked:0, w:v.wrong||0} });
+  const out=rows.filter(x=>x.w>0 && x.r>=.15).sort((a,b)=>b.r-a.r||b.w-a.w).slice(0,3).map(x=>x.k);
+  Object.entries(save.confuse||{}).sort((a,b)=>b[1]-a[1]).slice(0,3).forEach(([key])=>key.split('>').forEach(k=>{ if(KEYS.includes(k) && !out.includes(k) && out.length<4) out.push(k) }));
+  return out;
+}
+function recordPractice(k, wrong, picked){
+  const p=save.notes[k]||(save.notes[k]={asked:0,wrong:0}); p.asked++; if(wrong){ p.wrong++; addConfuse(k,picked) }
+}
+
+// ---------- 練習選單 ----------
+function practiceMenu(){
+  const box=$('lessons'); box.innerHTML='';
+  const card=(id,no,title,desc,noStyle)=>{
+    const b=document.createElement('button'), done=save.practice[id];
+    b.className='lesson-card'+(done?' done':'');
+    b.innerHTML=`<span class="no"${noStyle?` style="${noStyle}"`:''}>${no}</span><span class="lt"><b>${title}</b><small>${desc}</small></span>${done?'<span class="stamp">完成</span>':''}`;
+    b.addEventListener('click',()=>startLesson(id)); return b;
+  };
+  const sec=(title,sub)=>{ const h=document.createElement('div'); h.className='psec'; h.innerHTML=`<b>${title}</b>${sub?`<small>${sub}</small>`:''}`; box.appendChild(h) };
+  // 弱點特訓
+  const w=weakList();
+  const wc=card('weak','練','我的弱點特訓', w.length?`最需要練：${w.map(zyName).join('、')}`:'還沒有錯題紀錄，先把全部的音練一遍','background:var(--danger)');
+  wc.classList.add('weakcard'); box.appendChild(wc);
+  sec('基礎課','五線譜的線和間、怎麼數');
+  LESSONS.forEach((l,i)=>box.appendChild(card(l.id, i+1, l.title, l.desc)));
+  sec('一個音一個音學','每一課認識一個新的音，再跟學過的音混在一起考');
+  NOTE_LESSONS.forEach(l=>box.appendChild(card(l.id, NOTES[l.k].zy, l.title, l.desc, `background:var(--c-${l.k});font-family:var(--f-display);font-size:${NOTES[l.k].zy.length>2?'.78rem':'.95rem'}`)));
+  sec('聽音挑戰','先聽ㄉㄡ，再聽題目的音，找出是哪一個');
+  EAR_LESSONS.forEach((l,i)=>box.appendChild(card(l.id, '聽', l.title, l.desc, `background:var(--c-${['la','sol','do'][i]})`)));
+  sec('長得很像的音比一比','最容易搞混的兩個音，一起分辨清楚');
+  const pg=document.createElement('div'); pg.className='pairs';
+  PAIRS.map(p=>({p, n:confuseOf(p[0],p[1])})).sort((a,b)=>b.n-a.n).forEach(({p,n})=>{
+    const id=`c-${p[0]}-${p[1]}`, b=document.createElement('button');
+    b.className='pairbtn'+(save.practice[id]?' done':'')+(n>=2?' hot':'');
+    b.innerHTML=`<span style="background:var(--c-${p[0]})">${zyName(p[0])}</span><span style="background:var(--c-${p[1]})">${zyName(p[1])}</span>${n>=2?'<small>常搞混</small>':save.practice[id]?'<small class="ok">完成</small>':''}`;
+    b.addEventListener('click',()=>startLesson(id)); pg.appendChild(b);
+  });
+  box.appendChild(pg);
+}
+
+// ---------- 新的練習課 ----------
+function startLesson2(id){
+  if(/^e\d/.test(id)) return startEar(id);
+  const run=++lessonRun, m=lessonMeta(id);
+  Object.assign(L,{id, q:0, total:id==='weak'?10:id.startsWith('c-')?8:6, busy:true, last:null, data:null, retry:null, pool:null});
+  $('lTitle').textContent=m.title; show('ovLesson'); feed(''); lessonDots(); $('lAns').innerHTML=''; $('lAns').classList.remove('many');
+  if(id.startsWith('n')) introNote(run, m.k);
+  else if(id.startsWith('c-')){
+    const [a,b]=m.pair;
+    drawP({bands:[{s:NOTES[a].step,c:colorOf(a),o:.25},{s:NOTES[b].step,c:colorOf(b),o:.25}], notes:[{s:NOTES[a].step,x:120,c:colorOf(a),label:zyName(a)},{s:NOTES[b].step,x:245,c:colorOf(b),label:zyName(b)}]});
+    setPrompt(`${zyName(a)} 和 ${zyName(b)}`, `${sayZy(a)}住在${NOTE_POS[a]}，${sayZy(b)}住在${NOTE_POS[b]}。${pairExplain(b,a)}`);
+    feed(pairExplain(b,a));
+    sfx(()=>{ osc(NOTES[a].f,.45,'triangle',.22); osc(NOTES[b].f,.45,'triangle',.22,.55) });
+    setTimeout(()=>{ if(run===lessonRun) lessonQ2() }, 4600);
+  }else{
+    const w=weakList(); L.pool=w.length?w:KEYS.slice();
+    drawP({notes:L.pool.map((k,i)=>({s:NOTES[k].step, x:100+i*(220/Math.max(1,L.pool.length-1||1)), c:colorOf(k)}))});
+    setPrompt(w.length?`今天特訓：${w.map(zyName).join('、')}`:'先把全部的音練一遍', w.length?`今天特訓：${w.map(sayZy).join('、')}。答錯沒關係，會教你怎麼數。`:'還沒有錯題紀錄，先把全部的音練一遍');
+    setTimeout(()=>{ if(run===lessonRun) lessonQ2() }, 3400);
+  }
+}
+async function introNote(run,k){
+  const s=NOTES[k].step;
+  drawP({bands:[{s,c:colorOf(k),o:.3}], notes:[{s,x:200,c:colorOf(k),label:zyName(k)}]});
+  setPrompt(`${zyName(k)} 住在${NOTE_POS[k]}`, `${sayZy(k)}住在${NOTE_POS[k]}，${NOTE_TIP[k]}`);
+  feed(NOTE_TIP[k]);
+  sfx(()=>osc(NOTES[k].f,.7,'triangle',.25));
+  await wait(4600); if(run!==lessonRun || $('ovLesson').hidden) return;
+  if(landmarkOf(k)!==k){ await climbP(k, run); if(run!==lessonRun) return; await wait(1600) }
+  if(run===lessonRun) lessonQ2();
+}
+// 從地標音往上數到這個音
+async function climbP(k, run){
+  const lm=landmarkOf(k), s0=NOTES[lm].step, s1=NOTES[k].step, notes=[];
+  for(let s=s0,i=0; s<=s1; s++,i++){
+    const kk=STEP2KEY[s], last=s===s1;
+    notes.push({s, x:120+i*95, c:last?colorOf(k):'#8a93a6', label:zyName(kk), lc:last?colorOf(k):'#8a93a6'});
+    drawP({bands:last?[{s,c:colorOf(k),o:.28}]:[], notes:notes.slice()});
+    sfx(()=>osc(NOTES[kk].f,.4,'triangle',.22)); speak(sayZy(kk));
+    await wait(950); if(run!==lessonRun) return;
+  }
+  feed(s1===s0 ? `${zyName(k)}：${NOTE_TIP[k]}` : `從${zyName(lm)}（${NOTE_POS[lm]}）往上一格，就是 ${zyName(k)}`);
+}
+function pairExplain(t,o){
+  if(isLineNote(t)!==isLineNote(o)) return `${zyName(t)}${isLineNote(t)?'在線上，有線穿過肚子':'在間裡，沒有線穿過'}；${zyName(o)}${isLineNote(o)?'在線上':'在間裡'}`;
+  return `${zyName(t)}在${NOTE_POS[t]}，比${zyName(o)}${NOTES[t].step>NOTES[o].step?'高':'低'}一層`;
+}
+function lessonQ2(){
+  if(/^e\d/.test(L.id)) return earQ();
+  if($('ovLesson').hidden) return;
+  L.busy=false; feed(''); lessonDots();
+  if(L.q>=L.total){ lessonDone(); return }
+  const id=L.id;
+  if(id.startsWith('n')){
+    const i=Number(id.slice(1))-1, k=KEYS[i], known=KEYS.slice(0,i+1);
+    if(known.length<2 || L.q%2) askFind(Math.random()<.65||known.length<2 ? k : rnd(known.filter(x=>x!==k)), known.length<2?KEYS:known);
+    else askName(Math.random()<.55 ? k : rnd(known,L.last), known);
+  }else if(id.startsWith('c-')){
+    const [a,b]=lessonMeta(id).pair, t=rnd([a,b],L.last);
+    if(L.q%2) askFind(t,[a,b]); else askName(t,[a,b]);
+  }else{
+    askName(Math.random()<.75 ? rnd(L.pool,L.last) : rnd(KEYS,L.last), KEYS);
+  }
+}
+function askName(t, opts){
+  L.last=t; L.data={type:'name', t}; L.retry=()=>askName(t,opts); L.busy=false; feed('');
+  drawP({notes:[{s:NOTES[t].step,x:200}]});
+  setPrompt('這個音是誰？');
+  $('lAns').classList.toggle('many', opts.length>4);
+  ansButtons(opts.map(k=>({text:zyName(k), cls:'zbtn', bg:`var(--c-${k})`, on:()=>pickAnswer(k)})));
+}
+function askFind(t, pool){
+  L.last=t;
+  let others=pool.filter(k=>k!==t); if(!others.length) others=KEYS.filter(k=>k!==t);
+  const n=Math.min(pool.length<=2?2:3, others.length+1);
+  const pick=[t]; while(pick.length<n){ const k=rnd(others); if(!pick.includes(k)) pick.push(k) }
+  pick.sort(()=>Math.random()-.5);
+  const xs=n===2?[140,265]:[110,200,290];
+  const items=pick.map((k,i)=>({k, x:xs[i]}));
+  L.data={type:'find', t, items}; L.retry=()=>{ L.busy=false; feed(''); drawFind(); setPrompt(`點一下 ${zyName(t)}`, `點一下${sayZy(t)}`) };
+  $('lAns').innerHTML=''; $('lAns').classList.remove('many');
+  L.retry();
+}
+function drawFind(mark){
+  const {items}=L.data;
+  drawP({notes:items.map((it,i)=>({s:NOTES[it.k].step, x:it.x, c:mark&&mark[i]?mark[i].c:'#2b3550', label:mark&&mark[i]?mark[i].label:'', lc:mark&&mark[i]?mark[i].c:undefined})), picks:mark?null:items});
+}
+function lessonPick(i){ if(L.busy) return; pickAnswer(L.data.items[i].k, i) }
+function pickAnswer(k, idx){
+  if(L.busy) return;
+  const t=L.data.t, ok=k===t;
+  recordPractice(t, !ok, k);
+  if(ok){
+    if(L.data.type==='find') drawFind(L.data.items.map(it=>it.k===t?{c:colorOf(t),label:zyName(t)}:{c:'#c4c9d4',label:''}));
+    else drawP({bands:[{s:NOTES[t].step,c:colorOf(t),o:.25}], notes:[{s:NOTES[t].step,x:200,c:colorOf(t),label:zyName(t)}]});
+    lessonGood(`答對了！是 ${zyName(t)}`, NOTES[t].f, `答對了！是${sayZy(t)}`);
+  }else teachWrong(t, k, idx);
+}
+async function teachWrong(t, picked, idx){
+  L.busy=true; const run=lessonRun;
+  sfx(()=>{ osc(220,.25,'triangle',.12); osc(NOTES[picked].f,.35,'triangle',.18,.3) });
+  if(L.data.type==='find') drawFind(L.data.items.map((it,i)=>i===idx?{c:'#8a93a6',label:zyName(it.k)}:{c:'#2b3550',label:''}));
+  const pairTxt = L.id.startsWith('c-') ? pairExplain(t,picked) : '';
+  const first = L.data.type==='find' ? `你點的是 ${zyName(picked)}` : `這個音不是 ${zyName(picked)}`;
+  feed(first+(pairTxt?`。${pairTxt}`:''),'bad'); speak((L.data.type==='find'?`你點的是${sayZy(picked)}`:`這個音不是${sayZy(picked)}`)+(pairTxt?`。${pairTxt}`:''));
+  await wait(pairTxt?3000:1700); if(run!==lessonRun) return;
+  drawP({bands:[{s:NOTES[t].step,c:colorOf(t),o:.28}], notes:[{s:NOTES[t].step,x:200,c:colorOf(t),label:zyName(t)}]});
+  feed(`${zyName(t)} 住在${NOTE_POS[t]}：${NOTE_TIP[t]}`); speak(`${sayZy(t)}住在${NOTE_POS[t]}`);
+  await wait(2200); if(run!==lessonRun) return;
+  if(landmarkOf(t)!==t){ await climbP(t, run); if(run!==lessonRun) return; await wait(1500) }
+  if(run!==lessonRun) return;
+  feed('再試一次'); if(L.retry) L.retry();
+}
+
+// ---------- 關卡裡答錯時的小教學 ----------
+function teachText(cur, k){
+  const lm=landmarkOf(cur), up = lm!==cur ? `，${zyName(lm)}再往上一格` : '';
+  return `${k?`你按了${zyName(k)}。`:'時間到！'}${NOTE_POS[cur]}是 ${zyName(cur)}${up}`;
+}
+function teachDraw(cur){
+  if(S.seq.length!==1) return;
+  const svg=$('staff'), s=NOTES[cur].step, y=yOf(s), c=colorOf(cur), lm=landmarkOf(cur);
+  const band = s%2===0 ? {y:y-4.5, h:9} : {y:y-GAP/2+2.5, h:GAP-5};
+  const r=el('rect',{x:46,y:band.y,width:296,height:band.h,rx:4,fill:c,opacity:.22}); svg.insertBefore(r, svg.firstChild);
+  if(lm!==cur){
+    const x=150, yl=yOf(NOTES[lm].step);
+    if(NOTES[lm].step<=-2) el('line',{x1:x-15,x2:x+15,y1:yOf(-2),y2:yOf(-2),stroke:'#8a93a6','stroke-width':2});
+    el('ellipse',{cx:x,cy:yl,rx:9.6,ry:6.8,transform:`rotate(-22 ${x} ${yl})`,fill:'none',stroke:'#8a93a6','stroke-width':2,'stroke-dasharray':'3 2'});
+    el('text',{x:x-22,y:yl+5,'text-anchor':'end','font-size':13,'font-weight':900,'font-family':FONT,fill:'#6b7385'}).textContent=zyName(lm);
+    el('path',{d:`M${x+12} ${yl-3} Q ${(x+220)/2} ${Math.min(yl,y)-16} 218 ${y-3}`,fill:'none',stroke:c,'stroke-width':2.2,'stroke-dasharray':'4 3'});
+    el('path',{d:`M218 ${y-3} l-8 -4 l1 8z`,fill:c});
+    el('text',{x:(x+220)/2,y:Math.min(yl,y)-20,'text-anchor':'middle','font-size':12,'font-weight':900,'font-family':FONT,fill:c}).textContent='往上一格';
+  }else{
+    pill(svg, 150, s%2===0?y-15:y, NOTE_POS[cur], c, 12);
+  }
+}
+
+
+// ================= 版本 12 =================
+
+// ---------- 1. 怪獸台詞 ----------
+const MON_LINES = {
+  appear:['嘿嘿，你看得懂五線譜嗎？','這些音符你認得幾個？','想過去？先答對我的題目！','來比比看誰比較厲害！','我的音符可是很難的喔！'],
+  bossAppear:['我是這裡的魔王！','能走到這裡，算你厲害！','最後的挑戰來了！'],
+  hit:['哎呀！被你看穿了！','你怎麼知道是這個音！','唔…你好厲害','好癢好癢！','再答對我就要跑走了！','不可能！你都會！'],
+  taunt:['嘿嘿，答錯囉～','再看清楚一點喔！','是線上還是間裡呢？','從ㄉㄡ數上去試試看！','我前進一步啦！','慢慢看，不要急～'],
+  rage:['你惹我生氣了！','我要出更多音符了！','現在才是真正的挑戰！'],
+  lose:['你…你真的看得懂五線譜…','我下次還會再來的！','好啦好啦，你贏了！','好厲害的小勇者…'],
+  win:['嘿嘿，下次再來挑戰吧！','多練習幾次就能打贏我喔！'],
+};
+const MON_SOUND = {meadow:'噗嚕～',forest:'沙沙～',sea:'咕嚕～',snow:'呼呼～',castle:'哼哼～',master:'嗡～'};
+let monSayT=0;
+function monSay(kind, chance=1){
+  if(Math.random()>chance) return;
+  const list=MON_LINES[kind]; if(!list) return;
+  let text=list[Math.floor(Math.random()*list.length)];
+  if(kind==='appear'||kind==='bossAppear'){ const R=REGIONS[S.region]; text=(MON_SOUND[R&&R.id]||'')+text }
+  const sc=$('scene'); let b=$('monBubble');
+  if(!b){ b=document.createElement('div'); b.id='monBubble'; b.className='mbubble'; sc.appendChild(b) }
+  b.textContent=text;
+  const m=centerOf($('monster')), W=sc.clientWidth;
+  b.hidden=false; b.style.visibility='hidden'; b.style.left='0px';
+  const bw=b.offsetWidth;
+  let left=Math.max(6, Math.min(W-bw-6, m.x-bw+m.w*.25));
+  b.style.left=left+'px'; b.style.top=Math.max(32, m.y-m.h*.55-b.offsetHeight)+'px';
+  b.style.setProperty('--tail', Math.max(14, Math.min(bw-18, m.x-left))+'px');
+  b.style.visibility='';
+  b.getAnimations().forEach(a=>a.cancel());
+  b.animate([{transform:'scale(.6)',opacity:0},{transform:'scale(1.05)',opacity:1,offset:.12},{transform:'scale(1)',opacity:1,offset:.2},{transform:'scale(1)',opacity:1,offset:.88},{transform:'scale(.9)',opacity:0}],{duration:2600,easing:'ease-out',fill:'forwards'});
+}
+function monHide(){ const b=$('monBubble'); if(b){ b.getAnimations().forEach(a=>a.cancel()); b.hidden=true } }
+
+// ---------- 2. 全班成就牆 ----------
+const WALL = [
+  {goal:1000,  name:'道具大禮包', desc:'每種道具各 2 個', give:sv=>{ ITEMS.forEach(it=>sv.items[it.id]=(sv.items[it.id]||0)+2) }},
+  {goal:3000,  name:'200 金幣',   desc:'每個人 200 金幣', give:sv=>{ sv.coins+=200; sv.total+=200 }},
+  {goal:5000,  name:'限定造型「合唱團長」', desc:'全班才拿得到的造型', give:sv=>{ if(!sv.owned.includes('choir')) sv.owned.push('choir') }},
+  {goal:10000, name:'500 金幣',   desc:'每個人 500 金幣', give:sv=>{ sv.coins+=500; sv.total+=500 }},
+  {goal:20000, name:'徽章「全班同心」＋1000 金幣', desc:'最高目標', give:sv=>{ sv.coins+=1000; sv.total+=1000; if(!sv.badges.includes('classwall')) sv.badges.push('classwall') }},
+];
+WALL.forEach((w,i)=>{ const d={key:`wall.${i+1}`, tab:'reward', group:'全班成就牆', name:`第 ${i+1} 階目標（${w.name}）`, field:'答對音數', kind:'int', min:10, max:1000000, obj:w, prop:'goal'}; d.def=w.goal; TUNE_DEFS.push(d) });
+applyTune(TUNE);
+const classTotal = () => KEYS.reduce((a,k)=>{ const c=classStats[k]||{}; return a+Math.max(0,(c.asked||0)-(c.wrong||0)) },0);
+function renderWall(){
+  const box=$('classWall'); if(!box) return;
+  const n=classTotal(), goals=WALL.map(w=>w.goal), nx=WALL.find(w=>n<w.goal), prev=[0,...goals].filter(g=>g<=n).pop()||0;
+  const pct = nx ? Math.round((n-prev)/(nx.goal-prev)*100) : 100;
+  box.innerHTML=`<div class="cwhead"><b>全班成就牆</b><span>全班一起答對了 <em>${n.toLocaleString()}</em> 個音</span></div>
+    <div class="cwbar"><i style="width:${pct}%"></i><span>${nx?`下一個目標 ${nx.goal.toLocaleString()}：${nx.name}`:'全部目標都達成了！'}</span></div>
+    <div class="cwsteps">${WALL.map((w,i)=>`<span class="${n>=w.goal?'ok':''}" title="${w.desc}"><b>${i+1}</b>${w.name}</span>`).join('')}</div>`;
+}
+function claimWall(){
+  if(player.test) return;
+  const n=classTotal(); save.wall=save.wall||[]; const got=[];
+  WALL.forEach((w,i)=>{ if(n>=w.goal && !save.wall.includes(i+1)){ save.wall.push(i+1); w.give(save); got.push(w.name) } });
+  if(got.length){ sFan(); toastMsg(`全班成就達成！你獲得：${got.join('、')}`); commit(); hud(); renderHero() }
+}
+
+// ---------- 3. 作曲小教室 ----------
+const CP={notes:Array(8).fill(null), cur:0, labels:true, playing:0, slot:0};
+const CX = i => 108 + i*37;
+function openCompose(){
+  stopPlay(); ctx(); bgmStart(); setSong('calm');
+  save.comps = Array.isArray(save.comps) ? save.comps : [];
+  show('ovCompose'); cpRender(); cpSlots();
+}
+function cpDraw(hl=-1){
+  const s=$('cstaff'); s.innerHTML='';
+  const ce=(t,a)=>el(t,a,s);
+  ce('rect',{x:CX(CP.cur)-17,y:40,width:34,height:250,rx:10,fill:'#fff4cf',stroke:'#f5b82e','stroke-width':2,'stroke-dasharray':'5 4'});
+  for(let i=0;i<5;i++) ce('line',{x1:16,x2:404,y1:py(i*2),y2:py(i*2),stroke:'#2b3550','stroke-width':2.4});
+  ce('line',{x1:16,x2:16,y1:py(8),y2:py(0),stroke:'#2b3550','stroke-width':2.4});
+  ce('line',{x1:404,x2:404,y1:py(8),y2:py(0),stroke:'#2b3550','stroke-width':4});
+  ce('text',{x:22,y:py(2),'font-size':PG*4,'font-family':'"Noto Music","Bravura","Segoe UI Symbol",serif',fill:'#2b3550'}).textContent='\u{1D11E}';
+  CP.notes.forEach((k,i)=>{
+    const x=CX(i);
+    if(!k){ ce('text',{x,y:py(4)+6,'text-anchor':'middle','font-size':18,'font-weight':900,fill:'#c9c2ad','font-family':FONT}).textContent='·'; return }
+    const st=NOTES[k].step, y=py(st), c=i===hl?'#ff7a3d':colorOf(k);
+    if(st<=-2) ce('line',{x1:x-17,x2:x+17,y1:py(-2),y2:py(-2),stroke:'#2b3550','stroke-width':2.4});
+    if(st<4) ce('line',{x1:x+10.5,x2:x+10.5,y1:y-1,y2:y-PG*3.2,stroke:c,'stroke-width':3});
+    else ce('line',{x1:x-10.5,x2:x-10.5,y1:y+1,y2:y+PG*3.2,stroke:c,'stroke-width':3});
+    const e=ce('ellipse',{cx:x,cy:y,rx:12,ry:8.6,transform:`rotate(-22 ${x} ${y})`,fill:c});
+    if(i===hl) e.animate([{transform:`rotate(-22deg) scale(1)`},{transform:`rotate(-22deg) scale(1.4)`},{transform:`rotate(-22deg) scale(1)`}],{duration:300});
+    if(CP.labels) ce('text',{x,y:300,'text-anchor':'middle','font-size':NOTES[k].high?11:14,'font-weight':900,fill:colorOf(k),'font-family':FONT}).textContent=zyName(k).replace('高音','高');
+  });
+  // 點譜面放音符
+  for(let i=0;i<8;i++){
+    const z=ce('rect',{x:CX(i)-18,y:40,width:36,height:250,fill:'transparent',class:'zone'});
+    z.addEventListener('pointerdown',e=>{
+      e.preventDefault();
+      const pt=s.createSVGPoint(); pt.x=e.clientX; pt.y=e.clientY; const p=pt.matrixTransform(s.getScreenCTM().inverse());
+      const st=Math.max(-2, Math.min(5, Math.round((PL0-p.y)/(PG/2))));
+      const k=STEP2KEY[st];
+      if(CP.notes[i]===k){ CP.notes[i]=null; CP.cur=i }
+      else { CP.notes[i]=k; CP.cur=Math.min(7,i+1); sfx(()=>osc(NOTES[k].f,.45,'triangle',.25)) }
+      cpRender();
+    });
+  }
+}
+function cpRender(){ cpDraw(); const n=CP.notes.filter(Boolean).length; $('cpInfo').textContent=n?`${n} 個音・${CP.notes.filter(Boolean).map(zyName).join(' ')}`:'點五線譜放音符，或按下面的音符按鈕'; }
+function cpAdd(k){
+  CP.notes[CP.cur]=k; sfx(()=>osc(NOTES[k].f,.45,'triangle',.25));
+  CP.cur=Math.min(7,CP.cur+1); cpRender();
+}
+function cpBack(){ const i=CP.notes[CP.cur]?CP.cur:Math.max(0,CP.cur-1); CP.notes[i]=null; CP.cur=i; cpRender() }
+function cpClear(){ CP.notes=Array(8).fill(null); CP.cur=0; cpRender() }
+function cpIdea(){
+  const pool=['do','re','mi','fa','sol','la','si','hdo']; let s=Math.floor(Math.random()*3)*2; const out=[];
+  for(let i=0;i<7;i++){ out.push(pool[s]); s=Math.max(0,Math.min(7,s+[-2,-1,-1,1,1,2,0][Math.floor(Math.random()*7)])) }
+  out.push('do'); CP.notes=out; CP.cur=7; cpRender(); toastMsg('靈感來了！可以再改成你喜歡的樣子');
+}
+async function cpPlay(){
+  const run=++CP.playing, beat=.48, notes=CP.notes;
+  if(!notes.some(Boolean)){ toastMsg('先放幾個音符吧！'); return }
+  for(let i=0;i<8;i++){
+    if(run!==CP.playing || $('ovCompose').hidden) break;
+    const k=notes[i]; cpDraw(i);
+    if(k) sfx(()=>{ duck(beat+.3); osc(NOTES[k].f, beat*.95, 'triangle', .26) });
+    await wait(beat*1000);
+  }
+  if(run===CP.playing){ cpDraw();
+    if(notes.filter(Boolean).length>=4 && !save.practice.compose){ save.practice.compose=true; addCoins(RW.lesson); dailyEvent('practice',1); commit(); toastMsg(`第一首作品完成！獲得 ${RW.lesson} 金幣`) }
+  }
+}
+function cpSlots(){
+  const box=$('cpSlots'); box.innerHTML='';
+  for(let i=0;i<3;i++){
+    const has=save.comps[i] && save.comps[i].some(Boolean);
+    const d=document.createElement('div'); d.className='cpslot'+(CP.slot===i?' on':'');
+    d.innerHTML=`<b>作品 ${i+1}</b><small>${has?save.comps[i].filter(Boolean).map(zyName).join(' '):'空的'}</small><div><button class="sbtn" data-a="save">存在這裡</button>${has?'<button class="sbtn alt" data-a="load">打開</button>':''}</div>`;
+    d.querySelector('[data-a=save]').addEventListener('click',()=>{ save.comps[i]=CP.notes.slice(); CP.slot=i; commit(); cpSlots(); toastMsg(`已存成作品 ${i+1}`) });
+    const ld=d.querySelector('[data-a=load]'); if(ld) ld.addEventListener('click',()=>{ CP.notes=save.comps[i].slice(0,8); while(CP.notes.length<8) CP.notes.push(null); CP.cur=0; CP.slot=i; cpRender(); cpSlots() });
+    box.appendChild(d);
+  }
+}
+(function(){
+  const pal=$('cpPal');
+  KEYS.forEach(k=>{ const b=document.createElement('button'); b.className='big zbtn'; b.style.background=`var(--c-${k})`; b.textContent=zyName(k); b.addEventListener('click',()=>{ ctx(); cpAdd(k) }); pal.appendChild(b) });
+})();
+on('hCompose',()=>openCompose());
+on('btnCpBack',()=>{ CP.playing++; home() });
+on('cpPlay',()=>{ ctx(); cpPlay() });
+on('cpStop',()=>{ CP.playing++; cpDraw() });
+on('cpDel',cpBack);
+on('cpClear',cpClear);
+on('cpIdea',cpIdea);
+on('cpLabels',()=>{ CP.labels=!CP.labels; $('cpLabels').setAttribute('aria-pressed',CP.labels); cpRender() });
+
+// ---------- 4. 學習報告（跟著存檔送到試算表「學習報告」分頁） ----------
+const dayKey = () => { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}` };
+function snapNotes(){
+  save.snaps = Array.isArray(save.snaps) ? save.snaps : [];
+  const t=dayKey();
+  if(!save.snaps.length || save.snaps[save.snaps.length-1].d!==t){
+    const n={}; KEYS.forEach(k=>{ const v=save.notes[k]; if(v) n[k]=[v.asked||0, v.wrong||0] });
+    save.snaps.push({d:t, n}); if(save.snaps.length>20) save.snaps=save.snaps.slice(-20);
+  }
+}
+const pctTxt = (r,w) => r+w ? Math.round(r/(r+w)*100)+'%' : '—';
+function learnReport(){
+  snapNotes();
+  const cut=new Date(Date.now()-7*864e5), cs=`${cut.getFullYear()}-${String(cut.getMonth()+1).padStart(2,'0')}-${String(cut.getDate()).padStart(2,'0')}`;
+  const old = save.snaps.filter(s=>s.d<=cs).pop(), base = old || save.snaps[0];
+  let A=0,W=0,a7=0,w7=0; const per=[];
+  KEYS.forEach(k=>{
+    const v=save.notes[k]||{asked:0,wrong:0}, b=(base&&base.n[k])||[0,0];
+    A+=v.asked; W+=v.wrong;
+    const ra=v.asked-b[0], rw=v.wrong-b[1]; a7+=ra; w7+=rw;
+    per.push({k, before:b[0]?1-b[1]/b[0]:null, recent:ra>=3?1-rw/ra:null, rate:v.asked?v.wrong/v.asked:0, asked:v.asked});
+  });
+  const weak=per.filter(p=>p.asked>=3 && p.rate>0).sort((a,b)=>b.rate-a.rate).slice(0,3);
+  const conf=Object.entries(save.confuse||{}).sort((a,b)=>b[1]-a[1]).slice(0,2).map(([key,n])=>{ const [t,p]=key.split('>'); return `看到${zyName(t)}按成${zyName(p)} ×${n}` });
+  const trend=per.filter(p=>p.before!=null && p.recent!=null && Math.abs(p.recent-p.before)>=.1).sort((a,b)=>(b.recent-b.before)-(a.recent-a.before)).slice(0,3)
+    .map(p=>`${zyName(p.k)} ${Math.round(p.before*100)}%→${Math.round(p.recent*100)}%${p.recent>p.before?'↑':'↓'}`);
+  let suggest='';
+  const topConf=Object.entries(save.confuse||{}).sort((a,b)=>b[1]-a[1])[0];
+  if(topConf && topConf[1]>=2){ const [t,p]=topConf[0].split('>'); suggest=`練習「比一比：${zyName(t)} 和 ${zyName(p)}」` }
+  else if(weak.length) suggest=`練習「我的弱點特訓」（${weak.map(p=>zyName(p.k)).join('、')}）`;
+  else if(A>=30 && W/A<.1) suggest='很穩了，可以挑戰下一區或達人之島';
+  else suggest='多玩幾關，累積更多資料';
+  const pdone=Object.keys(save.practice||{}).length;
+  return {total:A, acc:pctTxt(A-W,W), total7:a7, acc7:pctTxt(a7-w7,w7), trend:!old?'開始記錄未滿 7 天':(trend.join('、')||(a7<5?'最近 7 天題數還不夠':'持平')),
+          weak:weak.map(p=>`${zyName(p.k)}（錯 ${Math.round(p.rate*100)}%）`).join('、'), confuse:conf.join('、'), suggest, practice:pdone};
+}
+
+// ---------- 5. 聽音挑戰 ----------
+const EAR_LESSONS = [
+  {id:'e1', title:'聽音挑戰 1', desc:'ㄉㄡ、ㄖㄨㄟ、ㄇㄧ', pool:['do','re','mi']},
+  {id:'e2', title:'聽音挑戰 2', desc:'ㄉㄡ 到 ㄙㄛ', pool:['do','re','mi','fa','sol']},
+  {id:'e3', title:'聽音挑戰 3', desc:'全部 8 個音', pool:KEYS.slice()},
+];
+function earPlay(t, withRef=true){
+  sfx(()=>{ if(withRef && t!=='do'){ osc(NOTES.do.f,.55,'triangle',.24); osc(NOTES[t].f,.7,'triangle',.28,.8) } else osc(NOTES[t].f,.7,'triangle',.28) });
+}
+function startEar(id){
+  const run=++lessonRun, m=EAR_LESSONS.find(x=>x.id===id);
+  Object.assign(L,{id, q:0, total:8, busy:true, last:null, data:null, retry:null, pool:m.pool});
+  $('lTitle').textContent=`${m.title}・${m.desc}`; show('ovLesson'); feed(''); lessonDots(); $('lAns').innerHTML=''; $('lAns').classList.remove('many');
+  drawP({notes:m.pool.map((k,i)=>({s:NOTES[k].step, x:100+i*(230/Math.max(1,m.pool.length-1)), c:colorOf(k)}))});
+  setPrompt('先聽ㄉㄡ，再聽題目的音','先聽兜，再聽題目的音。題目的音比兜高多少，就往上數幾格');
+  sfx(()=>m.pool.forEach((k,i)=>osc(NOTES[k].f,.4,'triangle',.22,i*.42)));
+  setTimeout(()=>{ if(run===lessonRun) earQ() }, 3600);
+}
+function earQ(){
+  if($('ovLesson').hidden) return;
+  L.busy=false; feed(''); lessonDots();
+  if(L.q>=L.total){ lessonDone(); return }
+  const t=rnd(L.pool, L.last); L.last=t;
+  const place = L.q%2===1;
+  L.data={type:place?'earPlace':'earName', t};
+  L.retry=()=>{ L.busy=false; earAsk() };
+  earAsk();
+}
+function earAsk(){
+  const {t,type}=L.data;
+  if(type==='earPlace'){
+    drawP({zones:[-2,-1,0,1,2,3,4,5]});
+    setPrompt('聽到的音，放在五線譜哪裡？', '聽到的音，放在五線譜的哪裡？');
+    $('lAns').classList.remove('many');
+    ansButtons([{text:'再聽一次',cls:'alt',on:()=>earPlay(t)}]);
+  }else{
+    drawP({notes:[{s:4,x:200,ghost:true,c:'#8a93a6'}], tags:[{s:7,x:200,text:'？',c:'#8a93a6'}]});
+    setPrompt('聽聽看，這是哪個音？');
+    $('lAns').classList.toggle('many', L.pool.length>4);
+    ansButtons([...L.pool.map(k=>({text:zyName(k), cls:'zbtn', bg:`var(--c-${k})`, on:()=>earPick(k)})), {text:'再聽一次',cls:'alt',on:()=>earPlay(t)}]);
+  }
+  setTimeout(()=>earPlay(t), 700);
+}
+function earTap(st){ if(L.busy) return; earPick(STEP2KEY[st]) }
+async function earPick(k){
+  if(L.busy) return;
+  const t=L.data.t, run=lessonRun;
+  recordPractice(t, k!==t, k);
+  if(k===t){ drawP({bands:[{s:NOTES[t].step,c:colorOf(t),o:.25}], notes:[{s:NOTES[t].step,x:200,c:colorOf(t),label:zyName(t)}]}); lessonGood(`聽對了！是 ${zyName(t)}`, NOTES[t].f, `聽對了！是${sayZy(t)}`); return }
+  L.busy=true;
+  drawP({notes:[{s:NOTES[k].step,x:140,c:'#8a93a6',label:zyName(k),lc:'#8a93a6'},{s:NOTES[t].step,x:260,c:colorOf(t),label:zyName(t)}]});
+  const up=NOTES[t].step>NOTES[k].step;
+  feed(`你選的是 ${zyName(k)}，題目是 ${zyName(t)}，比較${up?'高':'低'}`,'bad'); speak(`你選的是${sayZy(k)}，題目是${sayZy(t)}，比較${up?'高':'低'}`);
+  sfx(()=>{ osc(NOTES[k].f,.5,'triangle',.22,.2); osc(NOTES[t].f,.6,'triangle',.26,1) });
+  await wait(3200); if(run!==lessonRun) return;
+  feed('再聽一次'); L.retry();
+}
+// 關卡裡的聽音特殊題
+function earStaffDraw(){
+  drawStaff([]);
+  const x=232, y=yOf(4);
+  el('circle',{cx:x,cy:y,r:30,fill:'#fff4cf',stroke:'#f5b82e','stroke-width':3,'stroke-dasharray':'6 4'});
+  el('text',{x,y:y+11,'text-anchor':'middle','font-size':32,'font-weight':900,'font-family':FONT,fill:'#c98608'}).textContent='？';
+  pill($('staff'), x, 178, '聽音題・點譜面再聽一次', '#f5b82e', 13);
+}
+function earGamePlay(){ if(S.ear && S.seq.length) earPlay(S.seq[0]) }
+$('staff').addEventListener('pointerdown',()=>{ if(S.ear && !S.busy && S.playing) earGamePlay() });
+
+// ---------- 6. 只顯示用得到的按鈕 ----------
+const cfgOn = k => !!(CONFIG[k] || (!Cloud.ready() && T[k]));
+function fitKeys(list){
+  const big=cfgOn('bigKeys') && !(S.mode==='solo' && S.stage && S.stage.noHint && S.sub==='stage');
+  const ok=new Set(list);
+  const n=big ? list.length : 8, narrow=window.innerWidth<=640 && window.innerHeight>window.innerWidth;
+  const cols = !big ? null : (narrow ? (n<=4?n:Math.ceil(n/2)) : n);
+  [['keys','key-'],['keysA','kA-'],['keysB','kB-']].forEach(([box,p])=>{
+    const b=$(box); b.classList.toggle('few', big); if(cols) b.style.setProperty('--n', box==='keys'?cols:Math.min(n,4)); else b.style.removeProperty('--n');
+    KEYS.forEach(k=>{ $(p+k).hidden = big && !ok.has(k) });
+  });
+}
+window.addEventListener('resize',()=>{ if(S.playing) fitKeys(S.keyList||KEYS) });
 
 // ================= 啟動 =================
 $('btnHint').setAttribute('aria-pressed',prefs.hint); $('btnHint').classList.toggle('on',prefs.hint);
