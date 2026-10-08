@@ -662,6 +662,9 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 @media (orientation:landscape) and (max-height:560px){ #keys.few .key{min-height:52px} }
 .big.winshop{display:inline-flex;align-items:center;justify-content:center;gap:8px}
 .big.winshop .coin{flex:none}
+/* v16 分組對抗橫式：兩組按鈕不超出畫面 */
+@media (orientation:landscape) and (max-height:560px){ body.team .teamkeys{gap:8px} .tk .kg{grid-template-columns:repeat(8,minmax(0,1fr))!important} .tk .key{min-width:0;padding:3px 0} .tk .key .s{font-size:.82em;letter-spacing:-.05em} .tk h3{margin:0 0 2px} }
+.tk{min-width:0}
 </style>
 </head>
 <body>
@@ -1004,9 +1007,10 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 const $ = id => document.getElementById(id);
 
 // 版本號：每次更新加 1，畫面上會顯示，方便確認上傳的是最新版
-const VERSION = 15, VERSION_DATE = '2026-10-08';
+const VERSION = 16, VERSION_DATE = '2026-10-08';
 // 更新日誌：每次更新在最上面加一筆（顯示在老師面板）
 const CHANGELOG = [
+  {v:16, date:'2026-10-08', add:['勇者和怪獸全部換成楓之谷風格的大頭 Q 版：有陰影、亮面和大眼睛','關節動畫：勇者會呼吸、眨眼、走路擺手、蓄力揮劍（遠距武器是舉起來發射）、受傷往後仰、過關跳起來歡呼，表情會跟著變','怪獸會 Q 彈呼吸、眨眼、跳著前進、說話時嘴巴會動、被打時眼睛變成 × ×、魔王生氣時冒青筋'], fix:[]},
   {v:15, date:'2026-10-08', add:['老師面板新增「更新伺服器程式」：Apps Script 會自己從 GitHub 抓最新的 Code.gs 並部署，不用再手動貼上','在老師面板改老師密碼，會同步改到試算表的程式'], fix:['老師密碼和試算表 ID 不再寫在程式碼裡（改存在 Apps Script 的指令碼屬性）']},
   {v:14, date:'2026-10-08', add:['過關、失敗畫面加上「商店」按鈕，買完按返回會回到結算畫面'], fix:[]},
   {v:13, date:'2026-10-08', add:['前 5 區的魔王關加入愛心（預設 5 顆），答錯扣一顆，扣光就挑戰失敗，可以在修改器「關卡難度」調整'], fix:['歌曲關卡和世界魔王不會誤用上一關的愛心']},
@@ -1504,7 +1508,7 @@ function weapon(k){
     default:      return g(`<rect x="-3.5" y="-50" width="7" height="44" rx="2" fill="${c}" ${L}/><rect x="-11" y="-9" width="22" height="6" rx="2" fill="#f5b82e" ${L}/><rect x="-2.5" y="-4" width="5" height="11" rx="2" fill="#5b4636" ${L}/>`);
   }
 }
-function heroSVG(k){
+function headDeco(k){
   const a=k.a, b=k.b, L=SW;
   let back='', front='', headShape=`<circle cx="48" cy="38" r="22" fill="${k.skin}" ${L}/>`;
   const cap = `<path d="M22 36 Q48 2 74 36 Q48 20 22 36Z" fill="${a}" ${L}/>`;
@@ -1539,17 +1543,9 @@ function heroSVG(k){
   const face = k.head==='ninja'
     ? `<circle cx="41" cy="40" r="3.4" fill="#2b3550"/><circle cx="55" cy="40" r="3.4" fill="#2b3550"/>`
     : `${k.head==='pirate'?'':'<circle cx="41" cy="40" r="3.4" fill="#2b3550"/>'}<circle cx="55" cy="40" r="3.4" fill="#2b3550"/><circle cx="35" cy="48" r="3.5" fill="#ff8f8f" opacity=".5"/><circle cx="61" cy="48" r="3.5" fill="#ff8f8f" opacity=".5"/><path d="M43 50 Q48 55 54 50" fill="none" stroke="#2b3550" stroke-width="2.5" stroke-linecap="round"/>`;
-  return `<svg viewBox="2 -26 100 134">
-    ${back}
-    <rect x="32" y="88" width="12" height="16" rx="4" fill="#5b4636" ${L}/><rect x="52" y="88" width="12" height="16" rx="4" fill="#5b4636" ${L}/>
-    <rect x="28" y="52" width="40" height="40" rx="12" fill="${k.body}" ${L}/>
-    <rect x="28" y="74" width="40" height="5" fill="rgba(0,0,0,.18)"/>
-    ${weapon(k)}
-    <circle cx="70" cy="64" r="6" fill="${k.skin}" ${L}/><circle cx="26" cy="68" r="6" fill="${k.skin}" ${L}/>
-    ${headShape}${face}${front}
-  </svg>`;
+  return {back, front, headShape, face};
 }
-function monSVG(m){
+function monSVG_v1(m){
   const c=m.c, L=SW;
   return `<svg viewBox="0 -14 110 114">
     ${m.horn?`<path d="M22 30 L12 2 L36 22Z M88 30 L98 2 L74 22Z" fill="${m.hornC||'#f2c335'}" ${L}/>`:''}
@@ -1673,6 +1669,250 @@ function slashFx(x,y,big,fx=curFx(),box=$('scene')){
   d.animate([{transform:'translate(-50%,-50%) scale(.3) rotate(-30deg)',opacity:1},{transform:'translate(-50%,-50%) scale(1.15) rotate(5deg)',opacity:1,offset:.45},{transform:'translate(-50%,-50%) scale(1.3) rotate(15deg)',opacity:0}],{duration:big?420:320,easing:'ease-out'}).onfinish=()=>d.remove();
 }
 
+
+// ================= 版本 16：楓之谷風格 Q 版角色＋關節動畫 =================
+// 勇者：腳底在 (0,0)、面向右。部位：.rg-root > .rg-armB .rg-legB .rg-legF .rg-body( .rg-head, .rg-armF( .rg-wpn ) )
+// 怪獸：腳底在 (0,0)、面向左。部位：.rg-root > .rg-blob .eye ... 表情群組
+const ROL='#3b2c35';
+const RS=`stroke="${ROL}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"`;
+function shade(hex, amt){
+  const h=String(hex||'#888').replace('#',''), f=h.length===3?h.split('').map(c=>c+c).join(''):h;
+  let r=parseInt(f.slice(0,2),16), g=parseInt(f.slice(2,4),16), b=parseInt(f.slice(4,6),16);
+  if([r,g,b].some(isNaN)) return hex;
+  const t=amt<0?0:255, p=Math.abs(amt);
+  r=Math.round((t-r)*p+r); g=Math.round((t-g)*p+g); b=Math.round((t-b)*p+b);
+  return '#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');
+}
+// 舊版頭飾（畫在半徑 22 的頭上）放大到新的大頭
+const HEAD_K=1.65;
+function scaleDeco(s){ return s.replace(/stroke-width="([\d.]+)"/g,(m,v)=>`stroke-width="${(v/HEAD_K*1.05).toFixed(2)}"`) }
+const decoWrap = s => s ? `<g transform="translate(2 -98) scale(${HEAD_K}) translate(-48 -38)">${scaleDeco(s)}</g>` : '';
+// 武器：手的座標系，握把在 (0,0)，武器朝 +y 方向
+function weaponRig(k){
+  const raw=weapon(k);
+  const m=raw.match(/^<g transform="translate\(70 62\) rotate\(22\)">([\s\S]*?)<\/g>(<g>[\s\S]*<\/g>)?$/);
+  let hand='', hip='', pet='';
+  if(k.wpn==='blaster'){
+    hand=`<g transform="rotate(0)"><path d="M-6 -4 L6 -4 L5 8 L-5 8Z" fill="#5a63c9" ${RS}/><rect x="-10" y="6" width="20" height="26" rx="9" fill="${k.w}" ${RS}/><rect x="-5" y="30" width="10" height="12" rx="3" fill="#ff7a3d" ${RS}/><circle cx="-3" cy="14" r="3" fill="#fff"/><path d="M8 12 L16 16 L8 20" fill="#ffd23f" ${RS}/></g>`;
+  }else if(k.wpn==='dragon'){
+    hand=`<circle cx="0" cy="0" r="3" fill="#ffd23f"/>`;
+    pet=`<g class="rg-pet" transform="translate(-44 -150) scale(1.3) translate(-76 -42)">${raw.replace(/^<g>|<\/g>$/g,'')}</g>`;
+  }else if(m){
+    hand=`<g transform="rotate(180) scale(1.15)">${m[1]}</g>`;
+    if(m[2]) hip=`<g transform="translate(22 -30) scale(.95) translate(-37 -77)">${m[2].replace(/^<g>|<\/g>$/g,'')}</g>`;
+  }else hand=`<g transform="rotate(180) scale(1.15)">${raw}</g>`;
+  return {hand, hip, pet};
+}
+const KNIGHT_HELM = id => `<path d="M-40 -100 Q-40 -140 2 -140 Q44 -140 42 -100 Q36 -106 30 -108 L28 -116 Q2 -122 -26 -114 L-30 -104 Q-36 -104 -40 -100Z" fill="url(#${id}h)" ${RS}/><path d="M-30 -112 Q2 -124 30 -112" fill="none" stroke="#8796ab" stroke-width="3"/><path d="M-2 -138 L-2 -116" stroke="#8796ab" stroke-width="3"/><path d="M-10 -126 Q-22 -136 -18 -124" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".9"/>`;
+const NO_HAIR = new Set(['astro','robot','diver','ninja','hood','santa','bear','dino','tiara']);
+let rgUid=0;
+function heroSVG(k){
+  const id='rg'+(++rgUid);
+  const d=headDeco(k), skin=k.skin||'#ffd9b8', body=k.body||'#3f7fd1', a=k.a||'#e4ebf2', b=k.b||'#e8473d';
+  const bodyDk=shade(body,-.28), bodyLt=shade(body,.25), legC=shade(body,-.45), skinDk=shade(skin,-.12);
+  const W=weaponRig(k);
+  const helmet = k.head==='helmet';
+  const pirate = k.head==='pirate', ninja=k.head==='ninja', robot=k.head==='robot';
+  const eye=(cx,cls)=>`<g class="${cls}"><ellipse class="rg-iris" cx="${cx}" cy="-92" rx="6.5" ry="9.5" fill="#3b2633"/><ellipse cx="${cx+2}" cy="-96.5" rx="2.6" ry="3.4" fill="#fff"/><circle cx="${cx-2}" cy="-87" r="1.4" fill="#fff"/></g>`;
+  const faceShape = robot
+    ? `<rect x="-36" y="-136" width="76" height="72" rx="16" fill="${a}" ${RS}/><rect x="-28" y="-122" width="60" height="46" rx="12" fill="${skin}" ${RS} stroke-width="2"/>`
+    : `<ellipse cx="2" cy="-98" rx="38" ry="35" fill="${skin}" ${RS}/><path d="M-30 -80 Q-14 -64 14 -64 Q32 -66 38 -84 Q34 -68 14 -66 Q-12 -66 -30 -80Z" fill="${skinDk}" opacity=".55"/><ellipse cx="-14" cy="-116" rx="14" ry="8" fill="#fff" opacity=".28" transform="rotate(-20 -14 -116)"/>`;
+  const hair = NO_HAIR.has(k.head) ? '' : `<path d="M-36 -86 Q-44 -70 -34 -60 Q-30 -72 -28 -80Z" fill="#8a5a3c" ${RS}/>`;
+  const ear = robot ? '' : `<ellipse cx="34" cy="-92" rx="6" ry="8" fill="${skin}" ${RS}/>`;
+  return `<svg class="rg" viewBox="-67 -176 134 180" overflow="visible">
+  <defs><linearGradient id="${id}h" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f8fc"/><stop offset=".55" stop-color="${a}"/><stop offset="1" stop-color="${shade(a,-.3)}"/></linearGradient>
+  <linearGradient id="${id}t" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${bodyLt}"/><stop offset="1" stop-color="${body}"/></linearGradient></defs>
+  <g class="rg-root">
+    <g class="rg-armB" transform="rotate(8 -14 -58)"><path d="M-14 -58 Q-20 -48 -18 -38" fill="none" stroke="${ROL}" stroke-width="12" stroke-linecap="round"/><path d="M-14 -58 Q-20 -48 -18 -38" fill="none" stroke="${bodyDk}" stroke-width="7" stroke-linecap="round"/><circle cx="-18" cy="-36" r="5.5" fill="${skinDk}" ${RS}/></g>
+    ${k.head==='starknight'?`<path d="M-16 -64 Q-34 -30 -30 -6 Q-8 0 14 -6 Q10 -36 16 -64Z" fill="#5a63c9" ${RS}/><circle cx="-18" cy="-24" r="2" fill="#ffd23f"/><circle cx="-6" cy="-14" r="1.6" fill="#fff"/>`:''}
+    <g class="rg-legB"><rect x="-15" y="-40" width="12" height="26" rx="5" fill="${shade(legC,-.1)}" ${RS}/><path d="M-17 -16 h16 q4 0 4 5 v6 h-22 v-6 q0 -5 2 -5z" fill="#6b4a32" ${RS}/></g>
+    <g class="rg-legF"><rect x="3" y="-40" width="12" height="26" rx="5" fill="${legC}" ${RS}/><path d="M1 -16 h16 q6 0 6 6 v5 h-24 v-6 q0 -5 2 -5z" fill="#7d5a3e" ${RS}/></g>
+    ${W.hip}
+    <g class="rg-body">
+      <path d="M-18 -64 Q-22 -46 -19 -34 Q0 -28 19 -34 Q22 -46 18 -64 Q0 -70 -18 -64Z" fill="url(#${id}t)" ${RS}/>
+      <path d="M-19 -40 Q0 -35 19 -40 L19 -34 Q0 -29 -19 -34Z" fill="#6b4a32"/>
+      <rect x="-5" y="-42" width="10" height="9" rx="2" fill="${b}" stroke="${ROL}" stroke-width="2"/>
+      <path d="M-8 -64 L0 -54 L8 -64" fill="none" stroke="${b}" stroke-width="3"/>
+      ${W.pet}
+      <g class="rg-head">
+        ${hair}
+        ${d.back && k.head!=='starknight'?decoWrap(d.back):''}
+        ${faceShape}
+        ${ear}
+        <g class="rg-face">
+          ${ninja||robot?'':`<ellipse cx="-12" cy="-80" rx="7" ry="4.5" fill="#ff9aa8" opacity=".55"/><ellipse cx="26" cy="-80" rx="6" ry="4.5" fill="#ff9aa8" opacity=".55"/>`}
+          <g class="rg-eyesN">${pirate?'':eye(-4,'rg-eyeL')}${eye(18,'rg-eyeR')}</g>
+          <g class="rg-eyesHappy" visibility="hidden"><path d="${pirate?'':'M-10 -90 Q-4 -98 2 -90 '}M12 -90 Q18 -98 24 -90" fill="none" stroke="#3b2633" stroke-width="3.2" stroke-linecap="round"/></g>
+          <g class="rg-eyesHurt" visibility="hidden"><path d="${pirate?'':'M-10 -97 L1 -91 L-10 -86 '}M24 -97 L13 -91 L24 -86" fill="none" stroke="#3b2633" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></g>
+          <g class="rg-brows" visibility="hidden"><path d="M-11 -106 L2 -102 M25 -106 L12 -102" stroke="#3b2633" stroke-width="3" stroke-linecap="round"/></g>
+          ${ninja?'':`<path class="rg-mouthN" d="M3 -77 Q8 -73 13 -77" fill="none" stroke="#3b2633" stroke-width="2.4" stroke-linecap="round"/>
+          <path class="rg-mouthO" visibility="hidden" d="M4 -79 Q8 -71 13 -79 Q8 -83 4 -79Z" fill="#a8323e" stroke="#3b2633" stroke-width="2"/>
+          <path class="rg-mouthHurt" visibility="hidden" d="M2 -76 l3 -2 l3 2 l3 -2 l3 2" fill="none" stroke="#3b2633" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`}
+        </g>
+        ${helmet ? KNIGHT_HELM(id)+`<g class="rg-plume"><path d="M-2 -138 Q-6 -160 18 -164 Q4 -156 10 -146 Q-6 -150 -2 -138Z" fill="${b}" ${RS}/><path d="M2 -146 Q6 -156 14 -160" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".6"/></g>` : decoWrap(d.front)}
+      </g>
+      <g class="rg-armF" transform="rotate(-12 14 -58)">
+        <g class="rg-wpn" transform="translate(15 -35) rotate(-140)">${W.hand}</g>
+        <path d="M14 -58 Q20 -48 16 -38" fill="none" stroke="${ROL}" stroke-width="12" stroke-linecap="round"/><path d="M14 -58 Q20 -48 16 -38" fill="none" stroke="${body}" stroke-width="7" stroke-linecap="round"/>
+        <circle cx="15" cy="-35" r="6" fill="${skin}" ${RS}/>
+      </g>
+    </g>
+  </g></svg>`;
+}
+
+function monSVG(m, enraged){
+  const c=m.c||'#5fbf5a', dk=shade(c,-.3), lt=shade(c,.45), id='rg'+(++rgUid), L=RS;
+  const boss=!!m.boss, angry=!!(enraged||m._enraged);
+  const blob='M-46 0 Q-55 -34 -26 -62 Q-8 -78 10 -70 Q18 -84 27 -80 Q24 -71 31 -64 Q56 -40 46 0 Q0 7 -46 0Z';
+  return `<svg class="rg" viewBox="-60 -108 120 114" overflow="visible">
+  <defs><radialGradient id="${id}" cx=".36" cy=".3" r=".85"><stop offset="0" stop-color="${lt}"/><stop offset=".5" stop-color="${c}"/><stop offset="1" stop-color="${dk}"/></radialGradient></defs>
+  <g class="rg-root">
+    ${m.horn?`<path d="M-30 -56 L-40 -92 L-14 -66Z M32 -54 L44 -90 L18 -66Z" fill="${m.hornC||'#f2c335'}" ${L}/>`:''}
+    ${m.big?`<path d="M-48 -26 L-62 -36 L-46 -44Z M48 -26 L62 -36 L46 -44Z" fill="${dk}" ${L}/>`:''}
+    ${m.fins?`<path d="M-44 -24 Q-66 -36 -60 -8 Q-52 -12 -46 -8Z M44 -24 Q66 -36 60 -8 Q52 -12 46 -8Z" fill="${m.finC||c}" ${L}/>`:''}
+    <path class="rg-blob" d="${blob}" fill="url(#${id})" ${L}/>
+    <path d="M-40 -8 Q0 6 40 -8 Q38 -2 36 0 Q0 6 -38 0Z" fill="#000" opacity=".12"/>
+    ${m.cap?`<path d="M-44 -46 Q-36 -84 2 -86 Q40 -84 46 -46 Q34 -56 24 -50 Q14 -60 2 -54 Q-10 -60 -20 -50 Q-32 -56 -44 -46Z" fill="#ffffff" ${L}/><circle cx="-16" cy="-70" r="5" fill="#ff8fbf"/><circle cx="12" cy="-76" r="6" fill="#ff8fbf"/><circle cx="30" cy="-62" r="4" fill="#ff8fbf"/>`:''}
+    ${m.spots?`<circle cx="-34" cy="-24" r="5" fill="#fff" opacity=".45"/><circle cx="34" cy="-30" r="4" fill="#fff" opacity=".45"/><circle cx="26" cy="-12" r="3" fill="#fff" opacity=".45"/>`:''}
+    <ellipse cx="-20" cy="-50" rx="10" ry="5.5" fill="#fff" opacity=".7" transform="rotate(-30 -20 -50)"/>
+    <circle cx="-32" cy="-38" r="2.8" fill="#fff" opacity=".65"/>
+    <g class="rg-vein" visibility="${angry?'visible':'hidden'}"><path d="M20 -56 l7 -2 -2 7 M28 -50 l7 -2 -2 7" fill="none" stroke="#c4161c" stroke-width="3" stroke-linecap="round"/></g>
+    <g class="rg-eyesN">
+      <g class="rg-eyeL"><ellipse cx="-18" cy="-32" rx="7" ry="9.5" fill="#fff" ${L} stroke-width="2"/><ellipse class="pupil" cx="-20" cy="-31" rx="5" ry="7" fill="#2a2a3a"/><circle cx="-22" cy="-35" r="2.4" fill="#fff"/></g>
+      <g class="rg-eyeR"><ellipse cx="6" cy="-32" rx="7" ry="9.5" fill="#fff" ${L} stroke-width="2"/><ellipse class="pupil" cx="4" cy="-31" rx="5" ry="7" fill="#2a2a3a"/><circle cx="2" cy="-35" r="2.4" fill="#fff"/></g>
+    </g>
+    <g class="rg-brows" visibility="${angry||boss?'visible':'hidden'}"><path d="M-28 -46 L-11 -40 M16 -46 L-1 -40" stroke="#2a2a3a" stroke-width="3.6" stroke-linecap="round"/></g>
+    <g class="rg-eyesX" visibility="hidden"><path d="M-24 -38 l11 11 M-13 -38 l-11 11 M0 -38 l11 11 M11 -38 l-11 11" stroke="#2a2a3a" stroke-width="3.2" stroke-linecap="round"/></g>
+    <ellipse cx="-30" cy="-18" rx="5.5" ry="3.2" fill="#ff8fa0" opacity=".5"/><ellipse cx="16" cy="-18" rx="5.5" ry="3.2" fill="#ff8fa0" opacity=".5"/>
+    <path class="rg-mouthN" visibility="${angry?'hidden':'visible'}" d="${boss?'M-16 -18 Q-7 -10 2 -18':'M-12 -18 Q-7 -13 -2 -18'}" fill="none" stroke="#2a2a3a" stroke-width="2.6" stroke-linecap="round"/>
+    <ellipse class="rg-mouthO" visibility="hidden" cx="-7" cy="-16" rx="4.5" ry="5" fill="#7a1f2e" stroke="#2a2a3a" stroke-width="2"/>
+    <path class="rg-mouthAngry" visibility="${angry?'visible':'hidden'}" d="M-17 -14 l4.5 -5 l4.5 5 l4.5 -5 l4.5 5" fill="#fff" stroke="#2a2a3a" stroke-width="2.2" stroke-linejoin="round"/>
+    ${m.crown?`<path d="M-18 -74 L-20 -96 L-8 -86 L2 -102 L12 -86 L24 -96 L22 -74Z" fill="#f5b82e" ${L}/><circle cx="2" cy="-84" r="3.5" fill="#e8473d"/>`:''}
+  </g></svg>`;
+}
+
+// ================= 動畫引擎：每一格算出各部位的角度 =================
+const RG={actors:new Map(), raf:0};
+const rgEase={inOut:t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2, out:t=>1-Math.pow(1-t,3), in:t=>t*t*t, back:t=>{const c=1.7;return 1+(c+1)*Math.pow(t-1,3)+c*Math.pow(t-1,2)}};
+function rgKf(t, fr){
+  if(t<=fr[0][0]) return fr[0][1];
+  for(let i=1;i<fr.length;i++){ const [t1,v1,e]=fr[i], [t0,v0]=fr[i-1]; if(t<=t1){ const p=(t-t0)/(t1-t0||1); return v0+(v1-v0)*(rgEase[e||'inOut'])(p) } }
+  return fr[fr.length-1][1];
+}
+const RG_DUR={hero:{idle:0, walk:420, attack:640, cast:600, hurt:520, victory:1400, sad:1200}, mon:{idle:0, hop:620, talk:1300, hurt:420, defeat:900, rage:800}};
+function rgBind(bod, kind){
+  const svg=bod && bod.querySelector('svg.rg'); if(!svg) return null;
+  let a=RG.actors.get(bod);
+  if(!a || a.svg!==svg){
+    const q=s=>svg.querySelector(s);
+    a={bod, svg, kind, state:a?a.state:'idle', t0:a?a.t0:0, dur:a?a.dur:0, blinkAt:performance.now()+1200+Math.random()*1500,
+       p:{root:q('.rg-root'), body:q('.rg-body'), head:q('.rg-head'), armF:q('.rg-armF'), armB:q('.rg-armB'), legF:q('.rg-legF'), legB:q('.rg-legB'), wpn:q('.rg-wpn'), plume:q('.rg-plume'), pet:q('.rg-pet'),
+          eyesN:q('.rg-eyesN'), eyesHappy:q('.rg-eyesHappy'), eyesHurt:q('.rg-eyesHurt'), eyesX:q('.rg-eyesX'), brows:q('.rg-brows'), vein:q('.rg-vein'),
+          mouthN:q('.rg-mouthN'), mouthO:q('.rg-mouthO'), mouthHurt:q('.rg-mouthHurt'), mouthAngry:q('.rg-mouthAngry'),
+          eyes:[q('.rg-eyeL'),q('.rg-eyeR')].filter(Boolean)}};
+    a.angryBase = a.p.mouthAngry && a.p.mouthAngry.getAttribute('visibility')==='visible';
+    a.browBase = a.p.brows && a.p.brows.getAttribute('visibility')==='visible';
+    RG.actors.set(bod,a);
+  }
+  rgStart(); return a;
+}
+function rigPlay(bod, state){
+  const kind = bod && bod.id==='monBod' ? 'mon' : 'hero';
+  const a=rgBind(bod, kind); if(!a) return;
+  a.state=state; a.t0=performance.now(); a.dur=RG_DUR[kind][state]||0; a.hit=false;
+}
+const rgVis=(el,on)=>{ if(el) el.setAttribute('visibility', on?'visible':'hidden') };
+const rgSet=(el,tr)=>{ if(el) el.setAttribute('transform', tr) };
+function rgHeroPose(a, now){
+  const t=a.dur?Math.min(1,(now-a.t0)/a.dur):0, s=(now-a.t0)/1000, br=reduce?0:Math.sin(now/520);
+  const p={y:0,sx:1,sy:1, lean:0, bodyY:br*1.2, headRot:br*1.5, armF:12+br*3, armB:-8-br*3, legF:0, legB:0, plume:br*6, wpn:-140+br*3, face:'n', pet:Math.sin(now/300)*4};
+  if(a.state==='walk'){ const w=Math.sin(t*Math.PI*2); p.legF=w*26; p.legB=-w*26; p.armF=12-w*22; p.armB=-8+w*24; p.bodyY=-Math.abs(w)*3; p.lean=5; p.plume=-w*10 }
+  if(a.state==='attack'){
+    p.face=t<.3?'brow':(t<.8?'shout':'n');
+    p.armF=rgKf(t,[[0,12],[.3,215,'out'],[.42,215],[.55,40,'in'],[.7,30],[1,12]]);
+    p.wpn=rgKf(t,[[0,-140],[.3,-40,'out'],[.42,-30],[.55,-10,'in'],[.7,-15],[1,-140]]);
+    p.lean=rgKf(t,[[0,0],[.3,-10,'out'],[.42,-12],[.55,14,'in'],[.7,12],[1,0]]);
+    p.armB=rgKf(t,[[0,-8],[.3,40],[.55,-50],[1,-8]]);
+    p.legF=rgKf(t,[[0,0],[.3,-10],[.55,26],[.75,26],[1,0]]); p.legB=-p.legF;
+    p.plume=rgKf(t,[[0,0],[.35,-14],[.55,28],[1,0]]);
+    p.sx=rgKf(t,[[0,1],[.3,1.06],[.42,1.08],[.55,.94],[.65,1],[1,1]]); p.sy=2-p.sx;
+  }
+  if(a.state==='cast'){
+    p.face=t<.35?'brow':(t<.8?'shout':'n');
+    p.armF=rgKf(t,[[0,12],[.3,140,'out'],[.45,95,'in'],[.75,95],[1,12]]);
+    p.wpn=rgKf(t,[[0,-140],[.3,-60],[.45,-20,'in'],[.75,-20],[1,-140]]);
+    p.lean=rgKf(t,[[0,0],[.3,-6],[.45,10,'in'],[.75,8],[1,0]]);
+    p.armB=rgKf(t,[[0,-8],[.3,30],[.45,-40],[1,-8]]);
+    p.legF=rgKf(t,[[0,0],[.45,18],[.75,18],[1,0]]); p.legB=-p.legF*.6;
+  }
+  if(a.state==='hurt'){
+    p.face='hurt';
+    p.lean=rgKf(t,[[0,0],[.15,-18,'out'],[.6,-14],[1,0]]);
+    p.armF=rgKf(t,[[0,12],[.15,70],[.7,50],[1,12]]); p.armB=rgKf(t,[[0,-8],[.15,-70],[.7,-50],[1,-8]]);
+    p.headRot=rgKf(t,[[0,0],[.15,-12],[1,0]]); p.plume=rgKf(t,[[0,0],[.2,24],[1,0]]); p.wpn=rgKf(t,[[0,-140],[.15,-70],[.7,-90],[1,-140]]);
+  }
+  if(a.state==='victory'){
+    p.face='happy';
+    const j=rgKf(t,[[0,0],[.15,0],[.35,1,'out'],[.55,0,'in'],[.62,0],[.78,.5,'out'],[.9,0,'in'],[1,0]]);
+    p.y=-j*40; p.sy=rgKf(t,[[0,1],[.12,.86],[.18,1.08],[.35,1],[.55,.9],[.62,1.04],[1,1]]); p.sx=2-p.sy;
+    p.armF=rgKf(t,[[0,12],[.18,170,'back'],[.9,170],[1,12]]); p.armB=rgKf(t,[[0,-8],[.18,-160,'back'],[.9,-160],[1,-8]]);
+    p.wpn=rgKf(t,[[0,-140],[.18,-10,'back'],[.9,-10],[1,-140]]);
+    p.legF=j*14; p.legB=-j*14; p.headRot=t<.9?Math.sin(s*10)*5:0; p.plume=Math.sin(s*12)*16;
+  }
+  if(a.state==='sad'){ p.face='hurt'; p.lean=rgKf(t,[[0,0],[.3,8],[1,8]]); p.headRot=rgKf(t,[[0,0],[.3,10],[1,10]]); p.armF=4; p.armB=-2; p.wpn=-170 }
+  return p;
+}
+function rgMonPose(a, now){
+  const t=a.dur?Math.min(1,(now-a.t0)/a.dur):0, s=(now-a.t0)/1000, b=reduce?0:Math.sin(now/380);
+  const p={y:0,sx:1+b*.04,sy:1-b*.04, face:'n', mouth:'n'};
+  if(a.state==='hop'){ const up=Math.sin(Math.min(1,t/.75)*Math.PI); p.sy=t<.15?1-.2*Math.sin(t/.15*Math.PI):(t<.75?1+.12*up:1-.2*Math.sin((t-.75)/.25*Math.PI)); p.sx=2-p.sy }
+  if(a.state==='talk'){ p.mouth=Math.floor(s*8)%2?'o':'n'; p.sy=1+Math.sin(s*16)*.04; p.sx=2-p.sy }
+  if(a.state==='hurt'){ p.face='x'; p.mouth='o'; p.sx=rgKf(t,[[0,1],[.15,1.3],[.4,.85],[.7,1.08],[1,1]]); p.sy=2-p.sx }
+  if(a.state==='defeat'){ p.face='x'; p.mouth='o'; p.sx=rgKf(t,[[0,1],[.3,1.35],[.6,.9],[1,1]]); p.sy=2-p.sx }
+  if(a.state==='rage'){ p.face='angry'; p.mouth='angry'; const sh=Math.sin(s*60)*(1-t); p.sx=1+sh*.05+rgKf(t,[[0,0],[.2,-.18],[.4,.18],[.6,0]]); p.sy=2-p.sx }
+  return p;
+}
+function rgBlink(a, now, open){
+  if(now>a.blinkAt){ a.blinkAt=now+2200+Math.random()*2600; a.blinkEnd=now+130 }
+  const closed=open && now<(a.blinkEnd||0);
+  a.p.eyes.forEach(e=>{ const cy=a.kind==='mon'?-32:-92; e.setAttribute('transform', closed?`translate(0 ${cy}) scale(1 .12) translate(0 ${-cy})`:'') });
+}
+function rgFrame(now){
+  RG.raf=0; let alive=false;
+  RG.actors.forEach((a,bod)=>{
+    if(!bod.isConnected || !a.svg.isConnected){ RG.actors.delete(bod); return }
+    alive=true;
+    if(a.dur && now-a.t0>=a.dur){ if(a.state!=='defeat'){ a.state='idle'; a.dur=0 } }
+    const P=a.p;
+    if(a.kind==='hero'){
+      const h=rgHeroPose(a, now);
+      rgSet(P.root, `translate(0 ${h.y}) scale(${h.sx} ${h.sy})`);
+      rgSet(P.body, `rotate(${h.lean} 0 -36) translate(0 ${h.bodyY})`);
+      rgSet(P.head, `rotate(${h.headRot} 0 -64)`);
+      rgSet(P.armF, `rotate(${-h.armF} 14 -58)`); rgSet(P.armB, `rotate(${-h.armB} -14 -58)`);
+      rgSet(P.legF, `rotate(${-h.legF} 9 -38)`); rgSet(P.legB, `rotate(${-h.legB} -9 -38)`);
+      rgSet(P.wpn, `translate(15 -35) rotate(${h.wpn})`);
+      if(P.plume) rgSet(P.plume, `rotate(${h.plume} -2 -138)`);
+      if(P.pet) P.pet.style.transform=`translateY(${h.pet}px)`;
+      const f=h.face;
+      rgVis(P.eyesN, f==='n'||f==='brow'||f==='shout'); rgVis(P.eyesHappy, f==='happy'); rgVis(P.eyesHurt, f==='hurt');
+      rgVis(P.brows, f==='brow'||f==='shout');
+      rgVis(P.mouthN, f==='n'||f==='brow'); rgVis(P.mouthO, f==='shout'||f==='happy'); rgVis(P.mouthHurt, f==='hurt');
+      rgBlink(a, now, f==='n');
+    }else{
+      const m=rgMonPose(a, now);
+      rgSet(P.root, `scale(${m.sx} ${m.sy})`);
+      const angry=a.angryBase||m.face==='angry';
+      rgVis(P.eyesN, m.face!=='x'); rgVis(P.eyesX, m.face==='x');
+      rgVis(P.brows, a.browBase||m.face==='angry'); rgVis(P.vein, angry);
+      rgVis(P.mouthN, m.mouth==='n' && !angry); rgVis(P.mouthO, m.mouth==='o'); rgVis(P.mouthAngry, m.mouth!=='o' && (angry||m.mouth==='angry'));
+      rgBlink(a, now, m.face==='n');
+    }
+  });
+  if(alive) RG.raf=requestAnimationFrame(rgFrame);
+}
+function rgStart(){ if(!RG.raf) RG.raf=requestAnimationFrame(rgFrame) }
+function rigAll(){ ['heroBod','hero2Bod','monBod'].forEach(id=>{ const el=$(id); if(el) rgBind(el, id==='monBod'?'mon':'hero') }) }
 
 // ================= 五線譜（遊戲） =================
 const SVGNS='http://www.w3.org/2000/svg', LINE0=132, GAP=16;
@@ -1851,15 +2091,15 @@ function applyAura(el, partsEl, skin){
   else if(partsEl) partsEl.innerHTML='';
 }
 function renderHero(){
-  if(S.mode==='team'){ $('heroBod').innerHTML=heroSVG(teamSkin('A')); $('hero2Bod').innerHTML=heroSVG(teamSkin('B')); applyAura($('hero'),$('heroAura'),null); renderPet(); return }
+  if(S.mode==='team'){ $('heroBod').innerHTML=heroSVG(teamSkin('A')); $('hero2Bod').innerHTML=heroSVG(teamSkin('B')); applyAura($('hero'),$('heroAura'),null); renderPet(); rigAll(); return }
   $('heroBod').innerHTML=heroSVG(heroFor(curSkin(), save.wpn));
   applyAura($('hero'),$('heroAura'),curSkin());
-  renderPet();
+  renderPet(); rigAll();
 }
 const curMon = () => MONS.find(m=>m.id===S.monId)||MONS[0];
 function renderMon(enraged){
   const m=curMon();
-  $('monBod').innerHTML=monSVG(enraged?Object.assign({},m,{c:'#7a1f3d'}):m);
+  $('monBod').innerHTML=monSVG(enraged?Object.assign({},m,{c:'#b8333a'}):m, enraged); rigAll();
   $('monster').classList.toggle('enraged',!!enraged);
 }
 const HEART='<svg viewBox="0 0 24 22"><path d="M12 21 C3 14 1 9 3.5 5 C6 1.5 10.5 2.5 12 6 C13.5 2.5 18 1.5 20.5 5 C23 9 21 14 12 21Z" fill="#e8473d" stroke="#2b3550" stroke-width="2" stroke-linejoin="round"/></svg>';
@@ -1929,7 +2169,7 @@ function checkCollect(){
 
 // ================= 攻擊 =================
 function impact(big, fx, dir, slash, kind){
-  const m=centerOf($('monster'));
+  const m=centerOf($('monster')); rigPlay($('monBod'),'hurt');
   sFx(fx.snd,big); sHit(big);
   weaponImpact(kind||'sword', m, big, dir);
   fxExtra($('scene'), m.x, m.y, fx);
@@ -2060,6 +2300,7 @@ function spawnProj(kind, from, to, dur, delay, size, back){
 async function heroAttack(big, heroEl=$('hero'), dir=1){
   const hb=heroEl.querySelector('.bod'), h=centerOf(heroEl), m=centerOf($('monster'));
   const W = S.mode==='team' ? {style:'melee'} : effWeapon();
+  rigPlay(hb, W.style==='melee'?'attack':'cast');
   const fx = S.mode==='team' ? FX[heroEl.id==='hero'?1:2] : curFx();
   const hand={x:h.x+dir*h.w*.35, y:h.y-h.h*.05}, kind=attackKind(heroEl);
   if(W.style==='proj'){
@@ -2111,7 +2352,7 @@ async function heroAttack(big, heroEl=$('hero'), dir=1){
 }
 async function monsterAdvance(adjacent){
   const mb=$('monBod');
-  sGrowl();
+  sGrowl(); rigPlay(mb,'hop');
   if(!adjacent){
     mb.animate([{transform:'translateY(0) scale(1)'},{transform:'translateY(4%) scale(1.15,.82)',offset:.15},{transform:'translateY(-38%) scale(.92,1.12)',offset:.5},{transform:'translateY(0) scale(1.25,.75)',offset:.85},{transform:'translateY(0) scale(1)'}],{duration:620,easing:'ease-in-out'});
     await wait(80); S.mon--; place();
@@ -2124,7 +2365,7 @@ async function monsterAdvance(adjacent){
   const m=centerOf($('monster')), h=centerOf($('hero'));
   sStomp(); shake(adjacent?20:15, 480); dust(m.x, m.bottom-6);
   $('vign').animate([{opacity:1},{opacity:parseFloat($('vign').style.opacity)||0}],{duration:600});
-  fxText(adjacent?'吼——！':'咚！', m.x, m.y-m.h*.65, 'red');
+  fxText(adjacent?'吼——！':'咚！', m.x, m.y-m.h*.65, 'red'); rigPlay($('heroBod'),'hurt');
   $('heroBod').animate([{transform:'translateX(0)',filter:'none'},{transform:'translateX(-14px) rotate(-10deg)',filter:'brightness(1.4) sepia(1) hue-rotate(-40deg) saturate(4)',offset:.3},{transform:'translateX(0)',filter:'none'}],{duration:450});
   if(adjacent && S.hero>0){ S.hero--; await wait(120); place(); dust(h.x, h.bottom-6, -1); }
 }
@@ -2135,10 +2376,11 @@ async function monsterGrowlAt(t){
   $('monBod').animate([{transform:'translateX(0)'},{transform:`translateX(${-dir*10}px) scale(1.08)`,offset:.3},{transform:`translateX(${dir*Math.abs(m.x-h.x)*.35}px) scale(1.18)`,offset:.6},{transform:'translateX(0)'}],{duration:560});
   await wait(330);
   sStomp(); shake(12,380); dust(h.x, h.bottom-6, dir);
-  fxText('吼！', h.x, h.y-h.h*.6, 'red');
+  fxText('吼！', h.x, h.y-h.h*.6, 'red'); rigPlay(heroEl.querySelector('.bod'),'hurt');
   heroEl.querySelector('.bod').animate([{transform:'translateX(0)',filter:'none'},{transform:`translateX(${dir*14}px)`,filter:'brightness(1.4) sepia(1) hue-rotate(-40deg) saturate(4)',offset:.3},{transform:'translateX(0)',filter:'none'}],{duration:450});
 }
 async function monsterDefeat(){
+  rigPlay($('monBod'),'defeat');
   monSay('lose');
   const mb=$('monBod'), m=centerOf($('monster'));
   for(let i=0;i<3;i++){ mb.animate([{filter:'brightness(3)'},{filter:'none'}],{duration:120}); sHit(true); shake(10,150); await wait(160); }
@@ -2157,7 +2399,7 @@ async function bossEnrage(){
   $('flash').style.background='#ff3b2e'; flash(.55,500); setTimeout(()=>$('flash').style.background='#fff',520);
   shake(26,800);
   $('monBod').animate([{transform:'scale(1)'},{transform:'scale(1.35)',offset:.4},{transform:'scale(1)'}],{duration:800});
-  renderMon(true); place(); hud(); monSay('rage');
+  renderMon(true); rigPlay($('monBod'),'rage'); place(); hud(); monSay('rage');
   burst(m.x,m.y,20,['#ff4d2e','#ffcf3f','#7a1f3d'],120,[8,16]);
   await wait(900);
 }
@@ -2275,7 +2517,7 @@ async function answer(k,btn){
     if(!S.playing) return;
     if(S.power>=g){ await (S.sub==='song'?songWin():win()); return }
     if(S.stage.boss && !S.phase2 && S.power>=g/2){ await bossEnrage() }
-    if(S.hero+1<S.mon){ S.hero++; sStep(); $('heroBod').animate([{transform:'translateY(0)'},{transform:'translateY(-18%)'},{transform:'translateY(0)'}],{duration:380}); }
+    if(S.hero+1<S.mon){ S.hero++; sStep(); rigPlay($('heroBod'),'walk'); $('heroBod').animate([{transform:'translateY(0)'},{transform:'translateY(-18%)'},{transform:'translateY(0)'}],{duration:380}); }
     else if(S.mon<LANE){ S.mon++; }
     place();
     await wait(420);
@@ -2418,7 +2660,7 @@ function showWin(o){
 }
 async function win(){
   S.playing=false;
-  await monsterDefeat(); sFan();
+  await monsterDefeat(); sFan(); setTimeout(()=>{ rigPlay($('heroBod'),'victory'); if(S.mode==='team') rigPlay($('hero2Bod'),'victory') },500);
   const st=S.stage, R=REGIONS[st.r], stars=starsFor(S.right,S.wrong), m=curMon();
   const tierBefore=tierOf(rankScore()), firstClear=!save.prog[st.id], newMon=!save.dex[m.id];
   save.prog[st.id]=Math.max(save.prog[st.id]||0,stars);
@@ -2454,7 +2696,7 @@ async function stageFail(){
   S.playing=false; stopTimer();
   const st=S.stage, m=curMon();
   $('monBod').animate([{transform:'translateY(0)'},{transform:'translateY(-12%) scale(1.1)'},{transform:'translateY(0)'},{transform:'translateY(-12%) scale(1.1)'},{transform:'translateY(0)'}],{duration:900});
-  sfx(()=>[392,349.23,329.63,261.63].forEach((f,i)=>osc(f,.35,'triangle',.2,i*.22))); monSay('win');
+  sfx(()=>[392,349.23,329.63,261.63].forEach((f,i)=>osc(f,.35,'triangle',.2,i*.22))); monSay('win'); rigPlay($('heroBod'),'sad');
   commit({name:player.name||'訪客', mode:st.r===5?'達人（失敗）':'魔王（失敗）', level:stageLabel(st), right:S.right, wrong:S.wrong, best:S.best, stars:'', coins:S.earned, missed:missedText()}, S.sess);
   await wait(1000);
   showWin({title:st.r===5?`挑戰失敗！${m.name}太強了`:`差一點點！${m.name}這次贏了`, stat:`<span>${stageLabel(st)}</span><span>答對 ${S.right} 個音</span><span>愛心用完了</span>`});
@@ -2462,7 +2704,7 @@ async function stageFail(){
 }
 async function teamWin(t){
   S.playing=false;
-  await monsterDefeat(); sFan();
+  await monsterDefeat(); sFan(); setTimeout(()=>{ rigPlay($('heroBod'),'victory'); if(S.mode==='team') rigPlay($('hero2Bod'),'victory') },500);
   const A=S.team.A, B=S.team.B;
   commit({name:`${teamName('A')} vs ${teamName('B')}`, mode:`分組（${teamName(t)}勝）`, level:regionOf().name, right:A.right+B.right, wrong:A.wrong+B.wrong, best:Math.max(A.combo,B.combo), stars:'', coins:0, missed:missedText()}, S.sess);
   await wait(700);
@@ -3175,7 +3417,7 @@ async function raidOver(){
   S.playing=false; clearInterval(RAID.timer); stopTimer();
   const r=RAID.state;
   if(S.raidPending>0){ try{ await Cloud.post({action:'raidHit', name:player.name||'訪客', dmg:S.raidPending, id:S.raidId}) }catch(e){} S.raidPending=0 }
-  await monsterDefeat(); sFan();
+  await monsterDefeat(); sFan(); setTimeout(()=>{ rigPlay($('heroBod'),'victory'); if(S.mode==='team') rigPlay($('hero2Bod'),'victory') },500);
   let earn=0;
   if(r.status==='已打倒' && !save.raids.includes(r.id) && S.raidMine>0){ save.raids.push(r.id); earn=RW.raidBase+S.raidMine*RW.raidPer; addCoins(earn); award('raid') }
   commit({name:player.name||'訪客', mode:'世界魔王', level:r.name, right:S.right, wrong:S.wrong, best:S.best, stars:'', coins:S.earned, missed:missedText()}, S.sess);
@@ -3824,7 +4066,7 @@ function monSay(kind, chance=1){
   if(kind==='appear'||kind==='bossAppear'){ const R=REGIONS[S.region]; text=(MON_SOUND[R&&R.id]||'')+text }
   const sc=$('scene'); let b=$('monBubble');
   if(!b){ b=document.createElement('div'); b.id='monBubble'; b.className='mbubble'; sc.appendChild(b) }
-  b.textContent=text;
+  b.textContent=text; if(kind!=='lose') rigPlay($('monBod'),'talk');
   const m=centerOf($('monster')), W=sc.clientWidth;
   b.hidden=false; b.style.visibility='hidden'; b.style.left='0px';
   const bw=b.offsetWidth;
