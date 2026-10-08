@@ -1,25 +1,13 @@
 /**
- * 音符勇者 — Google 試算表存檔程式
+ * 音符勇者 — Google 試算表存檔程式（放在 GitHub，由 Apps Script 裡的「啟動程式」讀進來執行）
  * 用法：在試算表選「擴充功能 → Apps Script」，把這整段貼上後部署成「網頁應用程式」。
  * 第一次執行時會自動建立 Users、成績、錯題統計、排行榜 四個分頁。
  */
 
-// ====== 只有第一次手動貼上時才需要填（之後自動更新的版本這裡是空的，數值已存在「指令碼屬性」） ======
-const SETUP_SHEET_ID = '';      // 試算表網址中 /d/ 和 /edit 之間那串字
-const SETUP_TEACHER_PIN = '';   // 老師密碼（要和遊戲老師面板一樣）
-
-// 自動更新：從 GitHub 抓最新的 Code.gs，換掉自己並部署新版本
-const GITHUB_RAW = 'https://raw.githubusercontent.com/qwe0975169776-dotcom/-note-hero/main/Code.gs';
-
 // 試算表 ID 與老師密碼存在「專案設定 → 指令碼屬性」，不寫在程式碼裡（GitHub 是公開的）
 function props_() { return PropertiesService.getScriptProperties(); }
-function saveSetup_() {
-  const p = props_();
-  if (SETUP_SHEET_ID && p.getProperty('SHEET_ID') !== SETUP_SHEET_ID) p.setProperty('SHEET_ID', SETUP_SHEET_ID);
-  if (SETUP_TEACHER_PIN && !p.getProperty('TEACHER_PIN')) p.setProperty('TEACHER_PIN', SETUP_TEACHER_PIN);
-}
 function pin_() { return String(props_().getProperty('TEACHER_PIN') || '1234'); }
-function sheetId_() { return props_().getProperty('SHEET_ID') || SETUP_SHEET_ID; }
+function sheetId_() { return props_().getProperty('SHEET_ID') || ''; }
 
 function ss_() {
   const id = sheetId_();
@@ -28,12 +16,7 @@ function ss_() {
   return ss;
 }
 
-/** 第一次貼上後，在編輯器選這個函式按「執行」，同意授權 */
-function 一次設定() {
-  saveSetup_();
-  setup();
-  Logger.log('完成！試算表：' + ss_().getName() + '；腳本 ID：' + ScriptApp.getScriptId());
-}
+
 
 const NOTE_KEYS  = ['do', 're', 'mi', 'fa', 'sol', 'la', 'si', 'hdo'];
 const NOTE_NAMES = { do: 'ㄉㄡ', re: 'ㄖㄨㄟ', mi: 'ㄇㄧ', fa: 'ㄈㄚ', sol: 'ㄙㄛ', la: 'ㄌㄚ', si: 'ㄒㄧ', hdo: '高音ㄉㄡ' };
@@ -85,7 +68,7 @@ function testSave() {
   rebuildBoard_();
 }
 
-const CODE_VERSION = 10;   // 檢查用：網址回傳的版本號
+const CODE_VERSION = 11;   // 檢查用：網址回傳的版本號
 
 // ---------- 網頁應用程式入口 ----------
 function out_(o) {
@@ -95,7 +78,6 @@ function out_(o) {
 function doGet(e) {
   const p = (e && e.parameter) || {};
   try {
-    saveSetup_();
     if (p.action === 'ping') {
       // 真的打開試算表檢查一次，設定有問題時「測試連線」就會顯示錯誤
       usersSheet_(); scoresSheet_(); notesSheet_(); boardSheet_(); feedSheet_(); tuneSheet_(); logSheet_(); reportSheet_();
@@ -122,7 +104,6 @@ function doPost(e) {
   const lock = LockService.getScriptLock();
   lock.waitLock(20000);
   try {
-    saveSetup_();
     const d = JSON.parse(e.postData.contents);
     if (d.action === 'save') {
       const res = saveUser_(d.name, d.save) || {};
@@ -169,7 +150,10 @@ function doPost(e) {
     }
     if (d.action === 'selfUpdate') {
       if (String(d.pin) !== pin_()) return out_({ ok: false, error: '老師密碼不對' });
-      return out_(Object.assign({ ok: true }, selfUpdate_(d.deploymentId)));
+      if (typeof LOADER === 'undefined') return out_({ ok: false, error: '伺服器還不是「啟動程式」版本，請先貼上啟動程式並部署一次' });
+      const app = LOADER.reload();
+      const nv = app.CODE_VERSION;
+      return out_({ ok: true, updated: nv !== CODE_VERSION, version: nv, msg: nv !== CODE_VERSION ? '已更新到第 ' + nv + ' 版' : '已經是最新版（第 ' + nv + ' 版）' });
     }
     if (d.action === 'resetCoins') {
       if (String(d.pin) !== pin_()) return out_({ ok: false, error: '老師密碼不對' });
@@ -502,40 +486,4 @@ function saveReport_(name, p) {
   let r = findRow_(s, name);
   if (r < 0) { s.appendRow([name]); r = s.getLastRow(); }
   s.getRange(r, 1, 1, 11).setValues([[name, p.total || 0, p.acc || '', p.total7 || 0, p.acc7 || '', p.trend || '', p.weak || '', p.confuse || '', p.suggest || '', p.practice || 0, new Date()]]);
-}
-
-// ---------- 自動更新（需要：Apps Script API 開關打開、appsscript.json 有 script.projects 和 script.deployments 權限） ----------
-function selfUpdate_(deploymentId) {
-  const res = UrlFetchApp.fetch(GITHUB_RAW + '?t=' + Date.now(), { muteHttpExceptions: true });
-  if (res.getResponseCode() !== 200) throw new Error('抓不到 GitHub 上的 Code.gs（' + res.getResponseCode() + '）');
-  const src = res.getContentText();
-  const m = src.match(/const CODE_VERSION = (\d+);/);
-  const newVer = m ? Number(m[1]) : 0;
-  if (!newVer || src.indexOf('function doPost') < 0) throw new Error('GitHub 上的 Code.gs 看起來不完整，沒有更新');
-  if (newVer <= CODE_VERSION) return { updated: false, version: CODE_VERSION, msg: '已經是最新版（第 ' + CODE_VERSION + ' 版）' };
-  const id = ScriptApp.getScriptId();
-  const api = 'https://script.googleapis.com/v1/projects/' + id;
-  const call = (method, path, body) => {
-    const r = UrlFetchApp.fetch(api + path, { method, contentType: 'application/json', headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() }, payload: body ? JSON.stringify(body) : undefined, muteHttpExceptions: true });
-    const t = r.getContentText();
-    if (r.getResponseCode() >= 300) {
-      if (/has not been used|SERVICE_DISABLED|User has not enabled the Apps Script API/i.test(t)) throw new Error('Apps Script API 還沒打開：到 script.google.com/home/usersettings 打開');
-      if (/insufficient|PERMISSION_DENIED|scope/i.test(t)) throw new Error('權限不夠：appsscript.json 要加上 script.projects 和 script.deployments，並重新執行「一次設定」授權');
-      throw new Error('更新失敗（' + r.getResponseCode() + '）：' + t.slice(0, 200));
-    }
-    return t ? JSON.parse(t) : {};
-  };
-  const content = call('get', '/content');
-  const files = content.files || [];
-  let idx = files.findIndex(f => f.type === 'SERVER_JS' && /const CODE_VERSION = \d+;/.test(f.source || ''));
-  if (idx < 0) idx = files.findIndex(f => f.type === 'SERVER_JS');
-  if (idx < 0) throw new Error('找不到要替換的程式檔');
-  files[idx] = { name: files[idx].name, type: 'SERVER_JS', source: src };
-  call('put', '/content', { files: files.map(f => ({ name: f.name, type: f.type, source: f.source })) });
-  const ver = call('post', '/versions', { description: '自動更新到第 ' + newVer + ' 版' });
-  if (deploymentId) {
-    call('put', '/deployments/' + deploymentId, { deploymentConfig: { scriptId: id, versionNumber: ver.versionNumber, manifestFileName: 'appsscript', description: '音符勇者 第 ' + newVer + ' 版' } });
-  }
-  log_('伺服器', '自動更新：第 ' + CODE_VERSION + ' 版 → 第 ' + newVer + ' 版');
-  return { updated: true, from: CODE_VERSION, version: newVer, msg: '已更新到第 ' + newVer + ' 版' };
 }
