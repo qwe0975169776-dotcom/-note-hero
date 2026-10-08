@@ -1024,9 +1024,10 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 const $ = id => document.getElementById(id);
 
 // 版本號：每次更新加 1，畫面上會顯示，方便確認上傳的是最新版
-const VERSION = 19, VERSION_DATE = '2026-10-08';
+const VERSION = 20, VERSION_DATE = '2026-10-08';
 // 更新日誌：每次更新在最上面加一筆（顯示在老師面板）
 const CHANGELOG = [
+  {v:20, date:'2026-10-08', add:['商店「擊打特效」的卡片圖示全部重畫：每種武器有自己的形狀（劍是刀光、鎚子是震波、長笛是音符流、鼓是聲波圈、法杖是魔法陣…），再配上該特效的元素（火焰、冰晶、櫻花、閃電、流星…），39 張卡片都不一樣'], fix:[]},
   {v:19, date:'2026-10-08', add:['擊打特效大升級：12 種特效各有招牌動畫（火焰竄起、冰刺碎裂、音符旋轉、愛心雨、泡泡包住再爆開、櫻花漩渦、彩色紙花、閃電環繞、彩虹衝擊波、流星砸出煙塵…）','打中時有像素爆炸火花和打擊停頓的手感','連擊加碼：3 連擊以上出現 COMBO 字樣、5 連擊以上有集中線，會心一擊畫面會震一下','商店的特效預覽和武器預覽也看得到新特效'], fix:[]},
   {v:18, date:'2026-10-08', add:['角色換成像素風：26 套造型、武器和 18 隻怪獸都變成點陣圖，動作改成像素遊戲那樣一格一格播放（走路、攻擊、受傷、勝利、眨眼都有）'], fix:[]},
   {v:17, date:'2026-10-08', add:['商店「武器」可以點預覽：勇者會用這把武器打旁邊的小史萊姆，看得到攻擊動作和擊打特效（特效用目前選的那一款）'], fix:[]},
@@ -3249,6 +3250,37 @@ function openShop(from){
   backTo=from; ctx(); bgmStart(); pendingBuy=null; show('ovShop'); buildShop();
 }
 function setTab(t){ shopTab=t; pendingBuy=null; ['Skin','Wpn','Fx','Item'].forEach(x=>$('tab'+x).setAttribute('aria-selected',t===x.toLowerCase())); buildShop() }
+// 商店擊打特效卡片的圖示：武器的招牌形狀＋特效主題的元素
+function fxIcon(fam, th){
+  const f=th.slash[0], s=th.slash[1]==='#2b3550'?'#ffffff':th.slash[1], L='stroke-linejoin="round" stroke-linecap="round"';
+  const P=(shape,c,x,y,sz,rot=0)=>`<g transform="translate(${x} ${y}) rotate(${rot}) scale(${sz/20}) translate(-10 -10)">${partSVG(shape,c)}</g>`;
+  let m='';
+  switch(fam){
+    case 'sword':  m=`<path d="M14 82 Q36 16 88 20 Q46 30 14 82Z" fill="${f}" stroke="${s}" stroke-width="4" ${L}/><path d="M26 70 Q46 30 80 24" fill="none" stroke="#fff" stroke-width="2.5" opacity=".7"/>`; break;
+    case 'hammer': m=`<path d="M8 78 H92" stroke="${s}" stroke-width="4" ${L}/><path d="M18 78 A32 22 0 0 1 82 78" fill="none" stroke="${s}" stroke-width="7" ${L}/><path d="M30 78 A20 13 0 0 1 70 78" fill="none" stroke="${f}" stroke-width="5" ${L}/><path d="M50 78 L44 90 M50 78 L58 92 M50 78 L50 94" stroke="${s}" stroke-width="3" ${L}/><rect x="40" y="30" width="20" height="14" rx="3" fill="${f}" stroke="${s}" stroke-width="3"/><path d="M50 44 V62" stroke="${s}" stroke-width="4"/>`; break;
+    case 'spear':  m=`<path d="M10 90 L76 24 L90 10 L84 30Z" fill="${f}" stroke="${s}" stroke-width="3.5" ${L}/><path d="M20 64 L46 38 M34 78 L58 54 M10 54 L28 36" stroke="${s}" stroke-width="2.5" opacity=".75" ${L}/>`; break;
+    case 'candy':  m=`<path d="M50 50 m-4 0 a4 4 0 1 1 8 0 a10 10 0 1 1 -18 0 a16 16 0 1 1 30 0 a22 22 0 1 1 -42 0" fill="none" stroke="${s}" stroke-width="8" ${L}/><path d="M50 50 m-4 0 a4 4 0 1 1 8 0 a10 10 0 1 1 -18 0 a16 16 0 1 1 30 0 a22 22 0 1 1 -42 0" fill="none" stroke="${f}" stroke-width="4" ${L}/>`; break;
+    case 'wand':   m=`<circle cx="50" cy="52" r="32" fill="none" stroke="${s}" stroke-width="3.5"/><circle cx="50" cy="52" r="24" fill="none" stroke="${f}" stroke-width="2.5" stroke-dasharray="4 4"/><path d="M50 30 L55 45 L71 45 L58 55 L63 71 L50 61 L37 71 L42 55 L29 45 L45 45Z" fill="${f}" stroke="${s}" stroke-width="2.5" ${L}/>${[0,60,120,180,240,300].map(a=>`<circle cx="${50+32*Math.cos(a*Math.PI/180)}" cy="${52+32*Math.sin(a*Math.PI/180)}" r="3" fill="${s}"/>`).join('')}`; break;
+    case 'boomerang': m=`<path d="M14 74 Q24 22 58 26 Q88 32 76 60 Q64 84 40 70" fill="none" stroke="${s}" stroke-width="8" ${L}/><path d="M14 74 Q24 22 58 26 Q88 32 76 60 Q64 84 40 70" fill="none" stroke="${f}" stroke-width="3.5" stroke-dasharray="7 5" ${L}/><path d="M34 62 L42 72 L30 74Z" fill="${s}"/>`; break;
+    case 'yoyo':   m=`<path d="M14 86 Q24 50 40 64 Q52 76 46 52 Q42 34 60 40" fill="none" stroke="${s}" stroke-width="2.5" ${L}/><circle cx="66" cy="38" r="17" fill="${f}" stroke="${s}" stroke-width="4"/><circle cx="66" cy="38" r="6" fill="#fff" stroke="${s}" stroke-width="2"/><path d="M84 24 A24 24 0 0 1 86 52 M90 18 A32 32 0 0 1 92 58" fill="none" stroke="${s}" stroke-width="2.5" opacity=".7" ${L}/>`; break;
+    case 'flute':  m=[0,1,2].map(i=>`<path d="M6 ${40+i*10} Q28 ${28+i*10} 50 ${40+i*10} T94 ${40+i*10}" fill="none" stroke="${s}" stroke-width="2" opacity=".75"/>`).join(''); break;
+    case 'drum':   m=`<ellipse cx="18" cy="50" rx="8" ry="16" fill="${f}" stroke="${s}" stroke-width="3"/>`+[22,36,50].map((r,i)=>`<path d="M${18+r*.5} ${50-r} A${r} ${r} 0 0 1 ${18+r*.5} ${50+r}" fill="none" stroke="${i%2?f:s}" stroke-width="6" ${L}/>`).join(''); break;
+    case 'blaster':m=`<circle cx="14" cy="50" r="12" fill="#fff" stroke="${s}" stroke-width="3"/><rect x="14" y="40" width="80" height="20" rx="10" fill="${f}" stroke="${s}" stroke-width="3.5"/><path d="M20 50 H90" stroke="#fff" stroke-width="4" ${L}/><path d="M30 34 H70 M36 68 H80" stroke="${s}" stroke-width="2" opacity=".7" ${L}/>`; break;
+    case 'bubble': m=[[38,54,22],[70,34,13],[72,70,10],[20,24,8]].map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${f}" fill-opacity=".35" stroke="${s}" stroke-width="3"/><path d="M${x-r*.5} ${y-r*.2} Q${x-r*.4} ${y-r*.6} ${x} ${y-r*.65}" fill="none" stroke="#fff" stroke-width="2.5" ${L}/>`).join(''); break;
+    case 'rainbow':m=RB.map((c,i)=>`<path d="M${10+i*5} 80 A${40-i*5} ${40-i*5} 0 0 1 ${90-i*5} 80" fill="none" stroke="${c}" stroke-width="5"/>`).join(''); break;
+    case 'dragon': m=`<path d="M20 50 L90 22 Q98 50 90 78Z" fill="${f}" stroke="${s}" stroke-width="3.5" ${L}/><path d="M30 50 L80 34 Q84 50 80 66Z" fill="#fff" opacity=".55"/><circle cx="16" cy="50" r="10" fill="#9be07b" stroke="#2b3550" stroke-width="2.5"/><circle cx="18" cy="47" r="2" fill="#2b3550"/>`; break;
+    default:       m=`<path d="M14 82 Q36 16 88 20 Q46 30 14 82Z" fill="${f}" stroke="${s}" stroke-width="4" ${L}/>`;
+  }
+  // 主題元素
+  const c=th.cols, sh=th.parts.filter(p=>p!=='dot'), shape=sh[0]||'star', shape2=sh[1]||shape;
+  const spots = fam==='flute' ? [[18,36,14],[38,48,16],[60,38,14],[82,50,16]] : fam==='drum' ? [[78,24,14],[86,74,13],[60,86,11]] : fam==='rainbow' ? [[50,40,18],[22,30,12],[80,28,12]] : [[78,74,16],[24,24,13],[84,44,11],[38,86,11]];
+  let deco = spots.map(([x,y,sz],i)=>[x,y,sz*1.5]).map(([x,y,sz],i)=>P(fam==='flute'&&th.id!=='note'&&i%2===0?'note':(i%2?shape2:shape), c[i%c.length], x, y, sz, i*25)).join('');
+  if(th.id==='basic') deco = spots.map(([x,y,sz],i)=>P('star','#ffffff',x,y,sz*1.3,i*20)).join('');
+  if(th.extra==='bolt') deco += `<polyline points="62,6 52,30 64,30 50,58" fill="none" stroke="#fff35c" stroke-width="6" ${L}/><polyline points="62,6 52,30 64,30 50,58" fill="none" stroke="#fff" stroke-width="2" ${L}/>`;
+  if(th.extra==='meteor') deco += [[70,18],[88,36]].map(([x,y])=>`<path d="M${x} ${y} L${x-16} ${y-14}" stroke="#ffd23f" stroke-width="5" opacity=".7" ${L}/><circle cx="${x}" cy="${y}" r="5" fill="#ff7a3d" stroke="#2b3550" stroke-width="1.5"/>`).join('');
+  if(th.extra==='rainbow' && fam!=='rainbow') deco += RB.slice(0,5).map((col,i)=>`<path d="M${60+i*3} 92 A${20-i*3} ${20-i*3} 0 0 1 ${100-i*3} 92" fill="none" stroke="${col}" stroke-width="3"/>`).join('');
+  return `<svg class="mini" viewBox="0 0 100 100">${RB_GRAD}${m}${deco}</svg>`;
+}
 function previewFx(fx,pv){
   const r=pv.getBoundingClientRect(), x=r.width/2, y=r.height*.45;
   sFx(fx.snd,false); fxExtra(pv,x,y,fx);
@@ -3337,7 +3369,7 @@ function buildShop(){
         else if(own) btn=`<button class="own" data-act="wear">使用</button>`;
         else if(pendingBuy===it.id) btn=`<button class="confirm" data-act="buy">確定兌換？</button>`;
         else btn=`<button data-act="ask" ${save.coins<it.price?'disabled':''}><span class="coin"></span>${it.price}</button>`;
-        dv.innerHTML=`<div class="pv fxpv" role="button" tabindex="0" aria-label="試看 ${it.name}">${slashSVG(th,false,'mini')}<span class="try">點我看看</span></div><div class="nm">${it.name}</div><div class="tag">${it.tag}</div>${btn}`;
+        dv.innerHTML=`<div class="pv fxpv" role="button" tabindex="0" aria-label="試看 ${it.name}">${fxIcon(it.fam, th)}<span class="try">點我看看</span></div><div class="nm">${it.name}</div><div class="tag">${it.tag}</div>${btn}`;
         const p=dv.querySelector('.fxpv'); const go=()=>{ ctx(); previewFx(th,p) }; p.addEventListener('click',go); p.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go() } });
         const bt=dv.querySelector('button[data-act]');
         if(bt) bt.addEventListener('click',()=>{
