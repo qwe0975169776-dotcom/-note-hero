@@ -699,17 +699,38 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 .vlv .lv .n{font-size:.72rem}
 @media (max-width:420px){ .vlv .lv .t{font-size:.9rem} .vlv .lv .n{font-size:.66rem} }
 #keys.vmode{grid-template-columns:repeat(var(--vc,4),minmax(0,1fr))!important}
-.key.vk .hi{font-size:.7rem;font-weight:900;line-height:1;margin-bottom:2px;white-space:nowrap}
-.key.vk .s{font-size:clamp(1.05rem,2.8vw,1.7rem)}
-.key.vk.sh{background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.2) 0 6px,transparent 6px 12px)}
 #keys.vmode .key{min-height:60px;padding:4px 0}
 #keys.vmode.v2 .key{min-height:52px}
-#keys.vmode.v2 .key .l{display:none}
-#keys.vmode.vrows{gap:5px}
-#keys.vmode.vrows .key{min-height:46px;padding:2px 0;border-radius:13px;box-shadow:0 3px 0 var(--line)}
-#keys.vmode.vrows .key .l{display:none}
-#keys.vmode.vrows .key .s{font-size:clamp(.95rem,2.4vw,1.4rem)}
-@media (orientation:landscape) and (max-height:560px){ #keys.vmode.vrows .key{min-height:34px} #keys.vmode.vrows .key .hi{font-size:.6rem} }
+.hbtn.xtra{background:#e3f0ff}
+.k-xtra .vstr{background:#2b3550;font-family:"Noto Music",serif;font-size:1.6rem;line-height:1}
+.k-xtra.u-grand .vstr{font-size:1.2rem}
+/* v22 小提琴指板 */
+.fboard{--rh:clamp(34px,6.2vh,50px);background:linear-gradient(90deg,#3a2a20,#2a1d17);border:3px solid var(--line);border-radius:16px;padding:4px 8px 6px;box-shadow:0 4px 0 var(--line);color:#f3e6cf;user-select:none;-webkit-user-select:none}
+.fboard.one{--rh:clamp(46px,9vh,64px)}
+.fbhead,.fbrow{display:grid;grid-template-columns:22px repeat(8,minmax(0,1fr));align-items:center}
+.fbhead span{text-align:center;font-size:.75rem;font-weight:900;opacity:.85;white-space:nowrap}
+.fbhead .w2{grid-column:span 2;border-bottom:2px solid rgba(243,230,207,.35);margin:0 6px}
+.fbbody{position:relative}
+.fbbody .nut{position:absolute;top:2px;bottom:2px;left:calc(22px + (100% - 22px)/8);width:5px;margin-left:-2px;background:#efe3c8;border-radius:3px;opacity:.8}
+.fbrow{height:var(--rh);position:relative}
+.fbrow::before{content:'';position:absolute;left:22px;right:0;top:50%;height:3px;margin-top:-1.5px;background:linear-gradient(#e9dcc0,#a8977a);border-radius:2px}
+.fbrow b{font-family:var(--f-num);font-weight:800;font-size:1rem;color:var(--sc);text-align:center;position:relative;text-shadow:0 1px 0 #000}
+.fbcell{display:flex;justify-content:center;align-items:center;position:relative;height:100%}
+.fbdot{width:min(calc(var(--rh) - 4px),94%);aspect-ratio:1;border-radius:50%;border:2.5px solid #1d1410;background:var(--sc);color:#fff;font-weight:900;font-size:.72rem;padding:0;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 0 #120c09;transition:transform .08s}
+.fbdot.sh{background:#fff;color:#2b3550}
+.fbdot:active{transform:translateY(2px);box-shadow:0 1px 0 #120c09}
+.fbdot .nm{opacity:0;white-space:nowrap;letter-spacing:-.02em;text-shadow:0 1px 1px rgba(0,0,0,.4)}
+.fbdot.sh .nm{text-shadow:none}
+.fboard.fbnames .fbdot .nm,.fbdot.show .nm,.fbdot.ok .nm,.fbdot.wrong .nm{opacity:1}
+.fbdot.show{outline:4px solid #ffd23f;outline-offset:1px;animation:fbpulse .7s ease-in-out infinite alternate}
+.fbdot.wrong{background:#8a93a6;color:#fff;transform:scale(.9)}
+.fbdot.ok{outline:4px solid #6ee07a;outline-offset:1px}
+@keyframes fbpulse{to{transform:scale(1.12)}}
+@media (orientation:landscape) and (max-height:560px){ .fboard{grid-area:keys;--rh:clamp(26px,7.4vh,40px);padding:2px 8px 4px} .fboard.one{--rh:46px} .fbhead span{font-size:.65rem} }
+@media (orientation:landscape) and (min-width:700px) and (min-height:561px){
+  body.fbon .fboard{--rh:clamp(30px,4.6vh,44px)}
+  body.fbon .scene{height:clamp(110px,19vh,170px);min-height:0}
+}
 </style>
 </head>
 <body>
@@ -772,6 +793,7 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
   </div>
 
   <div class="keys" id="keys"></div>
+  <div class="fboard" id="fboard" hidden></div>
   <div class="teamkeys">
     <div class="tk tA" id="tkA"><h3><span id="tkAname">紅隊</span></h3><div class="kg" id="keysA"></div></div>
     <div class="tk tB" id="tkB"><h3><span id="tkBname">藍隊</span></h3><div class="kg" id="keysB"></div></div>
@@ -811,6 +833,7 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
       <button class="hbtn" id="hDex"><b>收藏</b><small>圖鑑・徽章</small></button>
       <button class="hbtn comp" id="hCompose"><b>作曲小教室</b><small>自己編一段旋律</small></button>
       <button class="hbtn vio" id="hViolin"><b>小提琴</b><small>G・D・A・E 四條弦</small></button>
+      <button class="hbtn xtra" id="hXtra"><b>進階挑戰</b><small>低音譜號・高音區</small></button>
     </div>
     <div class="row"><button class="big alt" id="btnSwitch">換玩家</button><button class="big alt" id="btnTeacher3">老師面板</button></div>
   </div>
@@ -852,8 +875,17 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 <div class="overlay" id="ovViolin" hidden>
   <div class="panel wide">
     <div class="shophead"><h2>小提琴讀譜</h2><button class="big alt" id="btnVioBack">返回</button></div>
-    <p>每條弦一個單元，按鈕上寫著第幾指。難度自己選：★ 入門 → ★★ 進階 → ★★★ 挑戰（越難音越多、時間越短）。</p>
+    <p>看五線譜上的音，在小提琴指板上點出要按的位置。難度自己選：★ 入門（有寫音名）→ ★★ 進階（不寫音名）→ ★★★ 挑戰（加上白色升記號位置）。</p>
     <div class="vlist" id="vioList"></div>
+  </div>
+</div>
+
+<!-- 進階挑戰 -->
+<div class="overlay" id="ovXtra" hidden>
+  <div class="panel wide">
+    <div class="shophead"><h2>進階挑戰</h2><button class="big alt" id="btnXtraBack">返回</button></div>
+    <p>認得高音譜的八個音了嗎？來挑戰更高的音和低音譜號！先看清楚譜號再回答。</p>
+    <div class="vlist" id="xtraList"></div>
   </div>
 </div>
 
@@ -1062,9 +1094,10 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 const $ = id => document.getElementById(id);
 
 // 版本號：每次更新加 1，畫面上會顯示，方便確認上傳的是最新版
-const VERSION = 21, VERSION_DATE = '2026-10-21';
+const VERSION = 22, VERSION_DATE = '2026-10-21';
 // 更新日誌：每次更新在最上面加一筆（顯示在老師面板）
 const CHANGELOG = [
+  {v:22, date:'2026-10-21', add:['小提琴改成「點指板」作答：照老師的指板圖，四條弦的空弦、低1、1、低2、高2、3、低4、4 指都有位置（白色圓點是升記號）；同一個音有兩個位置時點哪一個都對','小提琴三種難度：★ 入門＝彩色的音、0～3 指、圓點上寫音名；★★ 進階＝彩色的音、0～4 指、不寫音名；★★★ 挑戰＝加上白色升記號位置','小提琴音改成 C 大調指法（D、A、E 弦用低 2 指，例如 A 弦 2 指＝ㄉㄡ C5）；答錯會亮出正確的指板位置並說出是哪條弦第幾指','主畫面新增「進階挑戰」：高音譜高音區（C5～C6）、低音譜號、高低音譜混合，各有三種難度'], fix:[]},
   {v:21, date:'2026-10-21', add:['主畫面新增「小提琴」：G 弦、D 弦、A 弦、E 弦各一個單元，再加一個「四弦綜合」','每個單元有三種難度可以選：★ 入門（空弦＋1、2 指）、★★ 進階（0～3 指）、★★★ 挑戰（0～4 指、時間更短、會出兩個音）；四弦綜合從四條空弦開始','按鈕上寫著「哪條弦・第幾指」，升記號的音有斜線花紋；四弦綜合的按鈕排得像指板，一排一條弦','五線譜可以畫下加二線（G 弦低音）、上加一線（E 弦高音）和升記號 ♯','打開「提示」時會標出這條弦的空弦位置；答錯時會說出音在第幾線或第幾間、是哪條弦第幾指'], fix:[]},
   {v:20, date:'2026-10-08', add:['商店「擊打特效」的卡片圖示全部重畫：每種武器有自己的形狀（劍是刀光、鎚子是震波、長笛是音符流、鼓是聲波圈、法杖是魔法陣…），再配上該特效的元素（火焰、冰晶、櫻花、閃電、流星…），39 張卡片都不一樣'], fix:[]},
   {v:19, date:'2026-10-08', add:['擊打特效大升級：12 種特效各有招牌動畫（火焰竄起、冰刺碎裂、音符旋轉、愛心雨、泡泡包住再爆開、櫻花漩渦、彩色紙花、閃電環繞、彩虹衝擊波、流星砸出煙塵…）','打中時有像素爆炸火花和打擊停頓的手感','連擊加碼：3 連擊以上出現 COMBO 字樣、5 連擊以上有集中線，會心一擊畫面會震一下','商店的特效預覽和武器預覽也看得到新特效'], fix:[]},
@@ -1106,23 +1139,26 @@ const NOTES = {
 };
 const KEYS = ['do','re','mi','fa','sol','la','si','hdo'];
 const STEP2KEY = {'-2':'do','-1':'re','0':'mi','1':'fa','2':'sol','3':'la','4':'si','5':'hdo'};
-// ---- 小提琴第一把位：每條弦 0～4 指（同一個音在不同弦上是不同的按鈕） ----
-const VSTR = {
-  G:{name:'G',zy:'ㄙㄛ', base:'sol', notes:[['G',-5,196.00],['A',-4,220.00],['B',-3,246.94],['C',-2,261.63],['D',-1,293.66]]},
-  D:{name:'D',zy:'ㄖㄨㄟ',base:'re', notes:[['D',-1,293.66],['E',0,329.63],['F#',1,369.99],['G',2,392.00],['A',3,440.00]]},
-  A:{name:'A',zy:'ㄌㄚ', base:'la', notes:[['A',3,440.00],['B',4,493.88],['C#',5,554.37],['D',6,587.33],['E',7,659.25]]},
-  E:{name:'E',zy:'ㄇㄧ', base:'mi', notes:[['E',7,659.25],['F#',8,739.99],['G#',9,830.61],['A',10,880.00],['B',11,987.77]]},
-};
+// ---- 音高音符（小提琴指板、進階挑戰用）：key = 'p'+MIDI 或 'b'+MIDI（低音譜號） ----
+const PC_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
 const LETTER_ZY = {C:'ㄉㄡ',D:'ㄖㄨㄟ',E:'ㄇㄧ',F:'ㄈㄚ',G:'ㄙㄛ',A:'ㄌㄚ',B:'ㄒㄧ'};
 const LETTER_KEY = {C:'do',D:'re',E:'mi',F:'fa',G:'sol',A:'la',B:'si'};
-const VKEYS = [];
-Object.entries(VSTR).forEach(([s,d])=>d.notes.forEach(([L,step,f],fi)=>{
-  const k='v'+s+fi, sharp=L.length>1, base=L[0];
-  NOTES[k]={zy:(sharp?'升':'')+LETTER_ZY[base], letter:base+(sharp?'♯':''), step, f, say:(sharp?'升':'')+LETTER_ZY[base], vs:s, vf:fi, sharp, color:LETTER_KEY[base]};
-  VKEYS.push(k);
-}));
-const fingerTxt = f => f ? f+'指' : '空弦';
-const zyName = k => { const n=NOTES[k]; if(n.vs) return `${n.zy}（${n.vs}弦${fingerTxt(n.vf)}）`; return (n.high?'高音':'') + n.zy };
+const LETTER_SOLF = {C:'Do',D:'Re',E:'Mi',F:'Fa',G:'Sol',A:'La',B:'Si'};
+// clef 'g'：step 0 = E4（第一線）；clef 'f'：step 0 = G2（低音譜第一線）
+function pitchNote(m, clef){
+  const nm=PC_NAMES[m%12], L=nm[0], sharp=nm.length>1, oct=Math.floor(m/12)-1;
+  const dia=oct*7+'CDEFGAB'.indexOf(L), step=dia-(clef==='f'?(2*7+4):(4*7+2));
+  const k=(clef==='f'?'b':'p')+m;
+  if(!NOTES[k]) NOTES[k]={zy:LETTER_ZY[L]+(sharp?'♯':''), letter:L+(sharp?'♯':''), oct, step, f:440*Math.pow(2,(m-69)/12), say:(sharp?'升':'')+LETTER_ZY[L],
+    sharp, solf:LETTER_SOLF[L]+(sharp?'♯':''), pc:sharp?null:LETTER_KEY[L], color:LETTER_KEY[L], clef, midi:m, pitch:true};
+  return k;
+}
+// 小提琴第一把位：每條弦 8 個位置（空弦、低1、1、低2、高2、3、低4、4），跟老師的指板圖一樣
+const VSTR = {G:55, D:62, A:69, E:76};
+const VSLOT = [{f:0,t:'空弦'},{f:1,t:'低1指'},{f:1,t:'1指'},{f:2,t:'低2指'},{f:2,t:'高2指'},{f:3,t:'3指'},{f:4,t:'低4指'},{f:4,t:'4指'}];
+const VPOS = [];
+Object.entries(VSTR).forEach(([s,open])=>VSLOT.forEach((sl,i)=>{ const k=pitchNote(open+i,'g'); VPOS.push({s, i, f:sl.f, t:sl.t, k, nat:!NOTES[k].sharp}) }));
+const zyName = k => { const n=NOTES[k]; if(n.pitch) return `${n.zy}（${n.letter}${n.oct}）`; return (n.high?'高音':'') + n.zy };
 
 // 20 套造型
 const SKINS = [
@@ -2308,8 +2344,10 @@ function drawStaff(seq, states=[], active=-1){
   for(let i=0;i<5;i++) el('line',{x1:14,x2:346,y1:yOf(i*2),y2:yOf(i*2),stroke:'#2b3550','stroke-width':2.2});
   el('line',{x1:14,x2:14,y1:yOf(8),y2:yOf(0),stroke:'#2b3550','stroke-width':2.2});
   el('line',{x1:346,x2:346,y1:yOf(8),y2:yOf(0),stroke:'#2b3550','stroke-width':2.2});
-  el('text',{x:22,y:yOf(2),'font-size':GAP*4,'font-family':'"Noto Music","Bravura","Segoe UI Symbol",serif',fill:'#2b3550'}).textContent='\u{1D11E}';
+  if(S.clef==='f' && S.playing) el('text',{x:20,y:yOf(2)+2,'font-size':GAP*4,'font-family':'"Noto Music","Bravura","Segoe UI Symbol",serif',fill:'#2b3550'}).textContent='\u{1D122}';
+  else el('text',{x:22,y:yOf(2),'font-size':GAP*4,'font-family':'"Noto Music","Bravura","Segoe UI Symbol",serif',fill:'#2b3550'}).textContent='\u{1D11E}';
   if((prefs.hint || S.tempHint) && !noHintNow() && S.sub==='violin') vHintDraw();
+  else if((prefs.hint || S.tempHint) && !noHintNow() && S.sub==='xtra') xHintDraw();
   else if((prefs.hint || S.tempHint) && !noHintNow()){
     el('line',{x1:74,x2:100,y1:yOf(-2),y2:yOf(-2),stroke:'#e8473d','stroke-width':2.2,'stroke-dasharray':'4 3'});
     el('ellipse',{cx:87,cy:yOf(-2),rx:7.5,ry:5.4,fill:'none',stroke:'#e8473d','stroke-width':2,'stroke-dasharray':'3 2'});
@@ -2336,7 +2374,7 @@ function drawStaff(seq, states=[], active=-1){
     }
   });
 }
-const colorOf = k => getComputedStyle(document.documentElement).getPropertyValue('--c-'+k).trim();
+const colorOf = k => { const n=NOTES[k]; return getComputedStyle(document.documentElement).getPropertyValue('--c-'+(n&&n.pitch?n.color:k)).trim() };
 
 // ================= state =================
 const S = {mode:'solo', stage:null, region:0, power:0, combo:0, best:0, right:0, wrong:0, hero:0, mon:LANE,
@@ -2367,7 +2405,7 @@ function setKeys(){
   KEYS.forEach(k=>['key-','kA-','kB-'].forEach(p=>$(p+k).disabled=!ok.has(k)));
   S.keyList=regionOf().pool; fitKeys(S.keyList);
 }
-function clearKeyMarks(){ document.querySelectorAll('.key').forEach(b=>b.classList.remove('show','wrong')) }
+function clearKeyMarks(){ document.querySelectorAll('.key,.fbdot').forEach(b=>b.classList.remove('show','wrong','ok')) }
 function anyOverlay(){ return [...document.querySelectorAll('.overlay')].some(o=>!o.hidden) }
 document.addEventListener('keydown',e=>{
   if(anyOverlay() || e.target.tagName==='INPUT') return;
@@ -2805,6 +2843,7 @@ function makeSeq(){
   if(S.sub==='song'){ const p=S.song.parts[S.chunk].map(n=>n[0]); S.last=p[p.length-1]; return p }
   const lens = S.mode==='team' ? [1] : (S.phase2 ? S.stage.seq2 : S.stage.seq);
   const n = lens[Math.floor(Math.random()*lens.length)];
+  if(S.poolFn) S.pool=S.poolFn();
   const seq=[]; let last=S.last;
   for(let i=0;i<n;i++){ const k=pickOne(last); seq.push(k); last=k }
   S.last=last; return seq;
@@ -2861,16 +2900,16 @@ function spawnEmber(r, heat){
   e.animate([{transform:'translate(0,0)',opacity:1},{transform:`translate(${(Math.random()*2-1)*24}px,${-20-Math.random()*40*(.5+heat)}px)`,opacity:0}],{duration:600+Math.random()*500,easing:'ease-out'}).onfinish=()=>e.remove();
 }
 function say(t,kind){ const m=$('msg'); m.textContent=t; m.className='msg '+kind; m.hidden=false }
-const labelState = k => { const n=NOTES[k]; return {color:colorOf(k), label:n.vs?`${n.zy} ${n.vf?n.vf:'空'}`:zyName(k)} };
+const labelState = k => { const n=NOTES[k]; return {color:colorOf(k), label:n.pitch?(S.sub==='violin'?n.solf:n.zy):zyName(k)} };
 
 // ---------- 單人 ----------
 async function answer(k,btn){
   if(S.mode!=='solo' || S.busy || !S.seq.length || !S.playing) return;
   const cur=S.seq[S.pos], n=NOTES[cur];
-  if(k===cur){
+  if(k===cur || (k && NOTES[cur].pc===k)){
     recordNote(cur,false); save.right++;
     S.states[S.pos]=labelState(cur); S.pos++;
-    sNote(n.f);
+    sNote(n.f); if(S.sub==='violin' && btn) btn.classList.add('ok');
     if(S.pos<S.seq.length){
       drawStaff(S.seq, S.states, S.pos);
       say(`${zyName(cur)}！還有 ${S.seq.length-S.pos} 個`,'good');
@@ -2899,7 +2938,7 @@ async function answer(k,btn){
     persistLocal();
     await wait(250);
     if(!S.playing) return;
-    if(S.power>=g){ await (S.sub==='song'?songWin():S.sub==='violin'?violinWin():win()); return }
+    if(S.power>=g){ await (S.sub==='song'?songWin():(S.sub==='violin'||S.sub==='xtra')?unitWin():win()); return }
     if(S.stage.boss && !S.phase2 && S.power>=g/2){ await bossEnrage() }
     if(S.hero+1<S.mon){ S.hero++; sStep(); rigPlay($('heroBod'),'walk'); $('heroBod').animate([{transform:'translateY(0)'},{transform:'translateY(-18%)'},{transform:'translateY(0)'}],{duration:380}); }
     else if(S.mon<LANE){ S.mon++; }
@@ -2914,7 +2953,7 @@ async function answer(k,btn){
     drawStaff(S.seq, S.states, -1); teachDraw(cur);
     if(k) addConfuse(cur,k);
     if(btn) btn.classList.add('wrong');
-    $('key-'+cur).classList.add('show');
+    { const kb=$('key-'+(NOTES[cur].pc||cur)); if(kb) kb.classList.add('show'); if(S.sub==='violin') vMark(cur) }
     say(teachText(cur,k),'bad');
     if(S.shield){
       S.shield=false; $('hero').classList.remove('shielded'); renderItems();
@@ -3103,7 +3142,7 @@ function stageUnlocked(st){
 }
 function resetRound(ri, monId){
   ctx(); bgmStart(); setSong(REGIONS[ri].song);
-  Object.assign(S,{region:ri,power:0,combo:0,best:0,right:0,wrong:0,hero:0,mon:LANE,seq:[],pos:0,states:[],last:null,busy:false,earned:0,sess:{},phase2:false,monId,playing:true,lives:0,pool:null,timeBoost:1,tempHint:false,shield:false,petUsed:false,powerBoost:1,freezeUntil:0,ear:false});
+  Object.assign(S,{region:ri,power:0,combo:0,best:0,right:0,wrong:0,hero:0,mon:LANE,seq:[],pos:0,states:[],last:null,busy:false,earned:0,sess:{},phase2:false,monId,playing:true,lives:0,pool:null,poolFn:null,clef:'g',timeBoost:1,tempHint:false,shield:false,petUsed:false,powerBoost:1,freezeUntil:0,ear:false});
   $('hero').classList.remove('shielded');
   $('monBod').getAnimations().forEach(a=>a.cancel());
   renderMon(false); setScene(ri);
@@ -3129,13 +3168,13 @@ function startTeam(ri){
   ['A','B'].forEach(t=>{ $('t'+t+'name').textContent=teamName(t); $('tk'+t+'name').textContent=teamName(t) });
   renderHero(); setKeys(); place(); hud(); nextQ();
 }
-function again(){ if(S.mode==='team') startTeam(S.region); else if(S.sub==='song') startSong(S.song.id); else if(S.sub==='raid') startRaid(); else if(S.sub==='violin') startViolin(S.vu, S.vl); else startStage(S.stage.id) }
-function nextLevel(){ if(S.sub==='violin'){ startViolin(S.vu, Math.min(3,S.vl+1)); return } const nx=nextStageOf(S.stage); if(nx) startStage(nx.id) }
+function again(){ if(S.mode==='team') startTeam(S.region); else if(S.sub==='song') startSong(S.song.id); else if(S.sub==='raid') startRaid(); else if(S.sub==='violin') startViolin(S.vu, S.vl); else if(S.sub==='xtra') startXtra(S.vu, S.vl); else startStage(S.stage.id) }
+function nextLevel(){ if(S.sub==='violin'){ startViolin(S.vu, Math.min(3,S.vl+1)); return } if(S.sub==='xtra'){ startXtra(S.vu, Math.min(3,S.vl+1)); return } const nx=nextStageOf(S.stage); if(nx) startStage(nx.id) }
 function updateGodBtn(){ $('btnGodWin').hidden=!(save.god && S.playing && S.mode==='solo') }
 function stopPlay(){ if(S.mode==='solo' && S.playing && S.stage) commit(); if(S.sub==='raid' && S.playing && S.raidPending>0){ Cloud.post({action:'raidHit', name:player.name||'訪客', dmg:S.raidPending, id:S.raidId}).catch(()=>{}); S.raidPending=0 } S.playing=false; stopTimer(); clearInterval(RAID.timer); if(musBus&&ac) musBus.gain.setTargetAtTime(S.music?.55:0, ac.currentTime, .2) }
 
 // ================= 畫面切換 =================
-const OVS=['ovLogin','ovHome','ovMap','ovPractice','ovLesson','ovTeam','ovWin','ovShop','ovDex','ovRank','ovPin','ovTeacher','ovSongs','ovDaily','ovEditor','ovCompose','ovViolin'];
+const OVS=['ovLogin','ovHome','ovMap','ovPractice','ovLesson','ovTeam','ovWin','ovShop','ovDex','ovRank','ovPin','ovTeacher','ovSongs','ovDaily','ovEditor','ovCompose','ovViolin','ovXtra'];
 function closeAll(){ OVS.forEach(id=>$(id).hidden=true); $('more').hidden=true }
 function show(id){ cancelAnimationFrame(S.tId); closeAll(); $(id).hidden=false; $(id).scrollTop=0; setTimeout(flushDanmaku, 400) }
 function resumeIfPlaying(){ closeAll(); if(S.playing && !S.busy) startTimer() }
@@ -4030,7 +4069,7 @@ on('tabItem',()=>setTab('item')); on('tabPet',()=>setDexTab('pet'));
 on('raidStart',()=>teacherRaid('start')); on('raidStop',()=>teacherRaid('stop'));
 RAID.homeTimer=setInterval(()=>{ if(!$('ovHome').hidden) fetchRaid().then(raidBanner) }, 15000);
 on('btnAgain',again); on('btnNextLv',nextLevel); on('btnWinShop',()=>openShop('win'));
-on('btnWinMap',()=>{ if(S.mode==='team'||S.sub==='raid') home(); else if(S.sub==='song') openSongs(); else if(S.sub==='violin') openViolin(); else openMap() });
+on('btnWinMap',()=>{ if(S.mode==='team'||S.sub==='raid') home(); else if(S.sub==='song') openSongs(); else if(S.sub==='violin') openViolin(); else if(S.sub==='xtra') openXtra(); else openMap() });
 on('btnMap',openMap); on('btnHome',home); on('btnMapBack',home);
 on('hAdv',openMap); on('hPrac',openPractice); on('hTeam',teamSetup); on('hRank',openRank);
 on('hShop',()=>openShop('home')); on('hDex',()=>openDex('home'));
@@ -4487,13 +4526,13 @@ async function teachWrong(t, picked, idx){
 
 // ---------- 關卡裡答錯時的小教學 ----------
 function teachText(cur, k){
-  if(NOTES[cur].vs) return `${k?`你按了${zyName(k)}。`:'時間到！'}${vPos(NOTES[cur].step)}是 ${zyName(cur)}`;
+  if(NOTES[cur].pitch) return pitchTeachText(cur,k);
   const lm=landmarkOf(cur), up = lm!==cur ? `，${zyName(lm)}再往上一格` : '';
   return `${k?`你按了${zyName(k)}。`:'時間到！'}${NOTE_POS[cur]}是 ${zyName(cur)}${up}`;
 }
 function teachDraw(cur){
   if(S.seq.length!==1) return;
-  if(NOTES[cur].vs){ vTeachDraw(cur); return }
+  if(NOTES[cur].pitch){ vTeachDraw(cur); return }
   const svg=$('staff'), s=NOTES[cur].step, y=yOf(s), c=colorOf(cur), lm=landmarkOf(cur);
   const band = s%2===0 ? {y:y-4.5, h:9} : {y:y-GAP/2+2.5, h:GAP-5};
   const r=el('rect',{x:46,y:band.y,width:296,height:band.h,rx:4,fill:c,opacity:.22}); svg.insertBefore(r, svg.firstChild);
@@ -4769,8 +4808,10 @@ $('staff').addEventListener('pointerdown',()=>{ if(S.ear && !S.busy && S.playing
 // ---------- 6. 只顯示用得到的按鈕 ----------
 const cfgOn = k => !!(CONFIG[k] || (!Cloud.ready() && T[k]));
 function fitKeys(list){
-  if(S.sub==='violin' && S.mode==='solo'){ vFitKeys(list); return }
-  $('keys').classList.remove('vmode'); VKEYS.forEach(k=>{ const b=$('key-'+k); if(b) b.hidden=true });
+  if(S.sub==='violin' && S.mode==='solo'){ vShowBoard(true); return }
+  vShowBoard(false);
+  if(S.sub==='xtra' && S.mode==='solo'){ xFitKeys(list); return }
+  $('keys').classList.remove('vmode','v2'); $('key-hdo').hidden=false;
   const big=cfgOn('bigKeys') && !(S.mode==='solo' && S.stage && S.stage.noHint && S.sub==='stage');
   const ok=new Set(list);
   const n=big ? list.length : 8, narrow=window.innerWidth<=640 && window.innerHeight>window.innerWidth;
@@ -4782,48 +4823,8 @@ function fitKeys(list){
 }
 window.addEventListener('resize',()=>{ if(S.playing) fitKeys(S.keyList||KEYS) });
 
-// ================= 🎻 小提琴（G・D・A・E 分弦單元，三種難度） =================
-const VUNITS = [
-  {id:'G', name:'G 弦', ri:0, desc:'最粗的弦，聲音最低，音符住在五線譜下面'},
-  {id:'D', name:'D 弦', ri:1, desc:'第二條弦，2 指是升ㄈㄚ'},
-  {id:'A', name:'A 弦', ri:2, desc:'第三條弦，2 指是升ㄉㄡ'},
-  {id:'E', name:'E 弦', ri:3, desc:'最細的弦，聲音最高，2 指是升ㄙㄛ'},
-  {id:'mix', name:'四弦綜合', ri:4, desc:'四條弦混在一起，按鈕排得像指板（一排一條弦）'},
-];
-const VLEVELS = {
-  str:[null,
-    {name:'入門', fingers:[0,1,2],     time:9,   seq:[1],     goal:10, tip:'空弦＋1、2 指'},
-    {name:'進階', fingers:[0,1,2,3],   time:7,   seq:[1,1,2], goal:12, tip:'0～3 指，偶爾兩個音'},
-    {name:'挑戰', fingers:[0,1,2,3,4], time:5.5, seq:[1,2],   goal:14, tip:'0～4 指，常出兩個音'}],
-  mix:[null,
-    {name:'入門', fingers:[0],         time:8,   seq:[1],     goal:10, tip:'四條空弦'},
-    {name:'進階', fingers:[0,1,2],     time:7,   seq:[1],     goal:12, tip:'四條弦的 0～2 指'},
-    {name:'挑戰', fingers:[0,1,2,3],   time:6,   seq:[1,1,2], goal:14, tip:'四條弦的 0～3 指'}],
-};
-const vLevel = (uid,l) => VLEVELS[uid==='mix'?'mix':'str'][l];
-const vStrings = uid => uid==='mix' ? ['G','D','A','E'] : [uid];
 
-// 按鈕（放在同一個按鈕區，平常藏起來）
-VKEYS.forEach(k=>{
-  const n=NOTES[k], b=document.createElement('button');
-  document.documentElement.style.setProperty('--c-'+k, `var(--c-${n.color})`);
-  b.className='key vk'+(n.sharp?' sh':''); b.id='key-'+k; b.hidden=true; b.style.setProperty('--c',`var(--c-${k})`);
-  b.innerHTML=`<span class="hi">${n.vs}弦・${fingerTxt(n.vf)}</span><span class="s">${n.zy}</span><span class="l">${n.letter}</span>`;
-  b.setAttribute('aria-label', zyName(k));
-  b.addEventListener('click',()=>answer(k,b));
-  $('keys').appendChild(b);
-});
-function vFitKeys(list){
-  const box=$('keys'), ok=new Set(list);
-  box.classList.remove('few'); box.classList.add('vmode');
-  let cols=S.vcols||list.length;
-  if(list.length/cols>2 && (window.innerWidth>=700 || (window.innerWidth>window.innerHeight && window.innerHeight<=560))) cols*=2;   // 平板或手機橫放：兩條弦一排
-  box.style.setProperty('--vc', cols);
-  box.classList.toggle('vrows', list.length/cols > 2);
-  box.classList.toggle('v2', list.length/cols > 1);
-  KEYS.forEach(k=>{ $('key-'+k).hidden=true });
-  VKEYS.forEach(k=>{ const b=$('key-'+k); b.hidden=!ok.has(k); b.disabled=false });
-}
+// ================= 單元式關卡：🎻 小提琴指板、⭐ 進階挑戰（低音譜號／高音區） =================
 function vPos(s){
   const ledg = n => (n<0?'下加':'上加')+['','一','二','三'][Math.abs(n)]+'線';
   if(s%2===0){
@@ -4835,71 +4836,170 @@ function vPos(s){
   if(s===9) return '第五線上面';
   return s<0 ? ledg((s+1)/2)+'下面' : ledg((s-9)/2)+'上面';
 }
-function vHintDraw(){
-  // 提示：把這個單元的空弦位置畫成虛線音符
-  const strs=vStrings(S.vu||'G');
-  strs.forEach((sn,i)=>{
-    const k='v'+sn+'0', n=NOTES[k], x=strs.length===1?92:76+i*19, y=yOf(n.step), c=colorOf(k);
-    for(let L=-2; L>=n.step; L-=2) el('line',{x1:x-11,x2:x+11,y1:yOf(L),y2:yOf(L),stroke:c,'stroke-width':1.8,'stroke-dasharray':'3 2'});
-    for(let L=10; L<=n.step; L+=2) el('line',{x1:x-11,x2:x+11,y1:yOf(L),y2:yOf(L),stroke:c,'stroke-width':1.8,'stroke-dasharray':'3 2'});
-    el('ellipse',{cx:x,cy:y,rx:7,ry:5,fill:'none',stroke:c,'stroke-width':2,'stroke-dasharray':'3 2'});
-    el('text',{x, y:n.step<4?y+19:y-11,'text-anchor':'middle','font-size':strs.length===1?12:11,'font-weight':900,'font-family':FONT,fill:c}).textContent=strs.length===1?`${sn}空弦`:sn;
-  });
+function ghostNote(step,label,x,c){
+  for(let L=-2; L>=step; L-=2) el('line',{x1:x-11,x2:x+11,y1:yOf(L),y2:yOf(L),stroke:c,'stroke-width':1.8,'stroke-dasharray':'3 2'});
+  for(let L=10; L<=step; L+=2) el('line',{x1:x-11,x2:x+11,y1:yOf(L),y2:yOf(L),stroke:c,'stroke-width':1.8,'stroke-dasharray':'3 2'});
+  const y=yOf(step);
+  el('ellipse',{cx:x,cy:y,rx:7,ry:5,fill:'none',stroke:c,'stroke-width':2,'stroke-dasharray':'3 2'});
+  el('text',{x, y:step<4?y+19:y-11,'text-anchor':'middle','font-size':11,'font-weight':900,'font-family':FONT,fill:c}).textContent=label;
 }
 function vTeachDraw(cur){
-  const svg=$('staff'), s=NOTES[cur].step, y=yOf(s), c=colorOf(cur);
+  const svg=$('staff'), s=NOTES[cur].step, y=yOf(s), c=colorOf(NOTES[cur].color);
   const band = s%2===0 ? {y:y-4.5, h:9} : {y:y-GAP/2+2.5, h:GAP-5};
   const r=el('rect',{x:46,y:band.y,width:296,height:band.h,rx:4,fill:c,opacity:.22}); svg.insertBefore(r, svg.firstChild);
   pill(svg, 140, s%2===0?y-15:y, vPos(s), c, 12);
 }
-function vStars(uid,l){ return ((save.violin||{})[uid+'-'+l])||0 }
-function openViolin(){
-  stopPlay(); ctx(); bgmStart(); setSong('calm');
-  const box=$('vioList'); box.innerHTML='';
-  VUNITS.forEach(U=>{
-    const d=document.createElement('div'); d.className='vunit u-'+U.id;
-    const notes=vStrings(U.id).flatMap(sn=>(U.id==='mix'?[0,1,2,3]:[0,1,2,3,4]).map(f=>'v'+sn+f));
-    d.innerHTML=`<div class="vuh"><span class="vstr">${U.id==='mix'?'G D A E':U.id}</span><div><b>${U.name}</b><small>${U.desc}</small></div></div>`+
-      `<div class="vdots">${notes.map(k=>`<span style="background:var(--c-${k})" title="${zyName(k)}">${NOTES[k].letter}</span>`).join('')}</div>`+
-      `<div class="vlv">${[1,2,3].map(l=>{ const L=vLevel(U.id,l), st=vStars(U.id,l); return `<button class="lv" data-u="${U.id}" data-l="${l}"><span class="t">${'★'.repeat(l)} ${L.name}</span><span class="n">${L.tip}</span><span class="stars">${st?'★'.repeat(st)+'☆'.repeat(3-st):'還沒挑戰'}</span></button>` }).join('')}</div>`;
-    box.appendChild(d);
+function pitchTeachText(cur,k){
+  const n=NOTES[cur], clef = S.clef==='f' ? '低音譜' : '';
+  if(S.sub==='violin'){
+    const where=(S.vshow||[]).filter(p=>p.k===cur).map(p=>`${p.s}弦${p.t}`).join('或');
+    return `${k?`你點了 ${NOTES[k].solf}。`:'時間到！'}${vPos(n.step)}是 ${n.solf}（${n.zy}），在${where}`;
+  }
+  return `${k?`你按了${zyName(k)}。`:'時間到！'}${clef}${vPos(n.step)}是 ${n.zy}`;
+}
+const naturals = (a,b) => { const r=[]; for(let m=a;m<=b;m++) if(!PC_NAMES[m%12].includes('#')) r.push(m); return r };
+
+// ---------- 小提琴：點指板作答 ----------
+const VUNITS = [
+  {id:'G', name:'G 弦', ri:0, desc:'最粗的弦，聲音最低，音符住在五線譜下面'},
+  {id:'D', name:'D 弦', ri:1, desc:'第二條弦，2 指要分清楚 ㄈㄚ（低2）和 ㄈㄚ♯（高2）'},
+  {id:'A', name:'A 弦', ri:2, desc:'第三條弦，ㄉㄡ 是低 2 指、ㄉㄡ♯ 是高 2 指'},
+  {id:'E', name:'E 弦', ri:3, desc:'最細的弦，聲音最高，1 指是 ㄈㄚ'},
+  {id:'mix', name:'四弦綜合', ri:4, desc:'整個指板一起來：同一個音可能有兩個位置，點哪一個都對'},
+];
+const VLEVELS=[null,
+  {name:'入門', time:9,   seq:[1],     goal:10, names:true,  tip:'彩色的音・0～3 指・寫音名', show:p=>p.nat && p.f<=3},
+  {name:'進階', time:7,   seq:[1,1,2], goal:12, names:false, tip:'彩色的音・0～4 指・不寫音名', show:p=>p.nat},
+  {name:'挑戰', time:5.5, seq:[1,2],   goal:14, names:false, tip:'加上白色升記號位置', show:p=>true}];
+const vStrings = uid => uid==='mix' ? ['G','D','A','E'] : [uid];
+const VCOL = {G:'#c8642a', D:'#3f74b0', A:'#6f9e4f', E:'#d2453a'};
+function vBuildBoard(){
+  const box=$('fboard'), strs=vStrings(S.vu), L=VLEVELS[S.vl];
+  const shown=new Set(S.vshow.map(p=>p.s+p.i));
+  let h=`<div class="fbhead"><span></span><span>空弦</span><span class="w2">1 指</span><span class="w2">2 指</span><span>3 指</span><span class="w2">4 指</span></div><div class="fbbody"><i class="nut"></i>`;
+  ['E','A','D','G'].filter(s=>strs.includes(s)).forEach(s=>{
+    h+=`<div class="fbrow" style="--sc:${VCOL[s]}"><b>${s}</b>`;
+    VPOS.filter(p=>p.s===s).forEach(p=>{
+      if(!shown.has(p.s+p.i)){ h+='<span class="fbcell"></span>'; return }
+      const n=NOTES[p.k];
+      h+=`<span class="fbcell"><button class="fbdot${p.nat?'':' sh'}" data-k="${p.k}" aria-label="${s}弦${p.t}"><span class="nm">${n.solf}</span></button></span>`;
+    });
+    h+='</div>';
   });
-  box.querySelectorAll('button[data-u]').forEach(b=>b.addEventListener('click',()=>startViolin(b.dataset.u, +b.dataset.l)));
-  show('ovViolin');
+  box.innerHTML=h+'</div>';
+  box.classList.toggle('fbnames', L.names); box.classList.toggle('one', strs.length===1);
+  box.querySelectorAll('.fbdot').forEach(b=>b.addEventListener('click',()=>answer(b.dataset.k,b)));
+}
+function vShowBoard(on){ $('fboard').hidden=!on; $('keys').hidden=on; document.body.classList.toggle('fbon',on) }
+function vMark(cur){ $('fboard').querySelectorAll(`.fbdot[data-k="${cur}"]`).forEach(b=>b.classList.add('show')) }
+function vHintDraw(){
+  const strs=vStrings(S.vu||'G');
+  strs.forEach((sn,i)=>{ const k=VPOS.find(p=>p.s===sn&&p.i===0).k; ghostNote(NOTES[k].step, strs.length===1?`${sn}空弦`:sn, strs.length===1?92:76+i*19, VCOL[sn]) });
 }
 function startViolin(uid, lvl){
-  const U=VUNITS.find(u=>u.id===uid), L=vLevel(uid,lvl); if(!U||!L) return;
-  const pool=vStrings(uid).flatMap(sn=>L.fingers.map(f=>'v'+sn+f));
+  const U=VUNITS.find(u=>u.id===uid), L=VLEVELS[lvl]; if(!U||!L) return;
   S.mode='solo'; S.sub='violin'; S.vu=uid; S.vl=lvl;
   S.stage={id:`v-${uid}-${lvl}`, r:U.ri, n:0, seq:L.seq, seq2:L.seq, time:L.time, goal:L.goal, boss:false};
   document.body.classList.remove('team'); $('hero2').hidden=true;
   const R=REGIONS[U.ri];
   resetRound(U.ri, R.mons[Math.floor(Math.random()*R.mons.length)]);
-  S.pool=pool; S.vcols = uid==='mix' && L.fingers.length===1 ? 4 : L.fingers.length; S.keyList=pool;
+  const strs=vStrings(uid);
+  S.vshow=VPOS.filter(p=>strs.includes(p.s) && L.show(p));
+  S.pool=[...new Set(S.vshow.map(p=>p.k))]; S.keyList=S.pool;
   $('lvChip').textContent=`小提琴 ${U.name}・${L.name}`;
-  renderHero(); vFitKeys(pool); place(); hud(); renderLives(); renderItems(); nextQ(); updateGodBtn();
+  vBuildBoard(); vShowBoard(true);
+  renderHero(); place(); hud(); renderLives(); renderItems(); nextQ(); updateGodBtn();
 }
-async function violinWin(){
+
+// ---------- 進階挑戰：低音譜號、高音譜高音區 ----------
+const XUNITS = [
+  {id:'hi',    name:'高音譜・高音區', ri:3, desc:'ㄉㄡ（C5）到 高音ㄉㄡ（C6），會用到上加線'},
+  {id:'bass',  name:'低音譜號',       ri:2, desc:'低音譜號的兩個點夾住第四線，那條線是 ㄈㄚ'},
+  {id:'grand', name:'高低音譜混合',   ri:4, desc:'每一題換譜號，先看清楚是哪個譜號再回答'},
+];
+const XLEVELS=[null,
+  {name:'入門', time:9,   seq:[1],     goal:10, hi:[72,79], bass:[48,55], grandG:[60,72], grandF:[48,60]},
+  {name:'進階', time:7,   seq:[1,1,2], goal:12, hi:[72,84], bass:[48,60], grandG:[60,84], grandF:[43,60]},
+  {name:'挑戰', time:5.5, seq:[1,2],   goal:14, hi:[60,84], bass:[43,60], grandG:[60,84], grandF:[43,60]}];
+const XTIP = {hi:['C5～G5','C5～C6','C4～C6 兩個八度'], bass:['C3～G3','C3～C4','G2～C4 整個譜'], grand:['C3～C5','G2～C6','G2～C6・時間更短']};
+function xPools(uid,L){
+  if(uid==='hi') return {g:naturals(...L.hi).map(m=>pitchNote(m,'g'))};
+  if(uid==='bass') return {f:naturals(...L.bass).map(m=>pitchNote(m,'f'))};
+  return {g:naturals(...L.grandG).map(m=>pitchNote(m,'g')), f:naturals(...L.grandF).map(m=>pitchNote(m,'f'))};
+}
+function xFitKeys(list){
+  const box=$('keys'), ok=new Set(list), n=list.length, narrow=window.innerWidth<=640 && window.innerHeight>window.innerWidth;
+  const cols = narrow ? (n<=4?n:Math.ceil(n/2)) : n;
+  box.classList.remove('few'); box.classList.add('vmode'); box.style.setProperty('--vc', cols);
+  box.classList.toggle('v2', n>cols);
+  KEYS.forEach(k=>{ $('key-'+k).hidden=!ok.has(k) });
+}
+function xHintDraw(){
+  if(S.clef==='f'){ ghostNote(6,'ㄈㄚ',84,colorOf('fa')); ghostNote(10,'ㄉㄡ',106,colorOf('do')) }
+  else { ghostNote(5,'ㄉㄡ',84,colorOf('do')); ghostNote(-2,'ㄉㄡ',106,colorOf('do')) }
+}
+function startXtra(uid, lvl){
+  const U=XUNITS.find(u=>u.id===uid), L=XLEVELS[lvl]; if(!U||!L) return;
+  S.mode='solo'; S.sub='xtra'; S.vu=uid; S.vl=lvl;
+  S.stage={id:`x-${uid}-${lvl}`, r:U.ri, n:0, seq:L.seq, seq2:L.seq, time:L.time, goal:L.goal, boss:false};
+  document.body.classList.remove('team'); $('hero2').hidden=true;
+  const R=REGIONS[U.ri];
+  resetRound(U.ri, R.mons[Math.floor(Math.random()*R.mons.length)]);
+  const P=xPools(uid,L), clefs=Object.keys(P);
+  S.poolFn=()=>{ S.clef=clefs[Math.floor(Math.random()*clefs.length)]; return P[S.clef] };
+  S.poolFn();
+  const pcs=KEYS.filter(k=>clefs.some(c=>P[c].some(x=>NOTES[x].pc===k)));
+  $('lvChip').textContent=`進階 ${U.name}・${L.name}`;
+  renderHero(); setKeysFor(pcs); place(); hud(); renderLives(); renderItems(); nextQ(); updateGodBtn();
+}
+
+// ---------- 共用：選單、過關 ----------
+const UNITSET = {
+  violin:{units:VUNITS, lv:l=>VLEVELS[l], tip:(u,l)=>VLEVELS[l].tip, bucket:'violin', label:'小提琴', menu:'小提琴選單', start:startViolin, box:'vioList', ov:'ovViolin',
+    dots:u=>[...new Set(VPOS.filter(p=>vStrings(u.id).includes(p.s) && p.nat).map(p=>p.k))]},
+  xtra:{units:XUNITS, lv:l=>XLEVELS[l], tip:(u,l)=>XTIP[u.id][l-1], bucket:'xtra', label:'進階挑戰', menu:'進階挑戰選單', start:startXtra, box:'xtraList', ov:'ovXtra',
+    dots:u=>{ const P=xPools(u.id,XLEVELS[3]); return [...(P.f||[]),...(P.g||[])] }},
+};
+function openUnits(kind){
+  stopPlay(); ctx(); bgmStart(); setSong('calm');
+  const D=UNITSET[kind], box=$(D.box); box.innerHTML='';
+  const bucket=save[D.bucket]||{};
+  D.units.forEach(U=>{
+    const d=document.createElement('div'); d.className='vunit u-'+U.id+' k-'+kind;
+    const badge = kind==='violin' ? (U.id==='mix'?'G D A E':U.id) : ({hi:'\u{1D11E}',bass:'\u{1D122}',grand:'\u{1D11E}\u{1D122}'})[U.id];
+    d.innerHTML=`<div class="vuh"><span class="vstr">${badge}</span><div><b>${U.name}</b><small>${U.desc}</small></div></div>`+
+      `<div class="vdots">${D.dots(U).map(k=>`<span style="background:var(--c-${NOTES[k].color})">${kind==='violin'?NOTES[k].solf:NOTES[k].letter+NOTES[k].oct}</span>`).join('')}</div>`+
+      `<div class="vlv">${[1,2,3].map(l=>{ const L=D.lv(l), st=bucket[U.id+'-'+l]||0; return `<button class="lv" data-u="${U.id}" data-l="${l}"><span class="t">${'★'.repeat(l)} ${L.name}</span><span class="n">${D.tip(U,l)}</span><span class="stars">${st?'★'.repeat(st)+'☆'.repeat(3-st):'還沒挑戰'}</span></button>` }).join('')}</div>`;
+    box.appendChild(d);
+  });
+  box.querySelectorAll('button[data-u]').forEach(b=>b.addEventListener('click',()=>D.start(b.dataset.u, +b.dataset.l)));
+  show(D.ov);
+}
+const openViolin = () => openUnits('violin');
+const openXtra = () => openUnits('xtra');
+async function unitWin(){
   S.playing=false;
   await monsterDefeat(); sFan(); setTimeout(()=>rigPlay($('heroBod'),'victory'),500);
-  const U=VUNITS.find(u=>u.id===S.vu), L=vLevel(S.vu,S.vl), m=curMon(), stars=starsFor(S.right,S.wrong);
-  save.violin=save.violin||{};
-  const key=S.vu+'-'+S.vl, first=!save.violin[key];
-  save.violin[key]=Math.max(save.violin[key]||0, stars);
+  const D=UNITSET[S.sub], U=D.units.find(u=>u.id===S.vu), L=D.lv(S.vl), m=curMon(), stars=starsFor(S.right,S.wrong);
+  const bk=save[D.bucket]=save[D.bucket]||{};
+  const key=S.vu+'-'+S.vl, first=!bk[key];
+  bk[key]=Math.max(bk[key]||0, stars);
   addCoins(stars*RW.star);
   save.dex[m.id]=(save.dex[m.id]||0)+1;
   award('win1'); if(S.wrong===0) award('perfect');
   dailyEvent('stage',1);
-  if(first) broadcast(`完成小提琴「${U.name}・${L.name}」！`);
+  if(first) broadcast(`完成${D.label}「${U.name}・${L.name}」！`);
   checkCollect();
   const starTxt='★'.repeat(stars)+'☆'.repeat(3-stars);
-  commit({name:player.name||'訪客', mode:'小提琴', level:`${U.name} ${L.name}`, right:S.right, wrong:S.wrong, best:S.best, stars:starTxt, coins:S.earned, missed:missedText()}, S.sess);
+  commit({name:player.name||'訪客', mode:D.label, level:`${U.name} ${L.name}`, right:S.right, wrong:S.wrong, best:S.best, stars:starTxt, coins:S.earned, missed:missedText()}, S.sess);
   await wait(700);
   showWin({stars:starTxt, title:`${U.name}・${L.name} 過關！`, stat:`<span>答對 ${S.right} 個音</span><span>答錯 ${S.wrong}</span><span>最高連擊 ${S.best}</span>`, earn:S.earned});
   $('btnNextLv').hidden = S.vl>=3; $('btnNextLv').textContent='挑戰下一級 ▶';
-  $('btnWinMap').textContent='小提琴選單';
+  $('btnWinMap').textContent=D.menu;
 }
 on('hViolin',openViolin); on('btnVioBack',home);
+on('hXtra',openXtra); on('btnXtraBack',home);
+
 
 
 // ================= 啟動 =================
