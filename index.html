@@ -704,32 +704,38 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 .hbtn.xtra{background:#e3f0ff}
 .k-xtra .vstr{background:#2b3550;font-family:"Noto Music",serif;font-size:1.6rem;line-height:1}
 .k-xtra.u-grand .vstr{font-size:1.2rem}
-/* v22 小提琴指板 */
-.fboard{--rh:clamp(34px,6.2vh,50px);background:linear-gradient(90deg,#3a2a20,#2a1d17);border:3px solid var(--line);border-radius:16px;padding:4px 8px 6px;box-shadow:0 4px 0 var(--line);color:#f3e6cf;user-select:none;-webkit-user-select:none}
-.fboard.one{--rh:clamp(46px,9vh,64px)}
-.fbhead,.fbrow{display:grid;grid-template-columns:22px repeat(8,minmax(0,1fr));align-items:center}
-.fbhead span{text-align:center;font-size:.75rem;font-weight:900;opacity:.85;white-space:nowrap}
-.fbhead .w2{grid-column:span 2;border-bottom:2px solid rgba(243,230,207,.35);margin:0 6px}
-.fbbody{position:relative}
-.fbbody .nut{position:absolute;top:2px;bottom:2px;left:calc(22px + (100% - 22px)/8);width:5px;margin-left:-2px;background:#efe3c8;border-radius:3px;opacity:.8}
-.fbrow{height:var(--rh);position:relative}
-.fbrow::before{content:'';position:absolute;left:22px;right:0;top:50%;height:3px;margin-top:-1.5px;background:linear-gradient(#e9dcc0,#a8977a);border-radius:2px}
-.fbrow b{font-family:var(--f-num);font-weight:800;font-size:1rem;color:var(--sc);text-align:center;position:relative;text-shadow:0 1px 0 #000}
-.fbcell{display:flex;justify-content:center;align-items:center;position:relative;height:100%}
-.fbdot{width:min(calc(var(--rh) - 4px),94%);aspect-ratio:1;border-radius:50%;border:2.5px solid #1d1410;background:var(--sc);color:#fff;font-weight:900;font-size:.72rem;padding:0;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 0 #120c09;transition:transform .08s}
+/* v23 小提琴指板（直式，跟指板圖一樣：左到右 G D A E，上面是空弦） */
+.fboard{--rh:clamp(26px,3.9vh,42px);--cw:calc(var(--rh) + 14px);display:grid;grid-template-columns:40px repeat(4,var(--cw));grid-template-rows:20px repeat(8,var(--rh));justify-content:center;align-self:center;
+  background:linear-gradient(90deg,#2a1d17,#3d2c21 50%,#2a1d17);border:3px solid var(--line);border-radius:18px 18px 10px 10px;padding:4px 10px 8px 4px;box-shadow:0 4px 0 var(--line);color:#f3e6cf;user-select:none;-webkit-user-select:none;position:relative;margin-inline:auto;width:max-content}
+.fbs{grid-row:1;text-align:center;font-family:var(--f-num);font-weight:800;font-size:1rem;color:var(--sc);text-shadow:0 1px 0 #000;z-index:1}
+.fbs.off{opacity:.35}
+.fbline{grid-row:2 / -1;justify-self:center;width:3px;background:linear-gradient(90deg,#a8977a,#efe3c8,#a8977a);border-radius:2px}
+.fbline.off{opacity:.3}
+.fbf{grid-column:1;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:900;white-space:nowrap;border-right:2px solid rgba(243,230,207,.45);margin:3px 4px 3px 0;padding-right:2px}
+.fbnut{grid-row:3;grid-column:2 / -1;align-self:start;height:5px;margin-top:-3px;background:#efe3c8;border-radius:3px;opacity:.85;z-index:1}
+.fbcell{display:flex;justify-content:center;align-items:center;z-index:2}
+.fbdot{width:calc(var(--rh) - 3px);height:calc(var(--rh) - 3px);border-radius:50%;border:2.5px solid #1d1410;background:var(--sc);color:#fff;font-weight:900;font-size:.68rem;padding:0;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 0 #120c09;transition:transform .08s}
 .fbdot.sh{background:#fff;color:#2b3550}
 .fbdot:active{transform:translateY(2px);box-shadow:0 1px 0 #120c09}
-.fbdot .nm{opacity:0;white-space:nowrap;letter-spacing:-.02em;text-shadow:0 1px 1px rgba(0,0,0,.4)}
+.fbdot .nm{opacity:0;white-space:nowrap;letter-spacing:-.03em;text-shadow:0 1px 1px rgba(0,0,0,.4)}
 .fbdot.sh .nm{text-shadow:none}
 .fboard.fbnames .fbdot .nm,.fbdot.show .nm,.fbdot.ok .nm,.fbdot.wrong .nm{opacity:1}
 .fbdot.show{outline:4px solid #ffd23f;outline-offset:1px;animation:fbpulse .7s ease-in-out infinite alternate}
 .fbdot.wrong{background:#8a93a6;color:#fff;transform:scale(.9)}
 .fbdot.ok{outline:4px solid #6ee07a;outline-offset:1px}
 @keyframes fbpulse{to{transform:scale(1.12)}}
-@media (orientation:landscape) and (max-height:560px){ .fboard{grid-area:keys;--rh:clamp(26px,7.4vh,40px);padding:2px 8px 4px} .fboard.one{--rh:46px} .fbhead span{font-size:.65rem} }
-@media (orientation:landscape) and (min-width:700px) and (min-height:561px){
-  body.fbon .fboard{--rh:clamp(30px,4.6vh,44px)}
-  body.fbon .scene{height:clamp(110px,19vh,170px);min-height:0}
+/* 直式畫面：指板在五線譜下面 */
+@media (orientation:portrait){ body.fbon .card{min-height:0} }
+/* 橫式畫面（手機、平板）：指板站在五線譜右邊 */
+@media (orientation:landscape){
+  body.fbon .app{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"top top" "scene board" "hud board" "card board";grid-template-rows:auto minmax(0,auto) auto minmax(0,1fr);height:100vh;height:100dvh;min-height:0;column-gap:12px}
+  body.fbon .top{grid-area:top} body.fbon .scene{grid-area:scene} body.fbon .hud{grid-area:hud} body.fbon .card{grid-area:card;min-height:0}
+  body.fbon .fboard{grid-area:board;--rh:clamp(24px,calc((100dvh - 90px)/8.8),52px);align-self:start}
+}
+@media (orientation:landscape) and (max-height:560px){
+  body.fbon .app{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr) auto;grid-template-areas:"top top top" "scene card board" "hud card board" ". card board";grid-template-rows:auto minmax(0,1fr) auto auto}
+  body.fbon .fboard{--rh:clamp(22px,calc((100dvh - 78px)/8.8),40px);padding:2px 8px 4px 2px}
+  body.fbon .fbf{font-size:.62rem}
 }
 </style>
 </head>
@@ -1094,9 +1100,10 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 const $ = id => document.getElementById(id);
 
 // 版本號：每次更新加 1，畫面上會顯示，方便確認上傳的是最新版
-const VERSION = 22, VERSION_DATE = '2026-10-21';
+const VERSION = 23, VERSION_DATE = '2026-10-21';
 // 更新日誌：每次更新在最上面加一筆（顯示在老師面板）
 const CHANGELOG = [
+  {v:23, date:'2026-10-21', add:[], fix:['小提琴指板改成直式，跟指板圖一樣：左到右是 G、D、A、E 弦，最上面是空弦，往下是 1～4 指；手機直拿時指板在五線譜下面，橫拿或平板時站在五線譜右邊','單一弦的單元也會畫出四條弦，只有正在練的那條弦有圓點']},
   {v:22, date:'2026-10-21', add:['小提琴改成「點指板」作答：照老師的指板圖，四條弦的空弦、低1、1、低2、高2、3、低4、4 指都有位置（白色圓點是升記號）；同一個音有兩個位置時點哪一個都對','小提琴三種難度：★ 入門＝彩色的音、0～3 指、圓點上寫音名；★★ 進階＝彩色的音、0～4 指、不寫音名；★★★ 挑戰＝加上白色升記號位置','小提琴音改成 C 大調指法（D、A、E 弦用低 2 指，例如 A 弦 2 指＝ㄉㄡ C5）；答錯會亮出正確的指板位置並說出是哪條弦第幾指','主畫面新增「進階挑戰」：高音譜高音區（C5～C6）、低音譜號、高低音譜混合，各有三種難度'], fix:[]},
   {v:21, date:'2026-10-21', add:['主畫面新增「小提琴」：G 弦、D 弦、A 弦、E 弦各一個單元，再加一個「四弦綜合」','每個單元有三種難度可以選：★ 入門（空弦＋1、2 指）、★★ 進階（0～3 指）、★★★ 挑戰（0～4 指、時間更短、會出兩個音）；四弦綜合從四條空弦開始','按鈕上寫著「哪條弦・第幾指」，升記號的音有斜線花紋；四弦綜合的按鈕排得像指板，一排一條弦','五線譜可以畫下加二線（G 弦低音）、上加一線（E 弦高音）和升記號 ♯','打開「提示」時會標出這條弦的空弦位置；答錯時會說出音在第幾線或第幾間、是哪條弦第幾指'], fix:[]},
   {v:20, date:'2026-10-08', add:['商店「擊打特效」的卡片圖示全部重畫：每種武器有自己的形狀（劍是刀光、鎚子是震波、長笛是音符流、鼓是聲波圈、法杖是魔法陣…），再配上該特效的元素（火焰、冰晶、櫻花、閃電、流星…），39 張卡片都不一樣'], fix:[]},
@@ -4874,20 +4881,19 @@ const VLEVELS=[null,
 const vStrings = uid => uid==='mix' ? ['G','D','A','E'] : [uid];
 const VCOL = {G:'#c8642a', D:'#3f74b0', A:'#6f9e4f', E:'#d2453a'};
 function vBuildBoard(){
-  const box=$('fboard'), strs=vStrings(S.vu), L=VLEVELS[S.vl];
+  const box=$('fboard'), strs=vStrings(S.vu), L=VLEVELS[S.vl], SO=['G','D','A','E'];
   const shown=new Set(S.vshow.map(p=>p.s+p.i));
-  let h=`<div class="fbhead"><span></span><span>空弦</span><span class="w2">1 指</span><span class="w2">2 指</span><span>3 指</span><span class="w2">4 指</span></div><div class="fbbody"><i class="nut"></i>`;
-  ['E','A','D','G'].filter(s=>strs.includes(s)).forEach(s=>{
-    h+=`<div class="fbrow" style="--sc:${VCOL[s]}"><b>${s}</b>`;
-    VPOS.filter(p=>p.s===s).forEach(p=>{
-      if(!shown.has(p.s+p.i)){ h+='<span class="fbcell"></span>'; return }
-      const n=NOTES[p.k];
-      h+=`<span class="fbcell"><button class="fbdot${p.nat?'':' sh'}" data-k="${p.k}" aria-label="${s}弦${p.t}"><span class="nm">${n.solf}</span></button></span>`;
-    });
-    h+='</div>';
+  let h='<span class="fbcorner"></span>';
+  SO.forEach((s,c)=>{ h+=`<b class="fbs${strs.includes(s)?'':' off'}" style="grid-column:${c+2};--sc:${VCOL[s]}">${s}</b><i class="fbline${strs.includes(s)?'':' off'}" style="grid-column:${c+2}"></i>` });
+  [['空弦',2,1],['1指',3,2],['2指',5,2],['3指',7,1],['4指',8,2]].forEach(([t,r,n])=>{ h+=`<span class="fbf" style="grid-row:${r} / span ${n}">${t}</span>` });
+  h+='<i class="fbnut"></i>';
+  VPOS.forEach(p=>{
+    if(!shown.has(p.s+p.i)) return;
+    const n=NOTES[p.k], c=SO.indexOf(p.s);
+    h+=`<span class="fbcell" style="grid-row:${p.i+2};grid-column:${c+2}"><button class="fbdot${p.nat?'':' sh'}" style="--sc:${VCOL[p.s]}" data-k="${p.k}" aria-label="${p.s}弦${p.t}"><span class="nm">${n.solf}</span></button></span>`;
   });
-  box.innerHTML=h+'</div>';
-  box.classList.toggle('fbnames', L.names); box.classList.toggle('one', strs.length===1);
+  box.innerHTML=h;
+  box.classList.toggle('fbnames', L.names);
   box.querySelectorAll('.fbdot').forEach(b=>b.addEventListener('click',()=>answer(b.dataset.k,b)));
 }
 function vShowBoard(on){ $('fboard').hidden=!on; $('keys').hidden=on; document.body.classList.toggle('fbon',on) }
