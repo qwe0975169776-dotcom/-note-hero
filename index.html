@@ -702,8 +702,7 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 #keys.vmode .key{min-height:60px;padding:4px 0}
 #keys.vmode.v2 .key{min-height:52px}
 .hbtn.xtra{background:#e3f0ff}
-.k-xtra .vstr{background:#2b3550;font-family:"Noto Music",serif;font-size:1.6rem;line-height:1}
-.k-xtra.u-grand .vstr{font-size:1.2rem}
+.k-xtra .vstr{background:#2b3550;gap:3px;padding:0 10px}
 /* v23 小提琴指板（直式，跟指板圖一樣：左到右 G D A E，上面是空弦） */
 .fboard{--rh:clamp(26px,3.9vh,42px);--cw:calc(var(--rh) + 14px);display:grid;grid-template-columns:40px repeat(4,var(--cw));grid-template-rows:20px repeat(8,var(--rh));justify-content:center;align-self:center;
   background:linear-gradient(90deg,#2a1d17,#3d2c21 50%,#2a1d17);border:3px solid var(--line);border-radius:18px 18px 10px 10px;padding:4px 10px 8px 4px;box-shadow:0 4px 0 var(--line);color:#f3e6cf;user-select:none;-webkit-user-select:none;position:relative;margin-inline:auto;width:max-content}
@@ -1100,9 +1099,10 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 const $ = id => document.getElementById(id);
 
 // 版本號：每次更新加 1，畫面上會顯示，方便確認上傳的是最新版
-const VERSION = 23, VERSION_DATE = '2026-10-21';
+const VERSION = 24, VERSION_DATE = '2026-10-28';
 // 更新日誌：每次更新在最上面加一筆（顯示在老師面板）
 const CHANGELOG = [
+  {v:24, date:'2026-10-28', add:[], fix:['高音譜號、低音譜號改成直接畫出來（不再用字型），每台裝置上的位置和大小都一樣：高音譜號的螺旋中心壓在 G 線上、上下尾巴伸出五線之外；低音譜號的兩個點夾住 F 線','遊戲、練習和聽音題的五線譜都一起換成新譜號']},
   {v:23, date:'2026-10-21', add:[], fix:['小提琴指板改成直式，跟指板圖一樣：左到右是 G、D、A、E 弦，最上面是空弦，往下是 1～4 指；手機直拿時指板在五線譜下面，橫拿或平板時站在五線譜右邊','單一弦的單元也會畫出四條弦，只有正在練的那條弦有圓點']},
   {v:22, date:'2026-10-21', add:['小提琴改成「點指板」作答：照老師的指板圖，四條弦的空弦、低1、1、低2、高2、3、低4、4 指都有位置（白色圓點是升記號）；同一個音有兩個位置時點哪一個都對','小提琴三種難度：★ 入門＝彩色的音、0～3 指、圓點上寫音名；★★ 進階＝彩色的音、0～4 指、不寫音名；★★★ 挑戰＝加上白色升記號位置','小提琴音改成 C 大調指法（D、A、E 弦用低 2 指，例如 A 弦 2 指＝ㄉㄡ C5）；答錯會亮出正確的指板位置並說出是哪條弦第幾指','主畫面新增「進階挑戰」：高音譜高音區（C5～C6）、低音譜號、高低音譜混合，各有三種難度'], fix:[]},
   {v:21, date:'2026-10-21', add:['主畫面新增「小提琴」：G 弦、D 弦、A 弦、E 弦各一個單元，再加一個「四弦綜合」','每個單元有三種難度可以選：★ 入門（空弦＋1、2 指）、★★ 進階（0～3 指）、★★★ 挑戰（0～4 指、時間更短、會出兩個音）；四弦綜合從四條空弦開始','按鈕上寫著「哪條弦・第幾指」，升記號的音有斜線花紋；四弦綜合的按鈕排得像指板，一排一條弦','五線譜可以畫下加二線（G 弦低音）、上加一線（E 弦高音）和升記號 ♯','打開「提示」時會標出這條弦的空弦位置；答錯時會說出音在第幾線或第幾間、是哪條弦第幾指'], fix:[]},
@@ -1146,6 +1146,10 @@ const NOTES = {
 };
 const KEYS = ['do','re','mi','fa','sol','la','si','hdo'];
 const STEP2KEY = {'-2':'do','-1':'re','0':'mi','1':'fa','2':'sol','3':'la','4':'si','5':'hdo'};
+// ---- 譜號：用畫的（不用字型），每台裝置位置都一樣。座標單位 = 一個線距，原點在譜號的基準線（高音譜 G 線、低音譜 F 線） ----
+const CLEF = {"g":{"d":"M1.855 0.719Q2.033 1.339 2.033 1.735Q2.033 2.048 1.814 2.249Q1.595 2.45 1.282 2.45Q0.987 2.45 0.768 2.276Q0.55 2.101 0.55 1.853Q0.55 1.676 0.671 1.519Q0.792 1.363 0.966 1.363Q1.14 1.363 1.25 1.49Q1.359 1.617 1.359 1.782Q1.359 2.149 0.945 2.149Q1.052 2.314 1.288 2.314Q1.377 2.314 1.468 2.288Q1.56 2.261 1.66 2.196Q1.761 2.131 1.823 1.992Q1.885 1.853 1.885 1.658Q1.885 1.534 1.719 0.766Q1.589 0.801 1.395 0.801Q0.821 0.801 0.411 0.376Q0 -0.049 0 -0.64Q0 -0.847 0.068 -1.06Q0.136 -1.273 0.222 -1.435Q0.307 -1.598 0.476 -1.801Q0.644 -2.005 0.759 -2.126Q0.875 -2.248 1.081 -2.454Q0.945 -2.939 0.945 -3.341Q0.945 -3.873 1.14 -4.23Q1.335 -4.587 1.53 -4.587Q1.589 -4.587 1.663 -4.511Q1.737 -4.434 1.808 -4.298Q1.879 -4.162 1.929 -3.94Q1.979 -3.719 1.979 -3.465Q1.979 -2.525 1.312 -1.911L1.465 -1.214Q1.56 -1.231 1.637 -1.231Q1.997 -1.231 2.245 -0.939Q2.494 -0.646 2.494 -0.227Q2.494 0.471 1.855 0.719ZM1.808 -3.678Q1.808 -4.003 1.619 -4.003Q1.406 -4.003 1.259 -3.689Q1.111 -3.376 1.111 -2.992Q1.111 -2.744 1.188 -2.561Q1.412 -2.697 1.61 -3.048Q1.808 -3.4 1.808 -3.678ZM2.234 -0.026Q2.234 -0.351 2.044 -0.546Q1.855 -0.741 1.554 -0.741L1.82 0.595Q2.234 0.423 2.234 -0.026ZM1.696 0.63 1.424 -0.729Q1.265 -0.694 1.132 -0.534Q0.999 -0.374 0.999 -0.203Q0.999 -0.114 1.034 -0.029Q1.07 0.057 1.12 0.116Q1.17 0.175 1.223 0.222Q1.276 0.27 1.312 0.29Q1.347 0.311 1.347 0.311L1.3 0.341Q1.105 0.287 0.931 0.104Q0.756 -0.079 0.756 -0.357Q0.756 -0.634 0.931 -0.868Q1.105 -1.101 1.318 -1.178L1.211 -1.81Q0.284 -1.036 0.284 -0.315Q0.284 0.116 0.609 0.406Q0.934 0.695 1.347 0.695Q1.448 0.695 1.696 0.63Z","w":2.494,"y0":-4.587,"y1":2.45},"f":{"d":"M2.844 -0.814Q2.949 -0.814 3.022 -0.739Q3.094 -0.663 3.094 -0.564Q3.094 -0.465 3.013 -0.39Q2.931 -0.314 2.838 -0.314Q2.594 -0.314 2.594 -0.576Q2.594 -0.681 2.67 -0.747Q2.745 -0.814 2.844 -0.814ZM3.094 0.553Q3.094 0.663 3.019 0.739Q2.943 0.814 2.844 0.814Q2.594 0.814 2.594 0.553Q2.594 0.459 2.667 0.384Q2.74 0.308 2.844 0.308Q2.949 0.308 3.022 0.39Q3.094 0.471 3.094 0.553ZM1.221 -1.123Q1.693 -1.123 2.012 -0.8Q2.332 -0.477 2.332 -0.029Q2.332 0.192 2.271 0.401Q2.21 0.611 2.076 0.8Q1.943 0.989 1.809 1.146Q1.675 1.303 1.46 1.46Q1.245 1.617 1.099 1.725Q0.954 1.832 0.707 1.966Q0.459 2.1 0.352 2.155Q0.244 2.21 0.029 2.315L0 2.222Q0.006 2.216 0.157 2.117Q0.308 2.018 0.401 1.957Q0.494 1.896 0.678 1.751Q0.861 1.605 0.983 1.48Q1.105 1.355 1.259 1.166Q1.413 0.977 1.506 0.797Q1.6 0.617 1.666 0.384Q1.733 0.151 1.733 -0.081Q1.733 -0.995 1.088 -0.995Q0.872 -0.995 0.721 -0.939Q0.57 -0.884 0.503 -0.803Q0.436 -0.721 0.407 -0.66Q0.378 -0.599 0.378 -0.553Q0.378 -0.465 0.494 -0.465Q0.541 -0.465 0.605 -0.486Q0.669 -0.506 0.692 -0.506Q0.849 -0.506 0.954 -0.407Q1.059 -0.308 1.059 -0.163Q1.059 0.006 0.931 0.116Q0.803 0.227 0.628 0.227Q0.401 0.227 0.256 0.093Q0.111 -0.041 0.111 -0.25Q0.111 -0.634 0.439 -0.878Q0.768 -1.123 1.221 -1.123Z","w":3.094,"y0":-1.123,"y1":2.315}};
+const clefAt = (kind,x,yLine,gap) => ({d:CLEF[kind].d, transform:`translate(${x} ${yLine}) scale(${gap})`});
+const clefIcon = (kind,h) => { const c=CLEF[kind]; return `<svg viewBox="0 ${c.y0} ${c.w} ${c.y1-c.y0}" height="${h}" width="${(h*c.w/(c.y1-c.y0)).toFixed(1)}" aria-hidden="true" style="display:block"><path d="${c.d}" fill="currentColor"/></svg>` };
 // ---- 音高音符（小提琴指板、進階挑戰用）：key = 'p'+MIDI 或 'b'+MIDI（低音譜號） ----
 const PC_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
 const LETTER_ZY = {C:'ㄉㄡ',D:'ㄖㄨㄟ',E:'ㄇㄧ',F:'ㄈㄚ',G:'ㄙㄛ',A:'ㄌㄚ',B:'ㄒㄧ'};
@@ -2351,8 +2355,8 @@ function drawStaff(seq, states=[], active=-1){
   for(let i=0;i<5;i++) el('line',{x1:14,x2:346,y1:yOf(i*2),y2:yOf(i*2),stroke:'#2b3550','stroke-width':2.2});
   el('line',{x1:14,x2:14,y1:yOf(8),y2:yOf(0),stroke:'#2b3550','stroke-width':2.2});
   el('line',{x1:346,x2:346,y1:yOf(8),y2:yOf(0),stroke:'#2b3550','stroke-width':2.2});
-  if(S.clef==='f' && S.playing) el('text',{x:20,y:yOf(2)+2,'font-size':GAP*4,'font-family':'"Noto Music","Bravura","Segoe UI Symbol",serif',fill:'#2b3550'}).textContent='\u{1D122}';
-  else el('text',{x:22,y:yOf(2),'font-size':GAP*4,'font-family':'"Noto Music","Bravura","Segoe UI Symbol",serif',fill:'#2b3550'}).textContent='\u{1D11E}';
+  if(S.clef==='f' && S.playing) el('path',Object.assign(clefAt('f',26,yOf(6),GAP),{fill:'#2b3550'}));
+  else el('path',Object.assign(clefAt('g',26,yOf(2),GAP),{fill:'#2b3550'}));
   if((prefs.hint || S.tempHint) && !noHintNow() && S.sub==='violin') vHintDraw();
   else if((prefs.hint || S.tempHint) && !noHintNow() && S.sub==='xtra') xHintDraw();
   else if((prefs.hint || S.tempHint) && !noHintNow()){
@@ -3562,26 +3566,27 @@ function speak(text){
 const sayZy = k => (NOTES[k].high?'高音':'')+NOTES[k].say;
 const L = {id:null, q:0, total:6, data:null, busy:false, sayText:'', last:null};
 function pel(tag,at){ return el(tag,at,$('pstaff')) }
+const MX = x => 124 + (x-100)*0.913;   // 練習五線譜：音符從譜號右邊開始排
 function drawP(opt={}){
   const s=$('pstaff'); s.innerHTML='';
   (opt.bands||[]).forEach(b=>pel('rect',{x:70,y:py(b.s)-(b.s%2===0?7:PG/2-4),width:282,height:b.s%2===0?14:PG-8,rx:7,fill:b.c,opacity:b.o||.45}));
   for(let i=0;i<5;i++) pel('line',{x1:20,x2:352,y1:py(i*2),y2:py(i*2),stroke:'#2b3550','stroke-width':2.6});
   pel('line',{x1:20,x2:20,y1:py(8),y2:py(0),stroke:'#2b3550','stroke-width':2.6});
   pel('line',{x1:352,x2:352,y1:py(8),y2:py(0),stroke:'#2b3550','stroke-width':2.6});
-  pel('text',{x:28,y:py(2),'font-size':PG*4,'font-family':'"Noto Music","Bravura","Segoe UI Symbol",serif',fill:'#2b3550'}).textContent='\u{1D11E}';
+  pel('path',Object.assign(clefAt('g',26,py(2),PG*0.8),{fill:'#2b3550'}));
   (opt.tags||[]).forEach(t=>{ const w=t.text.length*15+14; pel('rect',{x:t.x-w/2,y:py(t.s)-12,width:w,height:24,rx:12,fill:'#fff',stroke:t.c,'stroke-width':2.5}); pel('text',{x:t.x,y:py(t.s)+6,'text-anchor':'middle','font-size':15,'font-weight':900,'font-family':FONT,fill:t.c}).textContent=t.text });
   (opt.notes||[]).forEach(n=>{
-    const y=py(n.s), c=n.c||'#2b3550';
-    if(n.s<=-2) pel('line',{x1:n.x-24,x2:n.x+24,y1:py(-2),y2:py(-2),stroke:n.ghost?c:'#2b3550','stroke-width':2.6,'stroke-dasharray':n.ghost?'5 4':'none'});
-    if(n.ghost){ pel('ellipse',{cx:n.x,cy:y,rx:14,ry:10,transform:`rotate(-22 ${n.x} ${y})`,fill:'none',stroke:c,'stroke-width':3,'stroke-dasharray':'4 3'}) }
+    const y=py(n.s), c=n.c||'#2b3550', nx=MX(n.x);
+    if(n.s<=-2) pel('line',{x1:nx-24,x2:nx+24,y1:py(-2),y2:py(-2),stroke:n.ghost?c:'#2b3550','stroke-width':2.6,'stroke-dasharray':n.ghost?'5 4':'none'});
+    if(n.ghost){ pel('ellipse',{cx:nx,cy:y,rx:14,ry:10,transform:`rotate(-22 ${nx} ${y})`,fill:'none',stroke:c,'stroke-width':3,'stroke-dasharray':'4 3'}) }
     else{
-      if(n.s<4) pel('line',{x1:n.x+13,x2:n.x+13,y1:y-1,y2:y-PG*3.4,stroke:c,'stroke-width':3.2});
-      else pel('line',{x1:n.x-13,x2:n.x-13,y1:y+1,y2:y+PG*3.4,stroke:c,'stroke-width':3.2});
-      pel('ellipse',{cx:n.x,cy:y,rx:14.5,ry:10.2,transform:`rotate(-22 ${n.x} ${y})`,fill:c});
+      if(n.s<4) pel('line',{x1:nx+13,x2:nx+13,y1:y-1,y2:y-PG*3.4,stroke:c,'stroke-width':3.2});
+      else pel('line',{x1:nx-13,x2:nx-13,y1:y+1,y2:y+PG*3.4,stroke:c,'stroke-width':3.2});
+      pel('ellipse',{cx:nx,cy:y,rx:14.5,ry:10.2,transform:`rotate(-22 ${nx} ${y})`,fill:c});
     }
-    if(n.label){ const w=n.label.length*17+16; pel('rect',{x:n.x+24,y:y-14,width:w,height:28,rx:14,fill:n.lc||c,stroke:'#2b3550','stroke-width':2}); pel('text',{x:n.x+24+w/2,y:y+7,'text-anchor':'middle','font-size':17,'font-weight':900,'font-family':FONT,fill:'#fff'}).textContent=n.label }
+    if(n.label){ const w=n.label.length*17+16; pel('rect',{x:nx+24,y:y-14,width:w,height:28,rx:14,fill:n.lc||c,stroke:'#2b3550','stroke-width':2}); pel('text',{x:nx+24+w/2,y:y+7,'text-anchor':'middle','font-size':17,'font-weight':900,'font-family':FONT,fill:'#fff'}).textContent=n.label }
   });
-  (opt.picks||[]).forEach((p,i)=>{ const z=pel('rect',{x:p.x-36,y:30,width:72,height:272,fill:'transparent',class:'zone'}); z.addEventListener('pointerdown',e=>{ e.preventDefault(); lessonPick(i) }) });
+  (opt.picks||[]).forEach((p,i)=>{ const z=pel('rect',{x:MX(p.x)-36,y:30,width:72,height:272,fill:'transparent',class:'zone'}); z.addEventListener('pointerdown',e=>{ e.preventDefault(); lessonPick(i) }) });
   if(opt.zones){
     opt.zones.forEach(st=>{ const z=pel('rect',{x:60,y:py(st)-PG/4,width:300,height:PG/2,fill:'transparent',class:'zone'}); z.addEventListener('pointerdown',e=>{ e.preventDefault(); lessonTap(st) }) });
   }
@@ -4619,7 +4624,7 @@ function claimWall(){
 
 // ---------- 3. 作曲小教室 ----------
 const CP={notes:Array(8).fill(null), cur:0, labels:true, playing:0, slot:0};
-const CX = i => 108 + i*37;
+const CX = i => 124 + i*35;
 function openCompose(){
   stopPlay(); ctx(); bgmStart(); setSong('calm');
   save.comps = Array.isArray(save.comps) ? save.comps : [];
@@ -4632,7 +4637,7 @@ function cpDraw(hl=-1){
   for(let i=0;i<5;i++) ce('line',{x1:16,x2:404,y1:py(i*2),y2:py(i*2),stroke:'#2b3550','stroke-width':2.4});
   ce('line',{x1:16,x2:16,y1:py(8),y2:py(0),stroke:'#2b3550','stroke-width':2.4});
   ce('line',{x1:404,x2:404,y1:py(8),y2:py(0),stroke:'#2b3550','stroke-width':4});
-  ce('text',{x:22,y:py(2),'font-size':PG*4,'font-family':'"Noto Music","Bravura","Segoe UI Symbol",serif',fill:'#2b3550'}).textContent='\u{1D11E}';
+  ce('path',Object.assign(clefAt('g',22,py(2),PG*0.8),{fill:'#2b3550'}));
   CP.notes.forEach((k,i)=>{
     const x=CX(i);
     if(!k){ ce('text',{x,y:py(4)+6,'text-anchor':'middle','font-size':18,'font-weight':900,fill:'#c9c2ad','font-family':FONT}).textContent='·'; return }
@@ -4972,7 +4977,7 @@ function openUnits(kind){
   const bucket=save[D.bucket]||{};
   D.units.forEach(U=>{
     const d=document.createElement('div'); d.className='vunit u-'+U.id+' k-'+kind;
-    const badge = kind==='violin' ? (U.id==='mix'?'G D A E':U.id) : ({hi:'\u{1D11E}',bass:'\u{1D122}',grand:'\u{1D11E}\u{1D122}'})[U.id];
+    const badge = kind==='violin' ? (U.id==='mix'?'G D A E':U.id) : ({hi:clefIcon('g',34),bass:clefIcon('f',20),grand:clefIcon('g',34)+clefIcon('f',20)})[U.id];
     d.innerHTML=`<div class="vuh"><span class="vstr">${badge}</span><div><b>${U.name}</b><small>${U.desc}</small></div></div>`+
       `<div class="vdots">${D.dots(U).map(k=>`<span style="background:var(--c-${NOTES[k].color})">${kind==='violin'?NOTES[k].solf:NOTES[k].letter+NOTES[k].oct}</span>`).join('')}</div>`+
       `<div class="vlv">${[1,2,3].map(l=>{ const L=D.lv(l), st=bucket[U.id+'-'+l]||0; return `<button class="lv" data-u="${U.id}" data-l="${l}"><span class="t">${'★'.repeat(l)} ${L.name}</span><span class="n">${D.tip(U,l)}</span><span class="stars">${st?'★'.repeat(st)+'☆'.repeat(3-st):'還沒挑戰'}</span></button>` }).join('')}</div>`;
