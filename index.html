@@ -1099,9 +1099,10 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 const $ = id => document.getElementById(id);
 
 // 版本號：每次更新加 1，畫面上會顯示，方便確認上傳的是最新版
-const VERSION = 24, VERSION_DATE = '2026-10-28';
+const VERSION = 25, VERSION_DATE = '2026-10-30';
 // 更新日誌：每次更新在最上面加一筆（顯示在老師面板）
 const CHANGELOG = [
+  {v:25, date:'2026-10-30', add:['練習模式的語音換成 AI 人聲（曉臻）：有錄好的音檔就念人聲，沒有就用原本的電腦語音'], fix:['「高音ㄉㄡ」會念成「高音高音兜」，已修正','說明文字裡的注音符號改成「兜、瑞、咪、發、嗦、拉、西」再念']},
   {v:24, date:'2026-10-28', add:[], fix:['高音譜號、低音譜號改成直接畫出來（不再用字型），每台裝置上的位置和大小都一樣：高音譜號的螺旋中心壓在 G 線上、上下尾巴伸出五線之外；低音譜號的兩個點夾住 F 線','遊戲、練習和聽音題的五線譜都一起換成新譜號']},
   {v:23, date:'2026-10-21', add:[], fix:['小提琴指板改成直式，跟指板圖一樣：左到右是 G、D、A、E 弦，最上面是空弦，往下是 1～4 指；手機直拿時指板在五線譜下面，橫拿或平板時站在五線譜右邊','單一弦的單元也會畫出四條弦，只有正在練的那條弦有圓點']},
   {v:22, date:'2026-10-21', add:['小提琴改成「點指板」作答：照老師的指板圖，四條弦的空弦、低1、1、低2、高2、3、低4、4 指都有位置（白色圓點是升記號）；同一個音有兩個位置時點哪一個都對','小提琴三種難度：★ 入門＝彩色的音、0～3 指、圓點上寫音名；★★ 進階＝彩色的音、0～4 指、不寫音名；★★★ 挑戰＝加上白色升記號位置','小提琴音改成 C 大調指法（D、A、E 弦用低 2 指，例如 A 弦 2 指＝ㄉㄡ C5）；答錯會亮出正確的指板位置並說出是哪條弦第幾指','主畫面新增「進階挑戰」：高音譜高音區（C5～C6）、低音譜號、高低音譜混合，各有三種難度'], fix:[]},
@@ -3559,11 +3560,30 @@ const py = s => PL0 - s*PG/2;
 const CN=['一','二','三','四','五'];
 const posName = s => s%2===0 ? `第${CN[s/2]}線` : `第${CN[(s-1)/2]}間`;
 const stepFreq = s => [261.63,293.66,329.63,349.23,392,440,493.88,523.25,587.33,659.25,698.46][s+2];
-function speak(text){
-  if(!prefs.voice || !('speechSynthesis' in window)) return;
-  try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang='zh-TW'; u.rate=.9; u.pitch=1.1; speechSynthesis.speak(u) }catch(e){}
+// ---- 人聲：有 AI 人聲音檔（voice 資料夾）就念人聲，沒有就用瀏覽器的電腦語音 ----
+const VOICE = {ids:null, run:0, audios:[]};
+const vkey = t => { let h=0x811c9dc5; for(let i=0;i<t.length;i++){ h^=t.charCodeAt(i); h=Math.imul(h,0x01000193)>>>0 } return h.toString(16).padStart(8,'0') };
+const SAY_ZY = {'ㄉㄡ':'兜','ㄖㄨㄟ':'瑞','ㄇㄧ':'咪','ㄈㄚ':'發','ㄙㄛ':'嗦','ㄌㄚ':'拉','ㄒㄧ':'西'};
+const fixSay = t => { t=t.replace(/高音高音/g,'高音'); for(const k in SAY_ZY) t=t.split(k).join(SAY_ZY[k]); return t };
+const clausesOf = t => fixSay(t).split(/[，。；！？、：,.;!?:]/).map(c=>c.replace(/\s+/g,'')).filter(Boolean);
+try{ fetch('voice/manifest.json?v='+VERSION,{cache:'no-cache'}).then(r=>r.ok?r.json():null).then(a=>{ if(Array.isArray(a)) VOICE.ids=new Set(a) }).catch(()=>{}) }catch(e){}
+function voiceStop(){ VOICE.run++; VOICE.audios.forEach(a=>{ try{ a.pause() }catch(e){} }); VOICE.audios=[] }
+function voicePlay(parts){
+  voiceStop(); const run=VOICE.run;
+  const aud=parts.map(p=>{ const a=new Audio('voice/'+vkey(p)+'.mp3'); a.preload='auto'; return a }); VOICE.audios=aud;
+  let i=0;
+  const next=()=>{ if(run!==VOICE.run || i>=aud.length) return; const a=aud[i++]; a.onended=()=>setTimeout(next,140); a.onerror=()=>setTimeout(next,0); const pr=a.play(); if(pr&&pr.catch) pr.catch(()=>setTimeout(next,0)) };
+  next();
 }
-const sayZy = k => (NOTES[k].high?'高音':'')+NOTES[k].say;
+function speak(text){
+  if(!prefs.voice) return;
+  const parts=clausesOf(text);
+  if(VOICE.ids && parts.length && parts.every(c=>VOICE.ids.has(vkey(c)))){ try{ speechSynthesis.cancel() }catch(e){} voicePlay(parts); return }
+  voiceStop();
+  if(!('speechSynthesis' in window)) return;
+  try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(fixSay(text)); u.lang='zh-TW'; u.rate=.9; u.pitch=1.1; speechSynthesis.speak(u) }catch(e){}
+}
+const sayZy = k => NOTES[k].say;
 const L = {id:null, q:0, total:6, data:null, busy:false, sayText:'', last:null};
 function pel(tag,at){ return el(tag,at,$('pstaff')) }
 const MX = x => 124 + (x-100)*0.913;   // 練習五線譜：音符從譜號右邊開始排
