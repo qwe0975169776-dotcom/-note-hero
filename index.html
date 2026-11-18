@@ -736,12 +736,47 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
   body.fbon .fboard{--rh:clamp(22px,calc((100dvh - 78px)/8.8),40px);padding:2px 8px 4px 2px}
   body.fbon .fbf{font-size:.62rem}
 }
+
+/* ---------- v26：音符飛行、溫和的答錯提示、怪獸個性 ---------- */
+.fly{position:fixed;inset:0;pointer-events:none;z-index:5;overflow:hidden}
+.fly i{position:absolute;display:block;border-radius:50%;pointer-events:none}
+.orb{background:radial-gradient(circle,#fff 0 26%,var(--c) 54%,transparent 72%);box-shadow:0 0 10px 3px var(--c)}
+.orb.tr{box-shadow:none}
+.oring{border:4px solid var(--c);box-sizing:border-box}
+.qmark{position:absolute;left:54%;bottom:96%;z-index:4;width:28px;height:28px;border-radius:50%;background:#fff;border:3px solid var(--line);display:grid;place-items:center;font-family:var(--f-num);font-weight:800;font-size:1.15rem;line-height:1;color:#f28a2e;pointer-events:none;box-shadow:0 3px 0 rgba(0,0,0,.18);transform-origin:20% 100%}
+.qmark::after{content:'';position:absolute;left:3px;bottom:-7px;width:8px;height:8px;border-radius:50%;background:#fff;border:2.5px solid var(--line)}
+#hero2 .qmark{left:auto;right:54%;transform-origin:80% 100%}
+#hero2 .qmark::after{left:auto;right:3px}
+.msg.bad{background:#fff1cc;color:#8a5200}
+.key.show{animation:hintHop .9s ease-in-out 3;box-shadow:0 0 0 4px var(--gold),0 6px 0 var(--line)}
+.key.wrong{animation:softNo .45s ease-out;opacity:.55}
+@keyframes hintHop{0%,100%{transform:translateY(0)}35%{transform:translateY(-9px) scale(1.04)}62%{transform:translateY(0) scale(1.03,.96)}}
+@keyframes softNo{30%{transform:translateX(-3px) rotate(-2deg)}65%{transform:translateX(3px) rotate(2deg)}}
+#monster.mv-drift #monBod svg{animation:mvFade 1.8s steps(3) infinite alternate}
+@keyframes mvFade{from{opacity:1}to{opacity:.72}}
+.sweat{position:absolute;right:4%;top:14%;width:13%;aspect-ratio:2/3;background:#8fd8ff;border:2px solid var(--line);border-radius:50% 50% 50% 50%/36% 36% 64% 64%;z-index:3;pointer-events:none;animation:sweat 1s ease-in infinite}
+#monster .sweat{right:2%;top:4%;width:16%}
+@keyframes sweat{0%{transform:translateY(-30%) scale(.5);opacity:0}25%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(150%) scale(.9);opacity:0}}
+.pet.hype{animation-duration:.5s}
+/* 挑戰模式 */
+.hbtn.chal{background:#ffe1ec}
+.chalrange{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:0 0 12px}
+.chalrange .lv{min-height:0;padding:8px 6px;text-align:center;align-items:center;gap:2px}
+.chalrange .lv b{font-size:.95rem;font-weight:900}
+.chalrange .lv small{font-size:.7rem;color:var(--ink-soft);font-weight:700}
+.chalrange .lv.on{background:var(--gold)}
+.chalrange .lv:disabled{opacity:.45}
+.chalrow{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:8px}
+.chalbest{font-weight:900;font-size:.95rem}
+.chalrow .big{padding:8px 20px;white-space:nowrap}
+@media (max-width:420px){ .chalrange{grid-template-columns:repeat(2,minmax(0,1fr))} }
 </style>
 </head>
 <body>
 <div class="vign" id="vign"></div>
 <div class="danmaku" id="danmaku" aria-live="polite"></div>
 <div class="flash" id="flash"></div>
+<div class="fly" id="fly"></div>
 <div class="app" id="app">
   <div class="top">
     <h1>音符勇者</h1>
@@ -839,6 +874,7 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
       <button class="hbtn comp" id="hCompose"><b>作曲小教室</b><small>自己編一段旋律</small></button>
       <button class="hbtn vio" id="hViolin"><b>小提琴</b><small>G・D・A・E 四條弦</small></button>
       <button class="hbtn xtra" id="hXtra"><b>進階挑戰</b><small>低音譜號・高音區</small></button>
+      <button class="hbtn chal" id="hChal"><b>挑戰模式</b><small>快答・衝刺・生存・魔王</small></button>
     </div>
     <div class="row"><button class="big alt" id="btnSwitch">換玩家</button><button class="big alt" id="btnTeacher3">老師面板</button></div>
   </div>
@@ -886,6 +922,15 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 </div>
 
 <!-- 進階挑戰 -->
+<div class="overlay" id="ovChal" hidden>
+  <div class="panel wide">
+    <div class="shophead"><h2>挑戰模式</h2><button class="big alt" id="btnChalBack">返回</button></div>
+    <p>挑戰自己的最高紀錄！先選要用哪些音，再選一種玩法。</p>
+    <div class="chalrange" id="chalRange"></div>
+    <div class="vlist" id="chalList"></div>
+  </div>
+</div>
+
 <div class="overlay" id="ovXtra" hidden>
   <div class="panel wide">
     <div class="shophead"><h2>進階挑戰</h2><button class="big alt" id="btnXtraBack">返回</button></div>
@@ -1099,9 +1144,10 @@ select{font:inherit;font-weight:700;padding:6px 10px;border:2px solid var(--line
 const $ = id => document.getElementById(id);
 
 // 版本號：每次更新加 1，畫面上會顯示，方便確認上傳的是最新版
-const VERSION = 25, VERSION_DATE = '2026-10-30';
+const VERSION = 26, VERSION_DATE = '2026-11-17';
 // 更新日誌：每次更新在最上面加一筆（顯示在老師面板）
 const CHANGELOG = [
+  {v:26, date:'2026-11-17', add:['主畫面新增「挑戰模式」，有四種玩法，最高紀錄會跟著帳號存到試算表：節拍快答（音符跟著拍子滑過來，在碰到紅線以前答出來）、限時衝刺（60 秒能答對幾題）、生存模式（三顆愛心，越來越快、越來越長）、魔王挑戰（連續打五個地區的魔王，共用五顆愛心）','答對時，五線譜上的音符會變成同顏色的光球飛向怪獸；一題有好幾個音時，會一顆接一顆飛過去','每種武器有自己的攻擊動作：劍用揮的、法杖舉高轉一圈、迴力鏢和溜溜球往後拉再甩出去、長笛拿到嘴邊吹、小鼓咚咚敲兩下、光線槍舉平瞄準、召喚小龍時雙手舉高','勇者有心情了：等待時會東張西望、蹦一下，想很久會打哈欠；連擊 5 以上會興奮地一直跳，每 5 連擊歡呼一次；怪獸貼到面前或只剩一顆愛心時會緊張冒汗','每種怪獸有自己的動作：史萊姆彈跳、角怪搖擺、魚怪浮在半空中拍魚鰭、雪怪發抖打噴嚏、黑影怪忽大忽小、火焰怪一閃一閃、大魔王跺腳；身邊還會冒出泡泡、雪花、小火苗','怪獸被打中會被壓扁、彈回來再搖幾下；勇氣值快滿（怪獸快輸了）的時候會發抖冒汗','夥伴會一起參與：答對跟著跳、會心一擊翻一圈、每 5 連擊幫忙丟一顆小星星喊「加油！」、答錯會垂頭；快贏的時候跳得特別快','老師面板的「學生資料」多一欄「挑戰紀錄」（要先按一次「更新伺服器程式」）'], fix:['答錯的提示變溫和：畫面不再閃紅、震動變小，勇者不會變紅，改成頭上冒出「？」抓抓頭；正確的按鈕會輕輕跳三下並留著金色外框；提示文字的底色從紅色改成暖黃色','怪獸被打中後馬上講話時，受傷的動作不會再被蓋掉']},
   {v:25, date:'2026-10-30', add:['練習模式的語音換成 AI 人聲（曉臻）：有錄好的音檔就念人聲，沒有就用原本的電腦語音'], fix:['「高音ㄉㄡ」會念成「高音高音兜」，已修正','說明文字裡的注音符號改成「兜、瑞、咪、發、嗦、拉、西」再念']},
   {v:24, date:'2026-10-28', add:[], fix:['高音譜號、低音譜號改成直接畫出來（不再用字型），每台裝置上的位置和大小都一樣：高音譜號的螺旋中心壓在 G 線上、上下尾巴伸出五線之外；低音譜號的兩個點夾住 F 線','遊戲、練習和聽音題的五線譜都一起換成新譜號']},
   {v:23, date:'2026-10-21', add:[], fix:['小提琴指板改成直式，跟指板圖一樣：左到右是 G、D、A、E 弦，最上面是空弦，往下是 1～4 指；手機直拿時指板在五線譜下面，橫拿或平板時站在五線譜右邊','單一弦的單元也會畫出四條弦，只有正在練的那條弦有圓點']},
@@ -1286,6 +1332,9 @@ const MONS = [
   {id:'flame',  name:'火焰怪',     r:4, c:'#e8573d', horn:true, hornC:'#ffd23f'},
   {id:'boss',   name:'大魔王',     r:4, c:'#d9473f', horn:true, big:true, crown:true, boss:true},
 ];
+// 版本 26：每種怪獸自己的動作（bounce 彈跳、sway 搖擺、float 飄浮、shiver 發抖、drift 忽大忽小、flicker 閃爍、stomp 跺腳）
+const MON_MV = {slimeG:'bounce', slimeP:'bounce', slimeK:'bounce', hornP:'sway', hornO:'sway', hornK:'sway', fishB:'float', fishC:'float', seaK:'float',
+  snowW:'shiver', snowI:'shiver', snowK:'shiver', shadow:'drift', flame:'flicker', boss:'stomp', mShadow:'drift', mCrystal:'float', mBoss:'stomp'};
 
 // ---------- 段位 ----------
 const TIERS = [
@@ -1407,7 +1456,7 @@ const newSave = () => ({coins:0,total:0,owned:['knight'],skin:'knight',fxOwned:[
 function normSave(s){
   const d=Object.assign(newSave(), s||{});
   ['owned','fxOwned','wpnOwned','cleared','badges','pets','raids'].forEach(k=>{ if(!Array.isArray(d[k])) d[k]=newSave()[k] });
-  ['prog','practice','dex','notes','songs','items'].forEach(k=>{ if(!d[k]||typeof d[k]!=='object') d[k]={} });
+  ['prog','practice','dex','notes','songs','items','rec'].forEach(k=>{ if(!d[k]||typeof d[k]!=='object') d[k]={} });
   if(!d.wpnOwned.includes('auto')) d.wpnOwned.unshift('auto');
   if(!WEAPONS.some(x=>x.id===d.wpn)) d.wpn='auto';
   if(!d.owned.includes('knight')) d.owned.unshift('knight');
@@ -1888,12 +1937,12 @@ function monVec(m, enraged){
   const c=m.c||'#5fbf5a', dk=shade(c,-.3), lt=shade(c,.45), id='rg'+(++rgUid), L=RS;
   const boss=!!m.boss, angry=!!(enraged||m._enraged);
   const blob='M-46 0 Q-55 -34 -26 -62 Q-8 -78 10 -70 Q18 -84 27 -80 Q24 -71 31 -64 Q56 -40 46 0 Q0 7 -46 0Z';
-  return `<svg class="rg" viewBox="-60 -108 120 114" overflow="visible">
+  return `<svg class="rg" data-mv="${m.mv||MON_MV[m.id]||''}" data-big="${m.big?1:0}" viewBox="-60 -108 120 114" overflow="visible">
   <defs><radialGradient id="${id}" cx=".36" cy=".3" r=".85"><stop offset="0" stop-color="${lt}"/><stop offset=".5" stop-color="${c}"/><stop offset="1" stop-color="${dk}"/></radialGradient></defs>
   <g class="rg-root">
     ${m.horn?`<path d="M-30 -56 L-40 -92 L-14 -66Z M32 -54 L44 -90 L18 -66Z" fill="${m.hornC||'#f2c335'}" ${L}/>`:''}
     ${m.big?`<path d="M-48 -26 L-62 -36 L-46 -44Z M48 -26 L62 -36 L46 -44Z" fill="${dk}" ${L}/>`:''}
-    ${m.fins?`<path d="M-44 -24 Q-66 -36 -60 -8 Q-52 -12 -46 -8Z M44 -24 Q66 -36 60 -8 Q52 -12 46 -8Z" fill="${m.finC||c}" ${L}/>`:''}
+    ${m.fins?`<g class="rg-finL"><path d="M-44 -24 Q-66 -36 -60 -8 Q-52 -12 -46 -8Z" fill="${m.finC||c}" ${L}/></g><g class="rg-finR"><path d="M44 -24 Q66 -36 60 -8 Q52 -12 46 -8Z" fill="${m.finC||c}" ${L}/></g>`:''}
     <path class="rg-blob" d="${blob}" fill="url(#${id})" ${L}/>
     <path d="M-40 -8 Q0 6 40 -8 Q38 -2 36 0 Q0 6 -38 0Z" fill="#000" opacity=".12"/>
     ${m.cap?`<path d="M-44 -46 Q-36 -84 2 -86 Q40 -84 46 -46 Q34 -56 24 -50 Q14 -60 2 -54 Q-10 -60 -20 -50 Q-32 -56 -44 -46Z" fill="#ffffff" ${L}/><circle cx="-16" cy="-70" r="5" fill="#ff8fbf"/><circle cx="12" cy="-76" r="6" fill="#ff8fbf"/><circle cx="30" cy="-62" r="4" fill="#ff8fbf"/>`:''}
@@ -1923,12 +1972,37 @@ function rgKf(t, fr){
   for(let i=1;i<fr.length;i++){ const [t1,v1,e]=fr[i], [t0,v0]=fr[i-1]; if(t<=t1){ const p=(t-t0)/(t1-t0||1); return v0+(v1-v0)*(rgEase[e||'inOut'])(p) } }
   return fr[fr.length-1][1];
 }
-const RG_DUR={hero:{idle:0, walk:420, attack:640, cast:600, hurt:520, victory:1400, sad:1200}, mon:{idle:0, hop:620, talk:1300, hurt:420, defeat:900, rage:800}};
+const RG_DUR={hero:{idle:0, walk:420, attack:640, cast:600, hurt:520, victory:1400, sad:1200, look:1300, ready:800, yawn:1800, puzzled:1500, throw:640, twirl:700, blow:700, drum:640, aim:600, summon:900}, mon:{idle:0, hop:620, talk:1300, hurt:620, defeat:900, rage:800, fid:1000}};
+// 版本 26：怪獸的招牌動作。MV＝一輪多久（毫秒）、畫幾格；MV_IDLE＝平常每一格的姿勢；MV_FID＝偶爾做一次的小動作
+const MV={bounce:{T:900,n:6}, sway:{T:1500,n:6}, float:{T:1500,n:6}, shiver:{T:2400,n:8}, drift:{T:1800,n:6}, flicker:{T:520,n:4}, stomp:{T:2400,n:6}};
+const MV_IDLE={
+  bounce:{y:[0,0,-10,-16,-8,0], sy:[1,.84,1.12,1,1.08,.82]},
+  sway:{rot:[0,5,5,0,-5,-5], sy:[1,.96,1,1,.96,1]},
+  float:{y:[-12,-16,-19,-16,-12,-8], fin:[0,20,0,-8,0,20], sy:[1,1.04,1,.97,1,1]},
+  shiver:{x:[0,0,0,0,0,4,-4,4], sy:[1,1.03,1.05,1.03,1,.96,.96,.96]},
+  drift:{x:[0,6,6,0,-6,-6], sx:[1,1.07,1,.93,1,1.07]},
+  flicker:{sy:[1,1.1,1.03,1.13], sx:[1,.94,1,.93]},
+  stomp:{sy:[1,1.03,1.06,1.03,1,.97]}
+};
+const MV_FID={
+  bounce:{dur:1000, n:6, y:[0,-20,-6,0,-20,0], sy:[.82,1.12,1.05,.82,1.12,.86], mouth:['n','o','o','n','o','n']},
+  sway:{dur:900, n:6, rot:[-8,10,-10,10,-6,0]},
+  float:{dur:1100, n:6, y:[-16,-24,-30,-30,-22,-14], fin:[22,-10,22,-10,22,0], rot:[0,-6,0,6,0,0]},
+  shiver:{dur:1200, n:6, sy:[1.06,1.14,1.16,.8,.9,1], rot:[-3,-6,-7,9,3,0], mouth:['n','o','o','o','n','n']},
+  drift:{dur:1100, n:6, s:[.85,.6,.5,.9,1.15,1]},
+  flicker:{dur:900, n:6, sy:[1.1,1.25,1.32,1.2,1.08,1], sx:[.94,.86,.84,.9,.96,1], mouth:['n','o','o','o','n','n']},
+  stomp:{dur:1100, n:6, y:[0,-10,-12,0,0,0], sy:[.9,1.08,1.05,.78,.92,1], mouth:['n','n','n','o','n','n']}
+};
+const mvLerp=(ph,arr)=>{ const n=arr.length, f=ph*n, i=Math.floor(f)%n, k=f-Math.floor(f); return arr[i]+(arr[(i+1)%n]-arr[i])*k };
+const rgEyeTr=(cy,closed,ex)=>(ex?`translate(${ex} 0) `:'')+(closed?`translate(0 ${cy}) scale(1 .12) translate(0 ${-cy})`:'');
+const rgFaceHero=(P,f)=>{ rgVis(P.eyesN, f==='n'||f==='brow'||f==='shout'||f==='hmm'); rgVis(P.eyesHappy, f==='happy'); rgVis(P.eyesHurt, f==='hurt'); rgVis(P.brows, f==='brow'||f==='shout'); rgVis(P.mouthN, f==='n'||f==='brow'); rgVis(P.mouthO, f==='shout'||f==='happy'); rgVis(P.mouthHurt, f==='hurt'||f==='hmm') };
+const rgRootMon=(P,m)=>{ rgSet(P.root, `translate(${m.x||0} ${m.y||0}) rotate(${m.rot||0}) scale(${m.sx} ${m.sy})`); if(P.finL) rgSet(P.finL, `rotate(${m.fin||0} -45 -16)`); if(P.finR) rgSet(P.finR, `rotate(${-(m.fin||0)} 45 -16)`) };
 function rgParts(svg){
   const q=s=>svg.querySelector(s);
   return {root:q('.rg-root'), body:q('.rg-body'), head:q('.rg-head'), armF:q('.rg-armF'), armB:q('.rg-armB'), legF:q('.rg-legF'), legB:q('.rg-legB'), wpn:q('.rg-wpn'), plume:q('.rg-plume'), pet:q('.rg-pet'),
     eyesN:q('.rg-eyesN'), eyesHappy:q('.rg-eyesHappy'), eyesHurt:q('.rg-eyesHurt'), eyesX:q('.rg-eyesX'), brows:q('.rg-brows'), vein:q('.rg-vein'),
     mouthN:q('.rg-mouthN'), mouthO:q('.rg-mouthO'), mouthHurt:q('.rg-mouthHurt'), mouthAngry:q('.rg-mouthAngry'),
+    finL:q('.rg-finL'), finR:q('.rg-finR'),
     eyes:[q('.rg-eyeL'),q('.rg-eyeR')].filter(Boolean)};
 }
 function rgApplyHero(P, h, blink){
@@ -1940,14 +2014,11 @@ function rgApplyHero(P, h, blink){
   rgSet(P.wpn, `translate(15 -35) rotate(${h.wpn})`);
   if(P.plume) rgSet(P.plume, `rotate(${h.plume} -2 -138)`);
   if(P.pet) rgSet(P.pet, (P.pet.dataset.base||(P.pet.dataset.base=P.pet.getAttribute('transform')||''))+` translate(0 ${h.pet/1.3})`);
-  const f=h.face;
-  rgVis(P.eyesN, f==='n'||f==='brow'||f==='shout'); rgVis(P.eyesHappy, f==='happy'); rgVis(P.eyesHurt, f==='hurt');
-  rgVis(P.brows, f==='brow'||f==='shout');
-  rgVis(P.mouthN, f==='n'||f==='brow'); rgVis(P.mouthO, f==='shout'||f==='happy'); rgVis(P.mouthHurt, f==='hurt');
-  P.eyes.forEach(e=>e.setAttribute('transform', blink?'translate(0 -92) scale(1 .12) translate(0 92)':''));
+  rgFaceHero(P, h.face);
+  P.eyes.forEach(e=>e.setAttribute('transform', rgEyeTr(-92, blink, h.eyeX)));
 }
 function rgApplyMon(P, m, angryBase, browBase, blink){
-  rgSet(P.root, `scale(${m.sx} ${m.sy})`);
+  rgRootMon(P, m);
   const angry=angryBase||m.face==='angry';
   rgVis(P.eyesN, m.face!=='x'); rgVis(P.eyesX, m.face==='x');
   rgVis(P.brows, browBase||m.face==='angry'); rgVis(P.vein, angry);
@@ -1959,6 +2030,7 @@ function rgBind(bod, kind){
   let a=RG.actors.get(bod);
   if(!a || a.svg!==svg){
     a={bod, svg, kind, state:a?a.state:'idle', t0:a?a.t0:0, dur:a?a.dur:0, blinkAt:performance.now()+1200+Math.random()*1500, p:rgParts(svg)};
+    a.mv = svg.getAttribute('data-mv')||''; a.big = svg.getAttribute('data-big')==='1';
     a.angryBase = a.p.mouthAngry && a.p.mouthAngry.getAttribute('visibility')==='visible';
     a.browBase = a.p.brows && a.p.brows.getAttribute('visibility')==='visible';
     const pi=svg.querySelector('image.pxi');
@@ -1976,7 +2048,7 @@ const rgVis=(el,on)=>{ if(el) el.setAttribute('visibility', on?'visible':'hidden
 const rgSet=(el,tr)=>{ if(el) el.setAttribute('transform', tr) };
 function rgHeroPose(a, now){
   const t=a.dur?Math.min(1,(now-a.t0)/a.dur):0, s=(now-a.t0)/1000, br=reduce?0:Math.sin(now/520);
-  const p={y:0,sx:1,sy:1, lean:0, bodyY:br*1.2, headRot:br*1.5, armF:12+br*3, armB:-8-br*3, legF:0, legB:0, plume:br*6, wpn:-140+br*3, face:'n', pet:Math.sin(now/300)*4};
+  const p={y:0,sx:1,sy:1, lean:0, bodyY:br*1.2, headRot:br*1.5, armF:12+br*3, armB:-8-br*3, legF:0, legB:0, plume:br*6, wpn:-140+br*3, face:'n', eyeX:0, pet:Math.sin(now/300)*4};
   if(a.state==='walk'){ const w=Math.sin(t*Math.PI*2); p.legF=w*26; p.legB=-w*26; p.armF=12-w*22; p.armB=-8+w*24; p.bodyY=-Math.abs(w)*3; p.lean=5; p.plume=-w*10 }
   if(a.state==='attack'){
     p.face=t<.3?'brow':(t<.8?'shout':'n');
@@ -2011,14 +2083,107 @@ function rgHeroPose(a, now){
     p.legF=j*14; p.legB=-j*14; p.headRot=t<.9?Math.sin(s*10)*5:0; p.plume=Math.sin(s*12)*16;
   }
   if(a.state==='sad'){ p.face='hurt'; p.lean=rgKf(t,[[0,0],[.3,8],[1,8]]); p.headRot=rgKf(t,[[0,0],[.3,10],[1,10]]); p.armF=4; p.armB=-2; p.wpn=-170 }
+  // 版本 26：每種武器自己的攻擊動作
+  if(a.state==='throw'){      // 迴力鏢、溜溜球：往後拉，再甩出去
+    p.face=t<.3?'brow':(t<.75?'shout':'n');
+    p.armF=rgKf(t,[[0,12],[.28,-70,'out'],[.42,150,'in'],[.7,110],[1,12]]);
+    p.wpn=rgKf(t,[[0,-140],[.28,-200],[.42,-40,'in'],[.7,-60],[1,-140]]);
+    p.lean=rgKf(t,[[0,0],[.28,-14,'out'],[.42,16,'in'],[.7,10],[1,0]]);
+    p.armB=rgKf(t,[[0,-8],[.28,50],[.42,-60],[1,-8]]);
+    p.legF=rgKf(t,[[0,0],[.28,-12],[.42,26],[.7,22],[1,0]]); p.legB=-p.legF*.7;
+  }
+  if(a.state==='twirl'){      // 法杖：舉高轉一圈，再往前一指
+    p.face=t<.3?'brow':(t<.8?'happy':'n');
+    p.armF=rgKf(t,[[0,12],[.18,170,'out'],[.5,170],[.62,95,'in'],[.82,95],[1,12]]);
+    p.wpn = t<.5 ? rgKf(t,[[0,-140],[.18,-20],[.5,340]]) : rgKf(t,[[.5,-20],[.82,-20],[1,-140]]);
+    p.y=-8*rgKf(t,[[0,0],[.2,0],[.38,1,'out'],[.56,0,'in'],[1,0]]);
+    p.lean=rgKf(t,[[0,0],[.5,-4],[.62,10,'in'],[.82,8],[1,0]]);
+    p.armB=rgKf(t,[[0,-8],[.3,-60],[.62,-30],[1,-8]]);
+  }
+  if(a.state==='blow'){       // 長笛：拿到嘴邊吹，身體跟著搖
+    const k=rgKf(t,[[0,0],[.2,1,'out'],[.8,1],[1,0]]);
+    p.face=k>.5?'happy':'n';
+    p.armF=12+k*106; p.wpn=-140+k*110; p.armB=-8-k*92;
+    p.lean=Math.sin(s*12)*4*k; p.headRot=p.lean*1.2; p.plume=Math.sin(s*12)*10*k;
+  }
+  if(a.state==='drum'){       // 小鼓：咚咚敲兩下
+    const hit=rgKf(t,[[0,0],[.14,1,'out'],[.26,0,'in'],[.4,1,'out'],[.52,0,'in'],[1,0]]);
+    p.face=t<.75?'shout':'n';
+    p.armF=rgKf(t,[[0,12],[.1,40],[1,12]])+hit*120; p.wpn=-110+hit*60;
+    p.armB=rgKf(t,[[0,-8],[.14,-40],[.26,-150],[.4,-40],[.52,-150],[.7,-8],[1,-8]]);
+    p.sy=t<.6?1-.06*(1-hit):1; p.sx=2-p.sy; p.lean=t<.7?6:0;
+  }
+  if(a.state==='aim'){        // 光線槍、彩虹權杖：舉平瞄準，發射時往後震一下
+    p.face=t<.7?'brow':'n';
+    p.armF=rgKf(t,[[0,12],[.12,92,'out'],[.7,92],[1,12]]); p.wpn=rgKf(t,[[0,-140],[.12,-20,'out'],[.7,-20],[1,-140]]);
+    p.lean=rgKf(t,[[0,0],[.12,6],[.25,-10,'out'],[.5,-4],[.7,0],[1,0]]);
+    p.armB=rgKf(t,[[0,-8],[.12,40],[.7,40],[1,-8]]); p.legF=rgKf(t,[[0,0],[.12,14],[.7,14],[1,0]]); p.legB=-p.legF;
+  }
+  if(a.state==='summon'){     // 召喚小龍：雙手舉高
+    p.face=t<.85?'happy':'n';
+    p.armF=rgKf(t,[[0,12],[.2,175,'back'],[.8,175],[1,12]]); p.armB=rgKf(t,[[0,-8],[.2,-165,'back'],[.8,-165],[1,-8]]);
+    p.wpn=rgKf(t,[[0,-140],[.2,-10],[.8,-10],[1,-140]]); p.headRot=rgKf(t,[[0,0],[.2,-12],[.8,-12],[1,0]]);
+    p.y=-6*rgKf(t,[[0,0],[.2,1,'out'],[.8,1],[1,0]]); p.plume=Math.sin(s*10)*12;
+  }
+  // 版本 26：心情（連擊很高時很興奮、怪獸貼到面前時很緊張）
+  if(a.state==='mood_up'){
+    const i=Math.floor(now/130)%4;
+    p.y=[0,-7,-11,-5][i]; p.sy=[.94,1.05,1,1.02][i]; p.sx=2-p.sy; p.face=i===1||i===2?'happy':'n';
+    p.armF=[20,60,80,50][i]; p.armB=[-14,-40,-56,-30][i]; p.plume=[0,20,-20,12][i]; p.legF=[0,6,8,4][i]; p.legB=-p.legF;
+  }
+  if(a.state==='mood_dn'){
+    const i=Math.floor(now/110)%4;
+    p.face='hmm'; p.lean=-5+[0,2,0,-2][i]; p.headRot=-4; p.legF=[5,-5,5,-5][i]; p.legB=-p.legF; p.armF=34; p.armB=-34; p.sy=[1,.97,1,.97][i]; p.sx=2-p.sy;
+  }
+  // 版本 26：等待時的小動作
+  if(a.state==='look'){
+    const e=rgKf(t,[[0,0],[.15,-7,'out'],[.42,-7],[.6,7,'out'],[.85,7],[1,0]]);
+    p.eyeX=e; p.headRot+=e*.9; p.lean=e*.35;
+  }
+  if(a.state==='ready'){
+    const j=rgKf(t,[[0,0],[.2,0],[.45,1,'out'],[.7,0,'in'],[1,0]]);
+    p.face=t>.25&&t<.85?'happy':'n'; p.y=-14*j;
+    p.sy=rgKf(t,[[0,1],[.2,.9],[.45,1.05],[.7,.92],[.85,1.03],[1,1]]); p.sx=2-p.sy;
+    p.armF=rgKf(t,[[0,12],[.3,150,'back'],[.75,150],[1,12]]); p.wpn=rgKf(t,[[0,-140],[.3,-20,'back'],[.75,-20],[1,-140]]);
+    p.legF=j*10; p.legB=-j*10;
+  }
+  if(a.state==='yawn'){
+    p.face=t>.18&&t<.82?'happy':'n';
+    p.armF=rgKf(t,[[0,12],[.25,160,'out'],[.72,165],[1,12]]); p.armB=rgKf(t,[[0,-8],[.25,-150,'out'],[.72,-155],[1,-8]]);
+    p.wpn=rgKf(t,[[0,-140],[.25,-12],[.72,-12],[1,-140]]);
+    p.lean=rgKf(t,[[0,0],[.3,-8],[.72,-8],[1,0]]); p.headRot=rgKf(t,[[0,0],[.3,-10],[.72,-10],[1,0]]);
+    p.sy=rgKf(t,[[0,1],[.3,1.05],[.72,1.05],[1,1]]); p.sx=2-p.sy;
+  }
+  if(a.state==='puzzled'){
+    const k=rgKf(t,[[0,0],[.15,1,'out'],[.85,1],[1,0]]);
+    p.face=k>.5?'hmm':'n'; p.headRot=12*k; p.lean=-5*k; p.eyeX=-4*k;
+    p.armB=-8+k*(-142+Math.sin(s*14)*12);
+  }
   return p;
 }
 function rgMonPose(a, now){
   const t=a.dur?Math.min(1,(now-a.t0)/a.dur):0, s=(now-a.t0)/1000, b=reduce?0:Math.sin(now/380);
-  const p={y:0,sx:1+b*.04,sy:1-b*.04, face:'n', mouth:'n'};
+  const mv=a.mv||'', M=MV[mv];
+  const p={x:0, y:mv==='float'?-12:0, rot:0, fin:0, sx:1, sy:1, face:'n', mouth:'n'};
+  if(!a.state || a.state==='idle'){
+    if(M && !reduce){
+      const T=M.T*(a.big?1.3:1), ph=(now%T)/T, I=MV_IDLE[mv], g=(k,d)=>I[k]?mvLerp(ph,I[k]):d;
+      p.x=g('x',0); p.y=g('y',p.y); p.rot=g('rot',0); p.fin=g('fin',0);
+      if(I.sx){ p.sx=g('sx',1); p.sy=2-p.sx } else { p.sy=g('sy',1); p.sx=2-p.sy }
+    }else{ p.sx=1+b*.04; p.sy=1-b*.04 }
+  }
+  if(a.state==='fid'){
+    const F=MV_FID[mv];
+    if(F){
+      const i=Math.min(F.n-1, Math.floor(t*F.n)), g=(k,d)=>F[k]?F[k][i]:d;
+      p.x=g('x',0); p.y=g('y',p.y); p.rot=g('rot',0); p.fin=g('fin',0); p.mouth=g('mouth','n');
+      if(F.s){ p.sx=p.sy=F.s[i] } else { p.sy=g('sy',1); p.sx=F.sx?F.sx[i]:2-p.sy }
+    }
+  }
+  if(a.state==='mood_weak'){ const i=Math.floor(now/110)%2; p.x=i?4:-4; p.sy=i?.97:.94; p.sx=2-p.sy; p.mouth='o' }   // 快輸了：發抖
   if(a.state==='hop'){ const up=Math.sin(Math.min(1,t/.75)*Math.PI); p.sy=t<.15?1-.2*Math.sin(t/.15*Math.PI):(t<.75?1+.12*up:1-.2*Math.sin((t-.75)/.25*Math.PI)); p.sx=2-p.sy }
   if(a.state==='talk'){ p.mouth=Math.floor(s*8)%2?'o':'n'; p.sy=1+Math.sin(s*16)*.04; p.sx=2-p.sy }
-  if(a.state==='hurt'){ p.face='x'; p.mouth='o'; p.sx=rgKf(t,[[0,1],[.15,1.3],[.4,.85],[.7,1.08],[1,1]]); p.sy=2-p.sx }
+  if(a.state==='hurt'){ p.face='x'; p.mouth='o'; p.sx=rgKf(t,[[0,1],[.12,1.28,'out'],[.32,.84],[.52,1.12],[.72,.96],[1,1]]); p.sy=2-p.sx; p.rot=rgKf(t,[[0,0],[.12,8,'out'],[.32,-7],[.52,5],[.72,-3],[1,0]]) }
   if(a.state==='defeat'){ p.face='x'; p.mouth='o'; p.sx=rgKf(t,[[0,1],[.3,1.35],[.6,.9],[1,1]]); p.sy=2-p.sx }
   if(a.state==='rage'){ p.face='angry'; p.mouth='angry'; const sh=Math.sin(s*60)*(1-t); p.sx=1+sh*.05+rgKf(t,[[0,0],[.2,-.18],[.4,.18],[.6,0]]); p.sy=2-p.sx }
   return p;
@@ -2026,7 +2191,7 @@ function rgMonPose(a, now){
 function rgBlink(a, now, open){
   if(now>a.blinkAt){ a.blinkAt=now+2200+Math.random()*2600; a.blinkEnd=now+130 }
   const closed=open && now<(a.blinkEnd||0);
-  a.p.eyes.forEach(e=>{ const cy=a.kind==='mon'?-32:-92; e.setAttribute('transform', closed?`translate(0 ${cy}) scale(1 .12) translate(0 ${-cy})`:'') });
+  a.p.eyes.forEach(e=>e.setAttribute('transform', rgEyeTr(a.kind==='mon'?-32:-92, closed, a.kind==='mon'?0:a.eyeX)));
 }
 function rgFrame(now){
   RG.raf=0; let alive=false;
@@ -2047,13 +2212,11 @@ function rgFrame(now){
       if(P.plume) rgSet(P.plume, `rotate(${h.plume} -2 -138)`);
       if(P.pet) P.pet.style.transform=`translateY(${h.pet}px)`;
       const f=h.face;
-      rgVis(P.eyesN, f==='n'||f==='brow'||f==='shout'); rgVis(P.eyesHappy, f==='happy'); rgVis(P.eyesHurt, f==='hurt');
-      rgVis(P.brows, f==='brow'||f==='shout');
-      rgVis(P.mouthN, f==='n'||f==='brow'); rgVis(P.mouthO, f==='shout'||f==='happy'); rgVis(P.mouthHurt, f==='hurt');
+      rgFaceHero(P, f); a.eyeX=h.eyeX;
       rgBlink(a, now, f==='n');
     }else{
       const m=rgMonPose(a, now);
-      rgSet(P.root, `scale(${m.sx} ${m.sy})`);
+      rgRootMon(P, m);
       const angry=a.angryBase||m.face==='angry';
       rgVis(P.eyesN, m.face!=='x'); rgVis(P.eyesX, m.face==='x');
       rgVis(P.brows, a.browBase||m.face==='angry'); rgVis(P.vein, angry);
@@ -2069,7 +2232,7 @@ function rigAll(){ ['heroBod','hero2Bod','monBod'].forEach(id=>{ const el=$(id);
 // ================= 版本 18：像素風（把向量角色即時轉成像素圖，動作一格一格播放） =================
 const PX_SCALE=.28;                                   // 每個 SVG 單位幾個像素
 const HERO_VB=[-67,-176,134,180], MON_VB=[-60,-108,120,114];      // 原本的顯示範圍（版面大小不變）
-const PXF_HERO=[-80,-226,172,232], PXF_MON=[-72,-126,144,134];    // 像素圖的範圍（留空間給跳躍、舉手）
+const PXF_HERO=[-80,-226,172,232], PXF_MON=[-84,-132,168,140];    // 像素圖的範圍（留空間給跳躍、舉手）
 const PX_OL=[43,34,56];
 const PXREG=new Map(); let pxN=0;
 const PXCACHE=new Map();                              // 同一個造型只轉一次
@@ -2113,18 +2276,28 @@ async function pxRaster(svgEl, f){
 }
 // 每種動作要轉哪幾格
 const PX_PLAN={
-  hero:{idle:[[0,0],[0,817]], walk:[[.12],[.37],[.62],[.87]], attack:[[.12],[.3],[.45],[.56],[.72],[.9]], cast:[[.15],[.32],[.48],[.72],[.9]], hurt:[[.15],[.55]], victory:[[.1],[.22],[.36],[.52],[.64],[.78],[.92]], sad:[[.8]]},
-  mon:{idle:[[0,0],[0,600]], hop:[[.1],[.4],[.85]], talk:[[0,0,1],[0,0,0]], hurt:[[.15],[.45]], defeat:[[.3],[.6]], rage:[[.2],[.45]]}
+  hero:{idle:[[0,0],[0,817]], walk:[[.12],[.37],[.62],[.87]], attack:[[.12],[.3],[.45],[.56],[.72],[.9]], cast:[[.15],[.32],[.48],[.72],[.9]], hurt:[[.15],[.55]], victory:[[.1],[.22],[.36],[.52],[.64],[.78],[.92]], sad:[[.8]],
+    puzzled:[[.1],[.3],[.5],[.7],[.9]], look:[[.08],[.25],[.42],[.6],[.75],[.92]], ready:[[.1],[.3],[.45],[.6],[.75],[.92]], yawn:[[.1],[.28],[.5],[.7],[.9]],
+    throw:[[.08],[.24],[.38],[.5],[.7],[.9]], twirl:[[.08],[.2],[.32],[.44],[.6],[.76],[.92]], blow:[[.1],[.3],[.45],[.6],[.75],[.92]], drum:[[.07],[.14],[.26],[.4],[.52],[.8]], aim:[[.06],[.16],[.28],[.5],[.85]], summon:[[.08],[.22],[.4],[.6],[.78],[.94]],
+    mood_up:[[0,0],[0,130],[0,260],[0,390]], mood_dn:[[0,0],[0,110],[0,220],[0,330]]},
+  mon:{idle:[[0,0],[0,600]], hop:[[.1],[.4],[.85]], talk:[[0,0,1],[0,0,0]], hurt:[[.1],[.28],[.48],[.68],[.88]], defeat:[[.3],[.6]], rage:[[.2],[.45]], mood_weak:[[0,0],[0,110]]}
 };
-function pxPoseAt(kind, state, t, now){
-  const dur=RG_DUR[kind][state]||1000, fake={state, t0:0, dur:state==='idle'?0:dur};
+// 版本 26：有招牌動作的怪獸，平常的格數和小動作的格數照 MV / MV_FID 來排
+function pxPlanFor(e){
+  const base=PX_PLAN[e.kind], M=e.kind==='mon' && MV[e.mv];
+  if(!M) return base;
+  const T=M.T*(e.big?1.3:1), F=MV_FID[e.mv];
+  return Object.assign({}, base, {idle:Array.from({length:M.n},(_,i)=>[0,(i+.01)*T/M.n]), fid:Array.from({length:F.n},(_,i)=>[(i+.5)/F.n])});
+}
+function pxPoseAt(kind, state, t, now, e){
+  const dur=RG_DUR[kind][state]||1000, fake={state, t0:0, dur:state==='idle'?0:dur, mv:e?e.mv:'', big:e?e.big:false};
   return kind==='mon' ? rgMonPose(fake, now!=null?now:t*dur) : rgHeroPose(fake, now!=null?now:t*dur);
 }
 function pxEntry(key){
   const spec=PXREG.get(key); if(!spec) return null;
   const ck=spec.kind+'|'+spec.vec.replace(/rg\d+/g,'rg');
   let e=PXCACHE.get(ck);
-  if(!e){ e={spec, frames:{}, blink:null, full:false, building:null, idleP:null}; PXCACHE.set(ck,e) }
+  if(!e){ e={spec, kind:spec.kind, mv:(/data-mv="([a-z]+)"/.exec(spec.vec)||[])[1]||'', big:/data-big="1"/.test(spec.vec), frames:{}, blink:null, blinks:null, full:false, building:null, idleP:null}; PXCACHE.set(ck,e) }
   return e;
 }
 function pxSvgOf(spec){
@@ -2138,21 +2311,22 @@ async function pxFrame(e, state, spec2){
   const svg=pxSvgOf(e.spec), P=rgParts(svg), kind=e.spec.kind, f=kind==='mon'?PXF_MON:PXF_HERO;
   const [t, now, talkOpen]=spec2;
   if(kind==='mon'){
-    const m=pxPoseAt('mon', state, t, now);
+    const m=pxPoseAt('mon', state, t, now, e);
     if(state==='talk') m.mouth=talkOpen?'o':'n';
     const angryBase=P.mouthAngry && P.mouthAngry.getAttribute('visibility')==='visible', browBase=P.brows && P.brows.getAttribute('visibility')==='visible';
     rgApplyMon(P, m, angryBase, browBase, false);
-  }else rgApplyHero(P, pxPoseAt('hero', state, t, now), false);
+  }else rgApplyHero(P, pxPoseAt('hero', state, t, now, e), false);
   return pxRaster(svg, f);
 }
-async function pxBlink(e){
+async function pxBlink(e, sp=[0,0]){
   const svg=pxSvgOf(e.spec), P=rgParts(svg), kind=e.spec.kind, f=kind==='mon'?PXF_MON:PXF_HERO;
-  if(kind==='mon'){ const ab=P.mouthAngry&&P.mouthAngry.getAttribute('visibility')==='visible', bb=P.brows&&P.brows.getAttribute('visibility')==='visible'; rgApplyMon(P, pxPoseAt('mon','idle',0,0), ab, bb, true) }
-  else rgApplyHero(P, pxPoseAt('hero','idle',0,0), true);
+  if(kind==='mon'){ const ab=P.mouthAngry&&P.mouthAngry.getAttribute('visibility')==='visible', bb=P.brows&&P.brows.getAttribute('visibility')==='visible'; rgApplyMon(P, pxPoseAt('mon','idle',sp[0],sp[1],e), ab, bb, true) }
+  else rgApplyHero(P, pxPoseAt('hero','idle',sp[0],sp[1],e), true);
   return pxRaster(svg, f);
 }
+// 先只轉第一格（商店、圖鑑的預覽只需要這一格），其他格等角色真的上場再轉
 function pxIdle(e){
-  if(!e.idleP) e.idleP=(async()=>{ const plan=PX_PLAN[e.spec.kind].idle; e.frames.idle=[]; for(const sp of plan) e.frames.idle.push(await pxFrame(e,'idle',sp)); return e.frames.idle[0] })().catch(err=>{ pxImgOK=false; throw err });
+  if(!e.idleP) e.idleP=(async()=>{ e.frames.idle=[await pxFrame(e,'idle',pxPlanFor(e).idle[0])]; return e.frames.idle[0] })().catch(err=>{ pxImgOK=false; throw err });
   return e.idleP;
 }
 function pxEnsureFull(key){
@@ -2160,9 +2334,15 @@ function pxEnsureFull(key){
   if(e.building) return e.building;
   e.building=(async()=>{
     await pxIdle(e);
-    e.blink=await pxBlink(e);
-    const plan=PX_PLAN[e.spec.kind];
-    for(const st of Object.keys(plan)){ if(st==='idle') continue; const arr=[]; for(const sp of plan[st]) arr.push(await pxFrame(e, st, sp)); e.frames[st]=arr; await new Promise(r=>setTimeout(r,0)) }
+    const plan=pxPlanFor(e), idle=[e.frames.idle[0]], blinks=[];
+    for(let i=1;i<plan.idle.length;i++) idle.push(await pxFrame(e,'idle',plan.idle[i]));
+    for(const sp of plan.idle) blinks.push(await pxBlink(e, sp));
+    e.frames.idle=idle; e.blinks=blinks; e.blink=blinks[0];
+    // 先轉馬上會用到的動作（現在這把武器的攻擊、走路、答錯），其他的排後面
+    let pri=['walk','puzzled','attack','hurt','mood_dn','mood_up'];
+    if(e.kind==='hero'){ try{ pri.unshift(atkPose()) }catch(err){} } else pri=['hurt','hop','talk','mood_weak'];
+    const order=Object.keys(plan).sort((x,y)=>((pri.indexOf(x)+1)||99)-((pri.indexOf(y)+1)||99));
+    for(const st of order){ if(st==='idle') continue; const arr=[]; for(const sp of plan[st]) arr.push(await pxFrame(e, st, sp)); e.frames[st]=arr; await new Promise(r=>setTimeout(r,0)) }
     e.full=true;
   })().catch(()=>{});
   return e.building;
@@ -2181,9 +2361,13 @@ function pxTick(a, now){
   let list=e.frames[a.state], url;
   if(!list || !list.length){ list=e.frames.idle }
   if(!list || !list.length) return;
-  if(a.state==='idle' || !e.frames[a.state]){
+  const ML = a.state==='idle' && a.mood && !reduce && e.frames['mood_'+a.mood];
+  if(ML && ML.length){
+    url=ML[Math.floor(now/(a.mood==='up'?130:110))%ML.length];
+  }else if(a.state==='idle' || !e.frames[a.state]){
     if(now>a.blinkAt){ a.blinkAt=now+2200+Math.random()*2600; a.blinkEnd=now+140 }
-    url = (e.blink && now<(a.blinkEnd||0)) ? e.blink : list[Math.floor(now/(reduce?100000:480))%list.length];
+    const M=e.kind==='mon' && MV[e.mv], fm=M ? M.T*(e.big?1.3:1)/M.n : 480, i=reduce ? 0 : Math.floor(now/fm)%list.length;
+    url = (now<(a.blinkEnd||0) && e.blinks && e.blinks[i]) ? e.blinks[i] : list[i];
   }else if(a.state==='talk'){
     url=list[Math.floor((now-a.t0)/130)%list.length];
   }else{
@@ -2377,7 +2561,7 @@ function drawStaff(seq, states=[], active=-1){
     if(n.sharp) el('text',{x:x-15,y:y+8,'text-anchor':'end','font-size':26,'font-family':'"Noto Music","Bravura","Segoe UI Symbol",serif',fill:c}).textContent='\u266F';
     if(n.step<4) el('line',{x1:x+8.6,x2:x+8.6,y1:y-1,y2:y-56,stroke:c,'stroke-width':2.6});
     else         el('line',{x1:x-8.6,x2:x-8.6,y1:y+1,y2:y+56,stroke:c,'stroke-width':2.6});
-    el('ellipse',{cx:x,cy:y,rx:9.6,ry:6.8,transform:`rotate(-22 ${x} ${y})`,fill:c});
+    el('ellipse',{class:'nh',cx:x,cy:y,rx:9.6,ry:6.8,transform:`rotate(-22 ${x} ${y})`,fill:c});
     if(i===active && seq.length>1) el('path',{d:`M${x-8} 22 L${x+8} 22 L${x} 34Z`,fill:'#f5b82e',stroke:'#2b3550','stroke-width':2});
     if(st && st.label){
       if(seq.length===1){ const w=st.label.length*19+18; let px=x+24+w/2; if(px+w/2>356) px=x-(n.sharp?44:24)-w/2; pill(s, px, y, st.label, st.color) }
@@ -2532,9 +2716,10 @@ function renderMon(enraged){
   const m=curMon();
   $('monBod').innerHTML=monSVG(enraged?Object.assign({},m,{c:'#b8333a'}):m, enraged); rigAll();
   $('monster').classList.toggle('enraged',!!enraged);
+  const cl=$('monster').classList, mv=m.mv||MON_MV[m.id]; [...cl].forEach(c=>{ if(c.startsWith('mv-')) cl.remove(c) }); if(mv) cl.add('mv-'+mv);
 }
 const HEART='<svg viewBox="0 0 24 22"><path d="M12 21 C3 14 1 9 3.5 5 C6 1.5 10.5 2.5 12 6 C13.5 2.5 18 1.5 20.5 5 C23 9 21 14 12 21Z" fill="#e8473d" stroke="#2b3550" stroke-width="2" stroke-linejoin="round"/></svg>';
-const stageLives = () => (S.mode==='solo' && S.sub==='stage' && S.stage && S.stage.lives) || 0;
+const stageLives = () => (S.mode==='solo' && (S.sub==='stage' || S.sub==='chal') && S.stage && S.stage.lives) || 0;
 function renderLives(breakOne){
   const el=$('lives'), max=stageLives();
   el.hidden=!max; if(!max) return;
@@ -2553,6 +2738,13 @@ function hud(){
     $('meter').classList.add('boss','raid'); $('pwLabel').textContent=`${r.name} ${r.hp}/${r.max}`;
     $('pwFill').style.width=Math.max(0,r.hp/Math.max(1,r.max)*100)+'%';
     $('combo').innerHTML=`我的傷害 <b>${S.raidMine||0}</b>`;
+  }else if(S.sub==='chal'){
+    const g=goal(), run=S.chal==='bossrun';
+    $('meter').classList.remove('raid'); $('meter').classList.toggle('boss',run);
+    $('pwLabel').textContent = run ? `第 ${Math.min(5,S.bossN+1)}/5 隻魔王${S.phase2?'（生氣了）':''}` : '下一隻怪獸';
+    const pct = run ? Math.max(0,100-S.power/g*100) : Math.min(100,S.power/g*100);
+    $('pwFill').style.width=pct+'%'; $('pw').setAttribute('aria-valuenow',Math.round(pct));
+    $('combo').innerHTML = run ? `連擊 <b>${S.combo}</b>` : `${S.chal==='beat'?'接到':'答對'} <b>${S.cq}</b>`;
   }else if(S.stage){
     $('meter').classList.remove('raid');
     const g=goal(), boss=S.stage.boss;
@@ -2734,7 +2926,7 @@ function spawnProj(kind, from, to, dur, delay, size, back){
 async function heroAttack(big, heroEl=$('hero'), dir=1){
   const hb=heroEl.querySelector('.bod'), h=centerOf(heroEl), m=centerOf($('monster'));
   const W = S.mode==='team' ? {style:'melee'} : effWeapon();
-  rigPlay(hb, W.style==='melee'?'attack':'cast');
+  rigPlay(hb, atkPose());
   const fx = S.mode==='team' ? FX[heroEl.id==='hero'?1:2] : curFx();
   const hand={x:h.x+dir*h.w*.35, y:h.y-h.h*.05}, kind=attackKind(heroEl);
   if(W.style==='proj'){
@@ -2797,10 +2989,9 @@ async function monsterAdvance(adjacent){
     await wait(380);
   }
   const m=centerOf($('monster')), h=centerOf($('hero'));
-  sStomp(); shake(adjacent?20:15, 480); dust(m.x, m.bottom-6);
-  $('vign').animate([{opacity:1},{opacity:parseFloat($('vign').style.opacity)||0}],{duration:600});
-  fxText(adjacent?'吼——！':'咚！', m.x, m.y-m.h*.65, 'red'); rigPlay($('heroBod'),'hurt');
-  $('heroBod').animate([{transform:'translateX(0)',filter:'none'},{transform:'translateX(-14px) rotate(-10deg)',filter:'brightness(1.4) sepia(1) hue-rotate(-40deg) saturate(4)',offset:.3},{transform:'translateX(0)',filter:'none'}],{duration:450});
+  sStomp(); shake(adjacent?7:5, 340); dust(m.x, m.bottom-6);
+  fxText(adjacent?'吼～':'咚！', m.x, m.y-m.h*.65);
+  heroPuzzled($('hero'), -1, adjacent?12:7);
   if(adjacent && S.hero>0){ S.hero--; await wait(120); place(); dust(h.x, h.bottom-6, -1); }
 }
 async function monsterGrowlAt(t){
@@ -2809,9 +3000,9 @@ async function monsterGrowlAt(t){
   sGrowl();
   $('monBod').animate([{transform:'translateX(0)'},{transform:`translateX(${-dir*10}px) scale(1.08)`,offset:.3},{transform:`translateX(${dir*Math.abs(m.x-h.x)*.35}px) scale(1.18)`,offset:.6},{transform:'translateX(0)'}],{duration:560});
   await wait(330);
-  sStomp(); shake(12,380); dust(h.x, h.bottom-6, dir);
-  fxText('吼！', h.x, h.y-h.h*.6, 'red'); rigPlay(heroEl.querySelector('.bod'),'hurt');
-  heroEl.querySelector('.bod').animate([{transform:'translateX(0)',filter:'none'},{transform:`translateX(${dir*14}px)`,filter:'brightness(1.4) sepia(1) hue-rotate(-40deg) saturate(4)',offset:.3},{transform:'translateX(0)',filter:'none'}],{duration:450});
+  sStomp(); shake(5,300); dust(h.x, h.bottom-6, dir);
+  fxText('吼～', m.x, m.y-m.h*.65);
+  heroPuzzled(heroEl, dir, 8);
 }
 async function monsterDefeat(){
   rigPlay($('monBod'),'defeat');
@@ -2836,6 +3027,340 @@ async function bossEnrage(){
   renderMon(true); rigPlay($('monBod'),'rage'); place(); hud(); monSay('rage');
   burst(m.x,m.y,20,['#ff4d2e','#ffcf3f','#7a1f3d'],120,[8,16]);
   await wait(900);
+}
+
+// ================= 版本 26：音符飛行、勇者等待動作、怪獸個性 =================
+// ---- 答對：五線譜上的音符變成光球飛向怪獸 ----
+function atkLead(){ const W=S.mode==='team'?{style:'melee'}:effWeapon(); return W.style==='proj'?580:W.style==='beam'?150:W.style==='wave'?420:W.style==='summon'?720:330 }
+function flyDot(x,y,size,col,cls){
+  const d=document.createElement('i'); d.className=cls;
+  Object.assign(d.style,{left:(x-size/2)+'px',top:(y-size/2)+'px',width:size+'px',height:size+'px'}); d.style.setProperty('--c',col);
+  $('fly').appendChild(d); return d;
+}
+function notePing(i){
+  if(reduce) return;
+  const hd=$('staff').querySelectorAll('.nh')[i]; if(!hd) return;
+  const r=hd.getBoundingClientRect(), d=flyDot(r.left+r.width/2, r.top+r.height/2, 30, hd.getAttribute('fill')||'#ffd23f', 'oring');
+  d.animate([{transform:'scale(.4)',opacity:1},{transform:'scale(1.9)',opacity:0}],{duration:420,easing:'ease-out'}).onfinish=()=>d.remove();
+}
+function noteOrbs(target, lead, only){
+  if(reduce || !target) return;
+  const heads=only || [...$('staff').querySelectorAll('.nh')]; if(!heads.length) return;
+  const tb=target.querySelector('.bod').getBoundingClientRect(); if(!tb.width) return;
+  const tx=tb.left+tb.width/2, ty=tb.top+tb.height*.5, dur=Math.max(320, lead), ease='cubic-bezier(.4,0,.9,.7)';
+  heads.forEach((hd,i)=>{
+    const r=hd.getBoundingClientRect(), x0=r.left+r.width/2, y0=r.top+r.height/2, col=hd.getAttribute('fill')||'#ffd23f';
+    const cx=x0+(tx-x0)*.2, cy=Math.min(y0,ty)-46, delay=i*80, K=[];
+    for(let j=0;j<=8;j++){
+      const u=j/8, v=1-u, bx=v*v*x0+2*u*v*cx+u*u*tx, by=v*v*y0+2*u*v*cy+u*u*ty;
+      K.push({transform:`translate(${(bx-x0).toFixed(1)}px,${(by-y0).toFixed(1)}px) scale(${(.75+.55*Math.sin(u*Math.PI)).toFixed(2)})`});
+    }
+    notePing(i);
+    const os=Math.max(22, Math.min(40, r.width*1.5)), orb=flyDot(x0,y0,os,col,'orb');
+    orb.animate(K,{duration:dur,delay,easing:ease,fill:'both'}).onfinish=()=>{
+      orb.remove();
+      if(!target.isConnected) return;
+      const m=centerOf(target); ringAt(m.x,m.y,col,40,{dur:360,w:8,grow:2.4}); burst(m.x,m.y,5,[col,'#fff'],44,[5,9]);
+    };
+    for(let g=1;g<=3;g++){
+      const tr=flyDot(x0,y0,os*(1-g*.2),col,'orb tr'); tr.style.opacity=.55-g*.13;
+      tr.animate(K,{duration:dur,delay:delay+g*45,easing:ease,fill:'both'}).onfinish=()=>tr.remove();
+    }
+  });
+}
+// ---- 每種武器自己的攻擊動作 ----
+function atkPose(){
+  if(S.mode==='team') return 'attack';
+  const W=effWeapon();
+  if(W.style==='melee') return 'attack';
+  if(W.style==='summon') return 'summon';
+  if(W.style==='wave') return 'drum';
+  if(W.style==='beam') return 'aim';
+  if(W.proj==='boomerang' || W.proj==='yoyo') return 'throw';
+  if(W.proj==='note') return 'blow';
+  return 'twirl';
+}
+// ---- 夥伴一起參與：答對會跳、連擊 5 的倍數會丟一顆小星星、答錯會垂頭 ----
+function petCheer(kind){
+  const el=$('pet'); if(!el || el.hidden || reduce) return;
+  el.getAnimations().filter(x=>!(window.CSSAnimation && x instanceof CSSAnimation)).forEach(x=>x.cancel());
+  if(kind==='no'){ el.animate([{transform:'translateY(0) rotate(0deg)'},{transform:'translateY(14%) rotate(-10deg) scale(1.06,.9)',offset:.25},{transform:'translateY(14%) rotate(8deg) scale(1.06,.9)',offset:.6},{transform:'translateY(0) rotate(0deg)'}],{duration:1000,easing:'ease-out'}); return }
+  if(kind==='ok'){ el.animate([{transform:'translateY(0)'},{transform:'translateY(-50%) scale(1.1)',offset:.4},{transform:'translateY(0) scale(1.12,.88)',offset:.8},{transform:'translateY(0)'}],{duration:420,easing:'ease-out'}); return }
+  el.animate([{transform:'translateY(0) rotate(0deg)'},{transform:'translateY(-70%) rotate(180deg) scale(1.15)',offset:.45},{transform:'translateY(0) rotate(360deg) scale(1.1,.9)',offset:.85},{transform:'translateY(0) rotate(360deg)'}],{duration:560,easing:'ease-out'});
+  if(kind==='star'){
+    const sc=$('scene').getBoundingClientRect(), r=el.getBoundingClientRect(), m=centerOf($('monster'));
+    const from={x:r.left-sc.left+r.width/2, y:r.top-sc.top+r.height/2};
+    setTimeout(()=>{ if(!S.playing) return; spawnProj('star', from, {x:m.x, y:m.y}, 420, 0, 20, false); fxText('加油！', from.x, from.y-r.height*.6, 'gold') }, 240);
+  }
+}
+// ---- 冒汗：勇者很緊張、怪獸快輸了 ----
+function sweat(actor, on){
+  let d=actor.querySelector('.sweat');
+  if(on && !d){ d=document.createElement('i'); d.className='sweat'; actor.appendChild(d) }
+  else if(!on && d) d.remove();
+}
+function moodTick(){
+  const ha=RG.actors.get($('heroBod')), ma=RG.actors.get($('monBod'));
+  const solo=S.playing && S.mode==='solo' && !anyOverlay();
+  const fight=solo && S.sub!=='song' && !(S.sub==='chal' && S.chal==='beat');
+  const danger=fight && !reduce && (S.mon-1<=S.hero || (stageLives()>0 && S.lives===1));
+  const up=solo && S.combo>=5;
+  let weak=false;
+  if(fight && S.stage && S.sub!=='raid' && !(S.sub==='chal' && S.chal!=='bossrun')){ const p=S.power/goal(); weak = S.stage.boss ? (S.phase2 && p>=.8) : p>=.66 }
+  if(reduce) weak=false;
+  if(ha) ha.mood = danger?'dn':(up?'up':'');
+  if(ma) ma.mood = weak?'weak':'';
+  sweat($('hero'), danger); sweat($('monster'), weak);
+  $('pet').classList.toggle('hype', weak||up);
+}
+// ---- 答錯：勇者頭上冒出問號、抓抓頭（不閃紅） ----
+function qBubble(heroEl){
+  let b=heroEl.querySelector('.qmark');
+  if(!b){ b=document.createElement('div'); b.className='qmark'; b.textContent='？'; heroEl.appendChild(b) }
+  b.getAnimations().forEach(a=>a.cancel());
+  b.animate([{transform:'scale(.2) rotate(-20deg)',opacity:0},{transform:'scale(1.15) rotate(8deg)',opacity:1,offset:.14},{transform:'scale(1) rotate(-6deg)',opacity:1,offset:.3},{transform:'scale(1) rotate(6deg)',opacity:1,offset:.55},{transform:'scale(1) rotate(-4deg)',opacity:1,offset:.85},{transform:'scale(.6)',opacity:0}],{duration:1700,easing:'ease-out'}).onfinish=()=>b.remove();
+}
+function heroPuzzled(heroEl, dir=-1, push=8){
+  const hb=heroEl.querySelector('.bod'); rigPlay(hb,'puzzled');
+  hb.animate([{transform:'translateX(0)'},{transform:`translateX(${dir*push}px) rotate(${dir*4}deg)`,offset:.3},{transform:'translateX(0)'}],{duration:420,easing:'ease-out'});
+  qBubble(heroEl);
+}
+// ---- 等待時的小動作：勇者東張西望／蹦一下／打哈欠，怪獸做自己的招牌動作，身邊冒出小東西 ----
+const FIDG={heroAt:0, monAt:0, ambAt:0, yawned:false};
+function fidReset(){
+  const now=performance.now();
+  FIDG.heroAt=now+3200+Math.random()*2200; FIDG.yawned=false;
+  if(S.mode==='solo' && S.combo>0 && S.combo%5===0 && !reduce){ rigPlay($('heroBod'),'ready'); const h=centerOf($('hero')); burst(h.x, h.y-h.h*.3, 6, ['#ffd23f','#fff'], 50, [5,9]) }
+  if(FIDG.monAt<now+1500) FIDG.monAt=now+2500+Math.random()*3500;
+}
+const rigIdle=bod=>{ const a=bod && RG.actors.get(bod); return !!a && a.state==='idle' && !bod.getAnimations().some(x=>!(window.CSSAnimation && x instanceof CSSAnimation)) };
+function heroFidget(now){
+  const waited=now-(S.qStart||now), list=[$('heroBod')]; if(S.mode==='team') list.push($('hero2Bod'));
+  list.forEach(hb=>{
+    if(!rigIdle(hb)) return;
+    let st=Math.random()<.6?'look':'ready';
+    if(S.mode!=='team' && waited>9000 && !FIDG.yawned){ st='yawn'; FIDG.yawned=true }
+    rigPlay(hb, st);
+  });
+}
+function monFidget(){
+  const mb=$('monBod'), a=RG.actors.get(mb); if(!a || !MV_FID[a.mv] || !rigIdle(mb)) return;
+  const bub=$('monBubble'); if(bub && !bub.hidden && bub.getAnimations().some(x=>x.playState==='running')) return;
+  rigPlay(mb,'fid'); a.dur=MV_FID[a.mv].dur;
+  const live=()=>S.playing && a.state==='fid' && mb.isConnected, at=(k,fn)=>setTimeout(()=>{ if(live()) fn(centerOf($('monster'))) }, a.dur*k);
+  if(a.mv==='shiver') at(.5, c=>{ fxText('哈啾！', c.x, c.y-c.h*.6); fxBurst($('scene'), c.x-c.w*.35, c.y, 5, {parts:['snow'],cols:['#ffffff','#bfe9ff']}, 46, [8,13]) });
+  if(a.mv==='stomp') at(.55, c=>{ dust(c.x, c.bottom-6); shake(3,200) });
+  if(a.mv==='flicker') at(.35, c=>fxBurst($('scene'), c.x, c.y-c.h*.3, 5, {parts:['flame'],cols:['#ff6a2b','#ffb02e','#ffe066']}, 40, [8,13]));
+  if(a.mv==='float') at(.3, c=>fxBurst($('scene'), c.x, c.y-c.h*.2, 4, {parts:['bubble'],cols:['#bfe9ff','#ffffff']}, 40, [8,13]));
+}
+const MV_AMB={float:['bubble','#bfe9ff'], shiver:['snow','#ffffff'], flicker:['flame','#ffb02e'], drift:['dot','#6b5aa8']};
+function monAmbient(){
+  const a=RG.actors.get($('monBod')), A=a && MV_AMB[a.mv]; if(!A || a.state==='defeat') return;
+  const c=centerOf($('monster')); if(!c.w) return;
+  const sz=9+Math.random()*5, fall=A[0]==='snow', x=c.x+(Math.random()-.5)*c.w*.9, y=fall?c.y-c.h*.55:c.y-c.h*.15;
+  const d=document.createElement('div'); d.className='part';
+  Object.assign(d.style,{width:sz+'px',height:sz+'px',left:(x-sz/2)+'px',top:(y-sz/2)+'px',zIndex:2});
+  d.innerHTML=partHTML(A[0],A[1]); $('scene').appendChild(d);
+  const dx=(Math.random()-.5)*18, dy=fall?c.h*.75:-(c.h*.5+12);
+  d.animate([{transform:'translate(0,0) scale(.5)',opacity:0},{transform:`translate(${dx*.3}px,${dy*.25}px) scale(1)`,opacity:.9,offset:.25},{transform:`translate(${dx}px,${dy}px) scale(.8)`,opacity:0}],{duration:1100+Math.random()*400,easing:'linear'}).onfinish=()=>d.remove();
+}
+setInterval(()=>{
+  moodTick();
+  if(reduce || !S.playing || document.hidden || anyOverlay()) return;
+  const now=performance.now();
+  if(!S.busy && now>FIDG.heroAt){ FIDG.heroAt=now+3800+Math.random()*3200; heroFidget(now) }
+  if((!S.busy || !$('btnNext').hidden) && now>FIDG.monAt){ FIDG.monAt=now+5200+Math.random()*4200; monFidget() }
+  if(now>FIDG.ambAt){ FIDG.ambAt=now+700+Math.random()*700; monAmbient() }
+}, 350);
+
+// ================= 版本 26：挑戰模式（節拍快答、限時衝刺、生存模式、魔王挑戰） =================
+const CHAL={
+  beat:   {name:'節拍快答', icon:'♪',  lives:5, unit:'個音',   desc:'音符跟著拍子從右邊滑過來，在碰到紅線以前答出來。漏掉或答錯會少一顆愛心，五顆用完就結束，越後面越快。'},
+  sprint: {name:'限時衝刺', icon:'60', lives:0, unit:'題',     desc:'60 秒內能答對幾題？答錯不會扣分，但是會花掉時間。'},
+  survive:{name:'生存模式', icon:'♥',  lives:3, unit:'題',     desc:'只有三顆愛心。題目會越來越快、越來越長，看你能撐過幾題。'},
+  bossrun:{name:'魔王挑戰', icon:'王', lives:5, unit:'隻魔王', desc:'連續挑戰五個地區的魔王，全程共用五顆愛心，看你能打倒幾隻。每隻魔王用牠那個地區的音。'}
+};
+const CHAL_RANGE=['ㄉㄡ ㄖㄨㄟ ㄇㄧ','ㄉㄡ 到 ㄙㄛ','ㄉㄡ 到 ㄌㄚ','八個音'];
+const chalFast = () => S.sub==='chal' && S.chal==='sprint';
+const chalUnlocked = ri => ri===0 || stageUnlocked(STAGES.find(st=>st.r===ri));
+function chalRecText(rec){ return rec ? Object.keys(CHAL).filter(k=>rec[k] && rec[k].v>0).map(k=>`${CHAL[k].name} ${rec[k].v}`).join('、') : '' }
+function openChal(){
+  if(advLocked()){ toastMsg('老師還沒開放挑戰模式，先去練習吧！'); return }
+  stopPlay(); ctx(); bgmStart(); setSong('calm');
+  let ri = save.chalRi==null ? 3 : Math.max(0, Math.min(3, save.chalRi));
+  while(ri>0 && !chalUnlocked(ri)) ri--;
+  const draw=()=>{
+    $('chalRange').innerHTML=CHAL_RANGE.map((t,i)=>`<button class="lv${i===ri?' on':''}" data-r="${i}" ${chalUnlocked(i)?'':'disabled'}><b>${t}</b><small>${chalUnlocked(i)?REGIONS[i].name:'還沒解鎖'}</small></button>`).join('');
+    $('chalList').innerHTML=Object.keys(CHAL).map(id=>{ const C=CHAL[id], r=save.rec[id];
+      return `<div class="vunit"><div class="vuh"><span class="vstr">${C.icon}</span><div><b>${C.name}</b><small>${C.desc}</small></div></div>`+
+        `<div class="chalrow"><span class="chalbest">${r&&r.v>0?`最高紀錄：${r.v} ${C.unit}`:'還沒挑戰過'}</span><button class="big" data-c="${id}">開始</button></div></div>` }).join('');
+    $('chalRange').querySelectorAll('[data-r]').forEach(b=>b.addEventListener('click',()=>{ ri=+b.dataset.r; save.chalRi=ri; persistLocal(); draw() }));
+    $('chalList').querySelectorAll('[data-c]').forEach(b=>b.addEventListener('click',()=>startChal(b.dataset.c, ri)));
+  };
+  draw(); show('ovChal');
+}
+function startChal(kind, ri){
+  const C=CHAL[kind]; if(!C) return;
+  const run=kind==='bossrun', r0=run?0:ri, R=REGIONS[r0];
+  S.mode='solo'; S.sub='chal'; S.chal=kind; S.chalRi=ri; S.cq=0; S.bossN=0;
+  S.stage={id:'chal-'+kind, r:r0, n:0, seq:[1], seq2:[1,2], time:run?R.t:(kind==='survive'?9:8), goal:run?8:5, boss:run, lives:C.lives};
+  document.body.classList.remove('team'); $('hero2').hidden=true;
+  resetRound(r0, run?R.boss:R.mons[Math.floor(Math.random()*R.mons.length)]);
+  S.lives=C.lives;
+  $('lvChip').textContent='挑戰・'+C.name;
+  renderHero(); setKeys(); place(); hud(); renderLives(); renderItems(); updateGodBtn();
+  if(kind==='beat'){ beatStart(); return }
+  if(kind==='sprint') sprintStart();
+  nextQ();
+}
+// 每一題開始前：生存模式越來越快、越來越長
+function chalTune(){
+  if(S.chal!=='survive') return;
+  const st=S.stage, q=S.cq;
+  st.seq = q<8?[1] : q<16?[1,1,2] : q<26?[1,2] : q<40?[2] : [2,3];
+  st.time = Math.max(4, 9*Math.pow(.97,q));
+}
+function chalHint(){
+  const h=$('seqhint');
+  if(S.chal==='sprint'){ S.spSec=-1; return }
+  if(S.chal==='survive'){ h.hidden=false; h.classList.remove('rage'); h.textContent=`第 ${S.cq+1} 題`+(S.seq.length>1?`・依序答 ${S.seq.length} 個音`:'') }
+}
+// 勇氣值滿了：一般玩法換下一隻怪獸；魔王挑戰換下一隻魔王。回傳 true 代表整場結束了
+async function chalGoal(){
+  if(S.chal!=='bossrun'){ await chalSwap(); return !S.playing }
+  S.busy=true; stopTimer();
+  const old=curMon(); save.dex[old.id]=(save.dex[old.id]||0)+1;
+  await monsterDefeat(); S.bossN++; hud();
+  if(S.bossN>=5){ await chalEnd('clear'); return true }
+  await wait(800); if(!S.playing) return true;
+  const ri=S.bossN, R=REGIONS[ri], mb=$('monBod');
+  Object.assign(S,{region:ri, power:0, phase2:false, hero:0, mon:LANE, monId:R.boss, last:null});
+  S.stage.r=ri; S.stage.time=R.t;
+  mb.getAnimations().forEach(a=>a.cancel()); renderMon(false); rigPlay(mb,'idle'); setScene(ri); setSong(R.song); setKeys(); monHide(); place(); hud();
+  mb.animate([{transform:'translateY(-120%)',opacity:0},{transform:'translateY(0) scale(1.15,.85)',opacity:1,offset:.7},{transform:'translateY(0) scale(1)',opacity:1}],{duration:520,easing:'ease-in'});
+  setTimeout(()=>{ if(S.playing){ const m=centerOf($('monster')); sStomp(); shake(6,300); dust(m.x, m.bottom-6) } }, 380);
+  say(`第 ${ri+1} 隻魔王：${curMon().name}！`,'good');
+  setTimeout(()=>{ if(S.playing) monSay('bossAppear') }, 500);
+  await wait(900);
+  return !S.playing;
+}
+async function chalSwap(){
+  const mb=$('monBod'), old=curMon(), m=centerOf($('monster'));
+  S.power=0; save.dex[old.id]=(save.dex[old.id]||0)+1;
+  burst(m.x, m.y, 12, ['#ffd23f','#fff',old.c], 90, [6,12]); sfx(()=>osc(880,.14,'triangle',.12,0,null,1500));
+  try{ await mb.animate([{transform:'scale(1)',opacity:1},{transform:'scale(.2) rotate(40deg)',opacity:0}],{duration:240,fill:'forwards'}).finished }catch(e){}
+  if(!S.playing || S.sub!=='chal') return;
+  const pool=REGIONS.slice(0,S.chalRi+1).flatMap(r=>r.mons).filter(id=>id!==old.id);
+  S.monId=pool[Math.floor(Math.random()*pool.length)]||old.id;
+  if(S.chal!=='beat'){ S.hero=0; S.mon=LANE }
+  mb.getAnimations().forEach(a=>a.cancel()); renderMon(false); rigPlay(mb,'idle'); monHide(); place(); hud();
+  mb.animate([{transform:'translateY(-90%) scale(.6)',opacity:0},{transform:'translateY(0) scale(1.12,.88)',opacity:1,offset:.7},{transform:'translateY(0) scale(1)',opacity:1}],{duration:280,easing:'ease-out'});
+}
+async function chalEnd(reason){
+  if(!S.playing || S.sub!=='chal') return;
+  S.playing=false; cancelAnimationFrame(S.tId); cancelAnimationFrame(S.spId); cancelAnimationFrame(BT.raf); $('timer').classList.add('off'); $('btnNext').hidden=true;
+  const kind=S.chal, C=CHAL[kind], score=kind==='bossrun'?S.bossN:S.cq, old=(save.rec[kind] && save.rec[kind].v)||0, isNew=score>old;
+  if(isNew) save.rec[kind]={v:score, ri:S.chalRi, d:today()};
+  const good = reason!=='hearts';
+  if(good){ sFan(); rigPlay($('heroBod'),'victory') }
+  else{ sfx(()=>[392,349.23,329.63].forEach((f,i)=>osc(f,.3,'triangle',.18,i*.2))); rigPlay($('heroBod'),'sad') }
+  if(isNew && score>0) broadcast(`在挑戰模式「${C.name}」創下新紀錄：${score} ${C.unit}！`);
+  const rg = kind==='bossrun' ? '' : `（${CHAL_RANGE[S.chalRi]}）`;
+  commit({name:player.name||'訪客', mode:'挑戰・'+C.name, level:`${score} ${C.unit}${rg}`, right:S.right, wrong:S.wrong, best:S.best, stars:isNew&&score>0?'新紀錄':'', coins:S.earned, missed:missedText()}, S.sess);
+  await wait(1000);
+  const title = kind==='bossrun' ? (S.bossN>=5?'五隻魔王全部打倒了！':`打倒了 ${S.bossN} 隻魔王`) : reason==='time' ? `時間到！答對 ${score} 題` : kind==='beat' ? `接到 ${score} 個音符` : `撐過了 ${score} 題`;
+  showWin({title, stat:`<span>${C.name}${rg}</span><span>這次 ${score} ${C.unit}</span><span>最高紀錄 ${Math.max(old,score)} ${C.unit}</span><span>答錯 ${S.wrong}</span>`, earn:S.earned, tier:isNew&&score>0?'新紀錄！':''});
+  $('btnNextLv').hidden=true; $('btnWinMap').textContent='挑戰模式'; $('btnAgain').focus({preventScroll:true});
+}
+// ---- 限時衝刺：整場 60 秒，開選單或切到別的畫面時會暫停 ----
+function sprintStart(){ S.spLeft=60000; S.spLast=performance.now(); S.spSec=-1; $('timer').classList.remove('off','rage'); cancelAnimationFrame(S.spId); S.spId=requestAnimationFrame(sprintLoop) }
+function sprintLoop(now){
+  if(!(S.playing && chalFast())) return;
+  const dt=now-S.spLast; S.spLast=now;
+  if(dt<400 && !anyOverlay() && !document.hidden) S.spLeft-=dt;
+  const r=Math.max(0,S.spLeft/60000), sec=Math.max(0,Math.ceil(S.spLeft/1000)), tm=$('timer');
+  $('timerFill').style.width=(r*100)+'%'; tm.style.setProperty('--heat',(1-r).toFixed(2)); tm.classList.remove('off');
+  if(sec!==S.spSec){ S.spSec=sec; const h=$('seqhint'); h.hidden=false; h.classList.toggle('rage',sec<=10); h.textContent=`剩 ${sec} 秒`; if(sec<=5 && sec>0) sfx(()=>osc(880,.06,'square',.06)) }
+  if(S.spLeft<=0){ chalEnd('time'); return }
+  S.spId=requestAnimationFrame(sprintLoop);
+}
+// ---- 節拍快答：音符跟著拍子從右邊滑向紅線 ----
+const BT={notes:[], raf:0, last:0, beat:780, clock:0, tkAt:0, tk:0};
+const BT_X0=340, BT_X1=74;
+const beatOn = () => S.playing && S.sub==='chal' && S.chal==='beat';
+function beatNoteG(k){
+  const n=NOTES[k], g=el('g',{class:'bn',opacity:0,transform:`translate(${BT_X0} 0)`}), y=yOf(n.step), c='#2b3550';
+  for(let L=-2; L>=n.step; L-=2) el('line',{x1:-17,x2:17,y1:yOf(L),y2:yOf(L),stroke:c,'stroke-width':2.2},g);
+  for(let L=10; L<=n.step; L+=2) el('line',{x1:-17,x2:17,y1:yOf(L),y2:yOf(L),stroke:c,'stroke-width':2.2},g);
+  if(n.step<4) el('line',{class:'bs',x1:8.6,x2:8.6,y1:y-1,y2:y-56,stroke:c,'stroke-width':2.6},g);
+  else         el('line',{class:'bs',x1:-8.6,x2:-8.6,y1:y+1,y2:y+56,stroke:c,'stroke-width':2.6},g);
+  el('ellipse',{class:'nh',cx:0,cy:y,rx:9.6,ry:6.8,transform:`rotate(-22 0 ${y})`,fill:c},g);
+  return g;
+}
+function beatStart(){
+  Object.assign(BT,{notes:[], beat:780, clock:0, tkAt:0, tk:0, last:performance.now()});
+  S.seq=[]; S.busy=false; stopTimer(); $('btnNext').hidden=true; clearKeyMarks();
+  drawStaff([]);
+  el('line',{x1:BT_X1,x2:BT_X1,y1:yOf(12),y2:yOf(-5),stroke:'#e8473d','stroke-width':3,'stroke-dasharray':'6 4','stroke-linecap':'round'});
+  say('在碰到紅線以前答出來！','good');
+  $('seqhint').hidden=true;
+  if(musBus && ac) musBus.gain.setTargetAtTime(0, ac.currentTime, .1);
+  cancelAnimationFrame(BT.raf); BT.raf=requestAnimationFrame(beatLoop);
+}
+function beatLoop(now){
+  if(!beatOn()) return;
+  let dt=now-BT.last; BT.last=now;
+  if(dt>250 || anyOverlay() || document.hidden) dt=0;   // 開選單時暫停
+  BT.clock+=dt;
+  if(BT.clock>=BT.tkAt){
+    const strong=BT.tk%4===0;
+    sfx(()=>osc(strong?990:660,.05,'square',strong?.07:.035));
+    if(strong && BT.tk>=4){ const k=pickOne(S.last); S.last=k; BT.notes.push({k, g:beatNoteG(k), prog:0, done:false}) }   // 第一小節先數拍子
+    BT.tk++; BT.tkAt+=BT.beat;
+  }
+  const span=8*BT.beat;
+  for(const n of BT.notes.slice()){
+    if(n.done) continue;
+    n.prog+=dt/span;
+    n.g.setAttribute('transform',`translate(${(BT_X0-(BT_X0-BT_X1)*Math.min(1,n.prog)).toFixed(1)} 0)`);
+    n.g.setAttribute('opacity', Math.min(1,n.prog*12).toFixed(2));
+    if(n.prog>=1){ beatMiss(n,null,null); if(!beatOn()) return }
+  }
+  BT.raf=requestAnimationFrame(beatLoop);
+}
+function beatDone(n, ok){
+  n.done=true; const c=colorOf(n.k);
+  n.g.querySelectorAll('.nh').forEach(e=>e.setAttribute('fill',c)); n.g.querySelectorAll('.bs').forEach(e=>e.setAttribute('stroke',c));
+  pill(n.g, 0, 178, zyName(n.k).replace('高音','高'), c, 15);
+  n.g.setAttribute('opacity',1);
+  setTimeout(()=>{ n.g.remove(); BT.notes=BT.notes.filter(x=>x!==n) }, ok?650:1300);
+}
+function beatAnswer(k,btn){
+  if(!beatOn()) return;
+  const n=BT.notes.find(x=>!x.done); if(!n) return;
+  if(k!==n.k){ beatMiss(n,k,btn); return }
+  recordNote(n.k,false); save.right++; S.right++; S.cq++; S.combo++; S.power++;
+  S.best=Math.max(S.best,S.combo); save.best=Math.max(save.best,S.combo);
+  sNote(NOTES[n.k].f); beatDone(n,true);
+  noteOrbs($('monster'), 340, [n.g.querySelector('.nh')]);
+  rigPlay($('heroBod'), atkPose()); petCheer(S.combo%5===0?'star':'ok');
+  setTimeout(()=>{ if(beatOn()){ rigPlay($('monBod'),'hurt'); sHit(false) } }, 340);
+  addCoins(RW.note); dailyEvent('notes',1); dailyEvent('combo',S.combo);
+  if(S.cq%6===0 && BT.beat>440){ BT.beat=Math.max(440, BT.beat*.93); say('加快囉！','good') } else say(`答對了！是 ${zyName(n.k)}`,'good');
+  hud();
+  if(S.power>=goal()) chalGoal();
+}
+function beatMiss(n,k,btn){
+  recordNote(n.k,true); if(k) addConfuse(n.k,k);
+  S.wrong++; S.combo=0; S.lives--; renderLives(true);
+  beatDone(n,false);
+  const kb=$('key-'+n.k); if(kb){ kb.classList.add('show'); setTimeout(()=>kb.classList.remove('show'),1200) }
+  if(btn){ btn.classList.add('wrong'); setTimeout(()=>btn.classList.remove('wrong'),700) }
+  say(k?`那個是 ${zyName(n.k)}`:`漏掉了！那個是 ${zyName(n.k)}`,'bad');
+  sfx(()=>{ osc(330,.2,'square',.1); osc(220,.3,'square',.1,.15) });
+  heroPuzzled($('hero')); petCheer('no'); rigPlay($('monBod'),'hop');
+  hud();
+  if(S.lives<=0) chalEnd('hearts');
 }
 
 // ================= 出題 =================
@@ -2872,7 +3397,8 @@ function nextQ(){
   $('btnNext').hidden=true; $('msg').hidden=true; clearKeyMarks();
   S.locked={A:false,B:false}; $('tkA').classList.remove('locked'); $('tkB').classList.remove('locked');
   S.timeBoost=1; S.tempHint=false;
-  S.seq=makeSeq(); S.pos=0; S.states=[]; S.busy=false; S.qWrong=false; S.qStart=performance.now();
+  if(S.sub==='chal') chalTune();
+  S.seq=makeSeq(); S.pos=0; S.states=[]; S.busy=false; S.qWrong=false; S.qStart=performance.now(); fidReset();
   S.ear = cfgOn('earQ') && S.mode==='solo' && S.sub==='stage' && S.seq.length===1 && !S.phase2 && !(S.stage&&S.stage.noHint) && Math.random()<.2;
   $('seqhint').hidden = S.seq.length<2 && !S.phase2;
   $('seqhint').classList.toggle('rage', S.phase2);
@@ -2880,6 +3406,7 @@ function nextQ(){
   $('timer').classList.toggle('rage', S.phase2);
   if(S.ear){ earStaffDraw(); setTimeout(earGamePlay,300); $('seqhint').hidden=false; $('seqhint').textContent='聽音題！聽聲音找答案' }
   else drawStaff(S.seq, S.states, S.seq.length>1?0:-1);
+  if(S.sub==='chal') chalHint();
   startTimer();
 }
 function qTime(){
@@ -2889,8 +3416,10 @@ function qTime(){
 }
 function startTimer(){
   cancelAnimationFrame(S.tId);
-  const bar=$('timerFill'); $('timer').classList.toggle('off',!S.timerOn);
-  if(!S.timerOn) return;
+  if(S.sub==='chal' && (S.chal==='sprint' || S.chal==='beat')){ $('timer').classList.toggle('off', S.chal==='beat'); return }   // 這兩種玩法有自己的計時
+  const tOn=S.timerOn || S.sub==='chal';
+  const bar=$('timerFill'); $('timer').classList.toggle('off',!tOn);
+  if(!tOn) return;
   const lim=qTime()*1000; let t0=performance.now(), lastNow=t0, lastEmber=0;
   const tick=now=>{
     if(now<(S.freezeUntil||0)) t0+=now-lastNow; lastNow=now;
@@ -2902,7 +3431,7 @@ function startTimer(){
   };
   S.tId=requestAnimationFrame(tick);
 }
-function stopTimer(){ cancelAnimationFrame(S.tId); $('timer').classList.add('off') }
+function stopTimer(){ cancelAnimationFrame(S.tId); if(!(S.playing && S.sub==='chal' && S.chal==='sprint')) $('timer').classList.add('off') }
 function spawnEmber(r, heat){
   const t=$('timer'), card=t.parentElement, tr=t.getBoundingClientRect(), cr=card.getBoundingClientRect();
   const e=document.createElement('i'); e.className='ember';
@@ -2916,6 +3445,7 @@ const labelState = k => { const n=NOTES[k]; return {color:colorOf(k), label:n.pi
 
 // ---------- 單人 ----------
 async function answer(k,btn){
+  if(S.sub==='chal' && S.chal==='beat' && S.mode==='solo'){ if(k) beatAnswer(k,btn); return }
   if(S.mode!=='solo' || S.busy || !S.seq.length || !S.playing) return;
   const cur=S.seq[S.pos], n=NOTES[cur];
   if(k===cur || (k && NOTES[cur].pc===k)){
@@ -2923,14 +3453,14 @@ async function answer(k,btn){
     S.states[S.pos]=labelState(cur); S.pos++;
     sNote(n.f); if(S.sub==='violin' && btn) btn.classList.add('ok');
     if(S.pos<S.seq.length){
-      drawStaff(S.seq, S.states, S.pos);
+      drawStaff(S.seq, S.states, S.pos); notePing(S.pos-1);
       say(`${zyName(cur)}！還有 ${S.seq.length-S.pos} 個`,'good');
       return;
     }
     S.busy=true; stopTimer();
     const len=S.seq.length, g=goal(), dt=performance.now()-S.qStart;
     drawStaff(S.seq, S.states, -1);
-    S.right+=len; S.combo++; S.best=Math.max(S.best,S.combo); save.best=Math.max(save.best,S.combo);
+    S.right+=len; S.combo++; if(S.sub==='chal') S.cq++; S.best=Math.max(S.best,S.combo); save.best=Math.max(save.best,S.combo);
     if(S.combo>=5) award('c5'); if(S.combo>=10) award('c10'); if(S.combo>=20) award('c20');
     if(len===1 && dt<2000) award('fast'); if(len===3) award('seq3'); if(save.right>=100) award('q100');
     const big = S.combo%3===0 || len>=3 || (S.powerBoost||1)>1;
@@ -2941,21 +3471,22 @@ async function answer(k,btn){
     dailyEvent('notes',len); dailyEvent('combo',S.combo); dailyEvent('weapon', attackKind($('hero')));
     say(big?(len>=3?`${['','','','三','四','五'][len]}音連發！`:`${S.combo} 連擊！會心一擊！`):(len>1?'全部答對！':`答對了！是 ${zyName(cur)}`),'good');
     const c=$('combo'); c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop');
-    hud();
+    hud(); petCheer(S.combo%5===0?'star':(big?'big':'ok'));
+    noteOrbs($('monster'), atkLead());
     await heroAttack(big);
     if(S.sub!=='song') monSay('hit', big?.6:.3);
     if(S.sub==='song'){ await wait(120); await wait(playMelody(S.song.parts[S.chunk-1])*1000) }
     const coins=RW.note*len+(big?RW.crit:0); addCoins(coins);
     const h=centerOf($('hero')); fxText(`+${coins}`, h.x, h.y-h.h*.7, 'gold');
     persistLocal();
-    await wait(250);
+    await wait(chalFast()?60:250);
     if(!S.playing) return;
-    if(S.power>=g){ await (S.sub==='song'?songWin():(S.sub==='violin'||S.sub==='xtra')?unitWin():win()); return }
+    if(S.power>=g){ if(S.sub==='chal'){ if(await chalGoal()) return } else { await (S.sub==='song'?songWin():(S.sub==='violin'||S.sub==='xtra')?unitWin():win()); return } }
     if(S.stage.boss && !S.phase2 && S.power>=g/2){ await bossEnrage() }
     if(S.hero+1<S.mon){ S.hero++; sStep(); rigPlay($('heroBod'),'walk'); $('heroBod').animate([{transform:'translateY(0)'},{transform:'translateY(-18%)'},{transform:'translateY(0)'}],{duration:380}); }
     else if(S.mon<LANE){ S.mon++; }
     place();
-    await wait(420);
+    await wait(chalFast()?160:420);
     nextQ();
   }else{
     S.busy=true; stopTimer();
@@ -2965,6 +3496,7 @@ async function answer(k,btn){
     drawStaff(S.seq, S.states, -1); teachDraw(cur);
     if(k) addConfuse(cur,k);
     if(btn) btn.classList.add('wrong');
+    petCheer('no');
     { const kb=$('key-'+(NOTES[cur].pc||cur)); if(kb) kb.classList.add('show'); if(S.sub==='violin') vMark(cur) }
     say(teachText(cur,k),'bad');
     if(S.shield){
@@ -2976,9 +3508,10 @@ async function answer(k,btn){
       await monsterAdvance(S.mon-1<=S.hero);
       monSay('taunt', .55);
       if(S.phase2 && S.mon-1>S.hero){ await wait(120); await monsterAdvance(false) }
-      if(stageLives() && S.lives<=0){ await stageFail(); return }
+      if(stageLives() && S.lives<=0){ await (S.sub==='chal'?chalEnd('hearts'):stageFail()); return }
     }
     S.seq.forEach((kk,i)=>setTimeout(()=>sNote(NOTES[kk].f), i*450));
+    if(chalFast()){ await wait(1300); if(S.playing) nextQ(); return }   // 限時衝刺：看一下正確答案就自動下一題
     $('btnNext').hidden=false; $('btnNext').focus({preventScroll:true});
   }
 }
@@ -2995,6 +3528,7 @@ async function answerTeam(t,k,btn){
     sNote(n.f);
     say(big?`${teamName(t)} ${d.combo} 連擊！`:`${teamName(t)} 答對了！`,'good');
     hud();
+    noteOrbs($('monster'), atkLead());
     await heroAttack(big, t==='A'?$('hero'):$('hero2'), t==='A'?1:-1);
     monSay('hit', .3);
     place();
@@ -3180,13 +3714,13 @@ function startTeam(ri){
   ['A','B'].forEach(t=>{ $('t'+t+'name').textContent=teamName(t); $('tk'+t+'name').textContent=teamName(t) });
   renderHero(); setKeys(); place(); hud(); nextQ();
 }
-function again(){ if(S.mode==='team') startTeam(S.region); else if(S.sub==='song') startSong(S.song.id); else if(S.sub==='raid') startRaid(); else if(S.sub==='violin') startViolin(S.vu, S.vl); else if(S.sub==='xtra') startXtra(S.vu, S.vl); else startStage(S.stage.id) }
+function again(){ if(S.mode==='team') startTeam(S.region); else if(S.sub==='song') startSong(S.song.id); else if(S.sub==='raid') startRaid(); else if(S.sub==='violin') startViolin(S.vu, S.vl); else if(S.sub==='xtra') startXtra(S.vu, S.vl); else if(S.sub==='chal') startChal(S.chal, S.chalRi); else startStage(S.stage.id) }
 function nextLevel(){ if(S.sub==='violin'){ startViolin(S.vu, Math.min(3,S.vl+1)); return } if(S.sub==='xtra'){ startXtra(S.vu, Math.min(3,S.vl+1)); return } const nx=nextStageOf(S.stage); if(nx) startStage(nx.id) }
-function updateGodBtn(){ $('btnGodWin').hidden=!(save.god && S.playing && S.mode==='solo') }
+function updateGodBtn(){ $('btnGodWin').hidden=!(save.god && S.playing && S.mode==='solo' && S.sub!=='chal') }
 function stopPlay(){ if(S.mode==='solo' && S.playing && S.stage) commit(); if(S.sub==='raid' && S.playing && S.raidPending>0){ Cloud.post({action:'raidHit', name:player.name||'訪客', dmg:S.raidPending, id:S.raidId}).catch(()=>{}); S.raidPending=0 } S.playing=false; stopTimer(); clearInterval(RAID.timer); if(musBus&&ac) musBus.gain.setTargetAtTime(S.music?.55:0, ac.currentTime, .2) }
 
 // ================= 畫面切換 =================
-const OVS=['ovLogin','ovHome','ovMap','ovPractice','ovLesson','ovTeam','ovWin','ovShop','ovDex','ovRank','ovPin','ovTeacher','ovSongs','ovDaily','ovEditor','ovCompose','ovViolin','ovXtra'];
+const OVS=['ovLogin','ovHome','ovMap','ovPractice','ovLesson','ovTeam','ovWin','ovShop','ovDex','ovRank','ovPin','ovTeacher','ovSongs','ovDaily','ovEditor','ovCompose','ovViolin','ovXtra','ovChal'];
 function closeAll(){ OVS.forEach(id=>$(id).hidden=true); $('more').hidden=true }
 function show(id){ cancelAnimationFrame(S.tId); closeAll(); $(id).hidden=false; $(id).scrollTop=0; setTimeout(flushDanmaku, 400) }
 function resumeIfPlaying(){ closeAll(); if(S.playing && !S.busy) startTimer() }
@@ -3986,13 +4520,14 @@ const ITEMS = [
 const itemSVG = it => `<svg viewBox="0 0 20 20">${it.icon}</svg>`;
 function renderItems(){
   const box=$('items'); if(!box) return;
+  if(S.sub==='chal' && S.playing){ box.innerHTML=''; return }   // 挑戰模式比紀錄，不能用道具和夥伴技能
   const pet=PETS.find(p=>p.id===save.pet);
   box.innerHTML = ITEMS.map(it=>`<button class="ibtn" data-item="${it.id}" ${(save.items[it.id]||0)<1?'disabled':''} aria-label="${it.name}，剩 ${save.items[it.id]||0} 個">${itemSVG(it)}<b>${save.items[it.id]||0}</b></button>`).join('')
     + (pet?`<button class="ibtn petbtn" id="btnPetSkill" ${S.petUsed?'disabled':''} aria-label="${pet.name}：${pet.desc}">${petSVG(pet)}<b>${S.petUsed?'用過':'技能'}</b></button>`:'');
   box.querySelectorAll('[data-item]').forEach(b=>b.addEventListener('click',()=>useItem(b.dataset.item)));
   const pb=$('btnPetSkill'); if(pb) pb.addEventListener('click',usePet);
 }
-function canUseNow(){ return S.mode==='solo' && S.playing && !S.busy && S.seq.length }
+function canUseNow(){ return S.mode==='solo' && S.playing && !S.busy && S.seq.length && S.sub!=='chal' }
 function useItem(id){
   if(!canUseNow() || (save.items[id]||0)<1) return;
   if(id==='shield' && S.shield) return;
@@ -4101,7 +4636,7 @@ on('tabItem',()=>setTab('item')); on('tabPet',()=>setDexTab('pet'));
 on('raidStart',()=>teacherRaid('start')); on('raidStop',()=>teacherRaid('stop'));
 RAID.homeTimer=setInterval(()=>{ if(!$('ovHome').hidden) fetchRaid().then(raidBanner) }, 15000);
 on('btnAgain',again); on('btnNextLv',nextLevel); on('btnWinShop',()=>openShop('win'));
-on('btnWinMap',()=>{ if(S.mode==='team'||S.sub==='raid') home(); else if(S.sub==='song') openSongs(); else if(S.sub==='violin') openViolin(); else if(S.sub==='xtra') openXtra(); else openMap() });
+on('btnWinMap',()=>{ if(S.mode==='team'||S.sub==='raid') home(); else if(S.sub==='song') openSongs(); else if(S.sub==='violin') openViolin(); else if(S.sub==='xtra') openXtra(); else if(S.sub==='chal') openChal(); else openMap() });
 on('btnMap',openMap); on('btnHome',home); on('btnMapBack',home);
 on('hAdv',openMap); on('hPrac',openPractice); on('hTeam',teamSetup); on('hRank',openRank);
 on('hShop',()=>openShop('home')); on('hDex',()=>openDex('home'));
@@ -4325,10 +4860,10 @@ function edRenderUsers(){
   if(edUser){ edRenderUser(); return }
   const q=($('edQ')&&$('edQ').value)||'';
   box.innerHTML=`<section><div class="r"><input type="text" id="edQ" placeholder="搜尋名字" value="${escapeHTML(q)}" aria-label="搜尋名字"><button class="sbtn alt" id="edReload">重新讀取</button><span class="hint">共 ${edUsers.length} 位</span></div>
-    <div class="tbl"><table><thead><tr><th>姓名</th><th>目前金幣</th><th>累計</th><th>段位</th><th>關卡</th><th>最後更新</th><th></th></tr></thead><tbody id="edUList"></tbody></table></div>
+    <div class="tbl"><table><thead><tr><th>姓名</th><th>目前金幣</th><th>累計</th><th>段位</th><th>關卡</th><th>挑戰紀錄</th><th>最後更新</th><th></th></tr></thead><tbody id="edUList"></tbody></table></div>
     <div class="hint">也可以直接在試算表 Users 分頁改「目前積分」那一格，小朋友下次存檔時就會變成那個數字。</div></section>`;
   const fill=()=>{ const s=$('edQ').value.trim();
-    $('edUList').innerHTML=edUsers.filter(u=>!s||String(u.name).includes(s)).map(u=>`<tr><td><b>${escapeHTML(u.name)}</b></td><td>${u.coins}</td><td>${u.total}</td><td>${escapeHTML(u.tier||'')}</td><td>${escapeHTML(u.progress||'')}</td><td><small>${escapeHTML(u.updated||'')}</small></td><td><button class="sbtn" data-u="${escapeHTML(u.name)}">修改</button></td></tr>`).join('') || '<tr><td colspan="7">找不到</td></tr>';
+    $('edUList').innerHTML=edUsers.filter(u=>!s||String(u.name).includes(s)).map(u=>`<tr><td><b>${escapeHTML(u.name)}</b></td><td>${u.coins}</td><td>${u.total}</td><td>${escapeHTML(u.tier||'')}</td><td>${escapeHTML(u.progress||'')}</td><td><small>${escapeHTML(chalRecText(u.rec))}</small></td><td><small>${escapeHTML(u.updated||'')}</small></td><td><button class="sbtn" data-u="${escapeHTML(u.name)}">修改</button></td></tr>`).join('') || '<tr><td colspan="8">找不到</td></tr>';
     $('edUList').querySelectorAll('[data-u]').forEach(b=>b.addEventListener('click',()=>{ edUser=b.dataset.u; edArm=''; edRenderUser() }));
   };
   $('edQ').addEventListener('input',fill); $('edReload').addEventListener('click',()=>{ edUsers=null; edLoadUsers() }); fill();
@@ -4603,7 +5138,11 @@ function monSay(kind, chance=1){
   if(kind==='appear'||kind==='bossAppear'){ const R=REGIONS[S.region]; text=(MON_SOUND[R&&R.id]||'')+text }
   const sc=$('scene'); let b=$('monBubble');
   if(!b){ b=document.createElement('div'); b.id='monBubble'; b.className='mbubble'; sc.appendChild(b) }
-  b.textContent=text; if(kind!=='lose') rigPlay($('monBod'),'talk');
+  b.textContent=text;
+  if(kind!=='lose'){
+    const mb=$('monBod'), ra=RG.actors.get(mb), left=ra && ra.state==='hurt' ? ra.t0+ra.dur-performance.now() : 0;
+    if(left>30) setTimeout(()=>{ const r2=RG.actors.get(mb); if(r2 && (r2.state==='idle'||r2.state==='hurt')) rigPlay(mb,'talk') }, left); else rigPlay(mb,'talk');
+  }
   const m=centerOf($('monster')), W=sc.clientWidth;
   b.hidden=false; b.style.visibility='hidden'; b.style.left='0px';
   const bw=b.offsetWidth;
@@ -5030,6 +5569,7 @@ async function unitWin(){
 }
 on('hViolin',openViolin); on('btnVioBack',home);
 on('hXtra',openXtra); on('btnXtraBack',home);
+on('hChal',openChal); on('btnChalBack',home);
 
 
 

@@ -68,7 +68,7 @@ function testSave() {
   rebuildBoard_();
 }
 
-const CODE_VERSION = 11;   // 檢查用：網址回傳的版本號
+const CODE_VERSION = 12;   // 檢查用：網址回傳的版本號
 
 // ---------- 網頁應用程式入口 ----------
 function out_(o) {
@@ -423,11 +423,11 @@ function users_() {
   s.getRange(2, 1, n - 1, 10).getValues().forEach((r, i) => {
     const name = String(r[0]).trim();
     if (!name) return;
-    let coins = Number(r[1] || 0);
-    // 試算表上直接改過的金幣也要算進來
-    try { const sv = JSON.parse(r[5]); if (r[1] === '' && sv) coins = sv.coins || 0; } catch (e) {}
+    let coins = Number(r[1] || 0), rec = null;
+    // 試算表上直接改過的金幣也要算進來；挑戰模式的最高紀錄也一起帶出去給老師面板看
+    try { const sv = JSON.parse(r[5]); if (r[1] === '' && sv) coins = sv.coins || 0; rec = (sv && sv.rec) || null; } catch (e) {}
     const t = r[4] instanceof Date ? Utilities.formatDate(r[4], Session.getScriptTimeZone(), 'M/d HH:mm') : String(r[4] || '');
-    out.push({ name, coins, total: Number(r[2] || 0), tier: r[6], score: Number(r[7] || 0), progress: r[8], updated: t });
+    out.push({ name, coins, total: Number(r[2] || 0), tier: r[6], score: Number(r[7] || 0), progress: r[8], updated: t, rec });
   });
   return out.sort((a, b) => String(a.name).localeCompare(String(b.name), 'zh-Hant'));
 }
